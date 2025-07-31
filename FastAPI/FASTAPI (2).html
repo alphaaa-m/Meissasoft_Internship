@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FastAPI Guide: Interactive Learning for Beginners</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <style>
+        .sidebar {
+            position: sticky;
+            top: 1rem;
+            height: calc(100vh - 2rem);
+            overflow-y: auto;
+        }
+        .section-content {
+            display: none;
+        }
+        .section-content.active {
+            display: block;
+        }
+        pre {
+            background-color: #2d2d2d;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="container mx-auto px-4 py-8 flex flex-col md:flex-row">
+        <!-- Sidebar -->
+        <aside class="md:w-1/4 p-4 sidebar">
+            <h2 class="text-2xl font-bold mb-4 text-blue-600">Table of Contents</h2>
+            <ul class="space-y-2">
+                <li><a href="#python-foundations" class="text-blue-500 hover:underline">Python Foundations</a></li>
+                <li><a href="#environment-setup" class="text-blue-500 hover:underline">Environment Setup</a></li>
+                <li><a href="#fastapi-basics" class="text-blue-500 hover:underline">FastAPI Basics</a></li>
+                <li><a href="#intermediate-concepts" class="text-blue-500 hover:underline">Intermediate Concepts</a></li>
+                <li><a href="#advanced-features" class="text-blue-500 hover:underline">Advanced Backend Features</a></li>
+                <li><a href="#authentication-authorization" class="text-blue-500 hover:underline">User Authentication & Authorization</a></li>
+                <li><a href="#application-management" class="text-blue-500 hover:underline">Application Management</a></li>
+                <li><a href="#fastapi-utilities" class="text-blue-500 hover:underline">FastAPI Utilities</a></li>
+                <li><a href="#deployment" class="text-blue-500 hover:underline">Deployment</a></li>
+                <li><a href="#extra-tools" class="text-blue-500 hover:underline">Extra Tools & Topics</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="md:w-3/4 p-4">
+            <h1 class="text-4xl font-bold text-center text-blue-700 mb-8">FastAPI Guide: Building APIs Made Simple</h1>
+            <p class="text-lg mb-6">FastAPI is a fast and easy-to-use Python framework for building APIs. This interactive guide is designed for beginners, with clear examples and clickable sections to make learning fun and engaging. Click the headings below to explore!</p>
+
+            <!-- 1. Python Foundations -->
+            <div class="mb-4">
+                <h2 id="python-foundations" class="text-2xl font-semibold text-blue-600 cursor-pointer flex items-center" onclick="toggleSection('python-foundations-content')">
+                    <span class="mr-2">📘</span> 1. Python Foundations
+                </h2>
+                <div id="python-foundations-content" class="section-content mt-2 p-4 bg-white rounded shadow">
+                    <h3 class="text-xl font-semibold">Python Syntax & Functions</h3>
+                    <p>Python uses indentation (spaces) to organize code instead of braces like other languages. Functions are reusable blocks of code defined with <code>def</code>. Here's a simple function:</p>
+                    <pre><code class="language-python">def greet(name):
+    return f"Hello, {name}!"
+</code></pre>
+                    <p>Call it with <code>greet("Alice")</code> to get <code>"Hello, Alice!"</code>. Python is case-sensitive, and colons (<code>:</code>) start code blocks.</p>
+                    <ul class="list-disc pl-6">
+                        <li><strong>Variables:</strong> No need to declare types, e.g., <code>name = "Alice"</code>.</li>
+                        <li><strong>Imports:</strong> Use <code>import module</code> to bring in code from other files.</li>
+                    </ul>
+
+                    <h3 class="text-xl font-semibold mt-4">Async/Await</h3>
+                    <p>Python's <code>async</code> and <code>await</code> let you write code that doesn't wait idly for slow tasks (like fetching data from a server). Think of it like ordering food and doing something else while you wait:</p>
+                    <pre><code class="language-python">import asyncio
+
+async def fetch_data():
+    print("Start fetching")
+    await asyncio.sleep(1)  # Simulate waiting for data
+    print("Done fetching")
+    return {"data": 123}
+
+async def main():
+    result = await fetch_data()
+    print(result)
+
+asyncio.run(main())
+</code></pre>
+                    <p>Use <code>async def</code> for functions that can pause, and <code>await</code> for tasks that take time.</p>
+
+                    <h3 class="text-xl font-semibold mt-4">Concurrency (asyncio, coroutines)</h3>
+                    <p>Concurrency means handling multiple tasks at once without waiting for one to finish. Imagine juggling tasks while waiting for your coffee. Python's <code>asyncio</code> library uses coroutines (functions that can pause and resume) to achieve this:</p>
+                    <ul class="list-disc pl-6">
+                        <li><strong>Coroutines:</strong> Defined with <code>async def</code>, they pause at <code>await</code>.</li>
+                        <li><strong>Event Loop:</strong> <code>asyncio.run()</code> manages all coroutines.</li>
+                        <li><strong>Concurrency vs. Parallelism:</strong> Concurrency switches between tasks; parallelism runs tasks on multiple CPU cores.</li>
+                    </ul>
+                    <p>FastAPI uses concurrency to handle many API requests efficiently.</p>
+
+                    <h3 class="text-xl font-semibold mt-4">Type Hints (Annotations)</h3>
+                    <p>Type hints tell Python what kind of data (e.g., numbers, text) a variable or function should use. They help catch errors and make code clearer:</p>
+                    <pre><code class="language-python">def sum(a: int, b: int) -> int:
+    return a + b
+</code></pre>
+                    <p>Here, <code>a: int</code> means <code>a</code> should be an integer, and <code>-> int</code> means the function returns an integer. FastAPI uses these for automatic validation.</p>
+                    <pre><code class="language-python">def surface_area_of_cube(edge_length: float) -> float:
+    return edge_length * edge_length * 6
+</code></pre>
+
+                    <h3 class="text-xl font-semibold mt-4">Decorators (Basic Understanding)</h3>
+                    <p>A decorator is like a wrapper that adds extra behavior to a function. For example:</p>
+                    <pre><code class="language-python">def my_decorator(f):
+    def wrapper(*args):
+        print("Before call")
+        result = f(*args)
+        print("After call")
+        return result
+    return wrapper
+
+@my_decorator
+def hello():
+    print("Hello")
+</code></pre>
+                    <p>Calling <code>hello()</code> prints "Before call", "Hello", then "After call". FastAPI uses decorators like <code>@app.get("/")</code> to define API routes.</p>
+                </div>
+            </div>
+
+            <!-- 2. Environment Setup -->
+            <div class="mb-4">
+                <h2 id="environment-setup" class="text-2xl font-semibold text-blue-600 cursor-pointer flex items-center" onclick="toggleSection('environment-setup-content')">
+                    <span class="mr-2">⚙️</span> 2. Environment Setup
+                </h2>
+                <div id="environment-setup-content" class="section-content mt-2 p-4 bg-white rounded shadow">
+                    <h3 class="text-xl font-semibold">Virtual Environments (venv, pipenv, poetry)</h3>
+                    <p>A virtual environment keeps your project's Python packages separate from your computer's main Python setup, avoiding conflicts:</p>
+                    <pre><code class="language-bash">python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+</code></pre>
+                    <p>Once activated, <code>pip install</code> only affects this project. Tools like <code>pipenv</code> or <code>poetry</code> make managing dependencies even easier with files like <code>Pipfile</code> or <code>pyproject.toml</code>.</p>
+
+                    <h3 class="text-xl font-semibold mt-4">Installing FastAPI and Uvicorn</h3>
+                    <p>Install FastAPI and Uvicorn (a server to run FastAPI) in your virtual environment:</p>
+                    <pre><code class="language-bash">pip install fastapi uvicorn
+</code></pre>
+                    <p>Or use <code>pip install "fastapi[all]"</code> to include extra tools like <code>pydantic-settings</code>.</p>
+
+                    <h3 class="text-xl font-semibold mt-4">Project Structure and Folder Organization</h3>
+                    <p>Organize your project for clarity. A simple structure looks like:</p>
+                    <pre><code class="language-text">project/
+├── main.py          # Main app file
+├── schemas.py       # Pydantic models
+├── models.py        # Database models
+├── routers/         # API route modules
+└── .env             # Environment variables
+</code></pre>
+                    <p>Keep your API routes in <code>main.py</code> or split them into <code>routers/</code> for larger projects. Use <code>__init__.py</code> in folders to make them Python packages.</p>
+
+                    <h3 class="text-xl font-semibold mt-4">.env Files and Environment Variables</h3>
+                    <p>Store sensitive info (like API keys) in a <code>.env</code> file, not in your code. Use Pydantic to load them:</p>
+                    <pre><code class="language-python">from pydantic_settings import BaseSettings, SettingsConfigDict
+
+class Settings(BaseSettings):
+    api_key: str
+    model_config = SettingsConfigDict(env_file=".env")
+
+settings = Settings()
+</code></pre>
+                    <p>In your <code>.env</code> file, add <code>API_KEY=your-secret-key</code>. Pydantic loads it into <code>settings.api_key</code>.</p>
+                </div>
+            </div>
+
+            <!-- 3. FastAPI Basics -->
+            <div class="mb-4">
+                <h2 id="fastapi-basics" class="text-2xl font-semibold text-blue-600 cursor-pointer flex items-center" onclick="toggleSection('fastapi-basics-content')">
+                    <span class="mr-2">🚀</span> 3. FastAPI Basics
+                </h2>
+                <div id="fastapi-basics-content" class="section-content mt-2 p-4 bg-white rounded shadow">
+                    <h3 class="text-xl font-semibold">Creating FastAPI App Instance</h3>
+                    <p>Start by creating a FastAPI app in <code>main.py</code>:</p>
+                    <pre><code class="language-python">from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/")
+async def read_root():
+    return {"message": "Hello World"}
+</code></pre>
+                    <p>The <code>app = FastAPI()</code> creates your API, and <code>@app.get("/")</code> defines a route at the root URL.</p>
+
+                    <h3 class="text-xl font-semibold mt-4">Running App with Uvicorn</h3>
+                    <p>Run your app using Uvicorn:</p>
+                    <pre><code class="language-bash">uvicorn main:app --reload
+</code></pre>
+                    <p>This starts a server at <code>http://127.0.0.1:8000</code>. The <code>--reload</code> flag auto-restarts the server when you change code.</p>
+
+                    <h3 class="text-xl font-semibold mt-4">FastAPI Docs (Swagger UI and ReDoc)</h3>
+                    <p>FastAPI automatically creates interactive API docs:</p>
+                    <ul class="list-disc pl-6">
+                        <li><strong>Swagger UI:</strong> Visit <code>/docs</code> to test your API in the browser.</li>
+                        <li><strong>ReDoc:</strong> Visit <code>/redoc</code> for a cleaner documentation view.</li>
+                    </ul>
+
+                    <h3 class="text-xl font-semibold mt-4">HTTP Methods: GET, POST, PUT, DELETE, PATCH</h3>
+                    <p>FastAPI uses HTTP methods to handle different actions:</p>
+                    <ul class="list-disc pl-6">
+                        <li><code>@app.get("/")</code>: Read data (e.g., fetch a list).</li>
+                        <li><code>@app.post("/")</code>: Create data (e.g., add a new item).</li>
+                        <li><code>@app.put("/")</code>: Replace data.</li>
+                        <li><code>@app.delete("/")</code>: Delete data.</li>
+                        <li><code>@app.patch("/")</code>: Update part of the data.</li>
+                    </ul>
+
+                    <h3 class="text-xl font-semibold mt-4">Endpoints</h3>
+                    <p>An endpoint is a specific URL (like <code>/items/123</code>) that triggers a function. For example:</p>
+                    <pre><code class="language-python">@app.get("/items/{item_id}")
+async def read_item(item_id: int):
+    return {"item_id": item_id}
+</code></pre>
+                    <p>Visiting <code>/items/123</code> calls <code>read_item</code> with <code>item_id=123</code>.</p>
+
+                    <h3 class="text-xl font-semibold mt-4">Path Parameters</h3>
+                    <p>Path parameters are parts of the URL in curly braces, like <code>{item_id}</code>. FastAPI passes them to your function:</p>
+                    <pre><code class="language-python">@app.get("/users/{user_id}")
+async def get_user(user_id: int):
+    return {"user_id": user_id}
+</code></pre>
+                    <p>If <code>user_id</code> isn't an integer, FastAPI returns a 422 error.</p>
+
+                    <h3 class="text-xl font-semibold mt-4">Query Parameters</h3>
+                    <p>Query parameters are extra data in the URL, like <code>/items?q=test</code>. Define them as function arguments:</p>
+                    <pre><code class="language-python">@app.get("/items/")
+async def read_items(q: str | None = None):
+    return {"q": q}
+</code></pre>
+                    <p>If <code>q</code> is required, remove the default value:</p>
+                    <pre><code class="language-python">@app.get("/items/")
+async def read_items(q: str):
+    return {"q": q}
+</code></pre>
+
+                    <h3 class="text-xl font-semibold mt-4">Request Body (Pydantic Models)</h3>
+                    <p>Use Pydantic models to handle JSON data in requests:</p>
+                    <pre><code class="language-python">from pydantic import BaseModel
+
+class Item(BaseModel):
+    name: str
+    price: float
+
+@app.post("/items/")
+async def create_item(item: Item):
+    return {"item_name": item.name, "item_price": item.price}
+</code></pre>
+                    <p>Send a JSON like <code>{"name": "Book", "price": 9.99}</code> to this endpoint.</p>
+
+                    <h3 class="text-xl font-semibold mt-4">Response Models</h3>
+                    <p>Control what data is returned with a response model:</p>
+                    <pre><code class="language-python">class ItemOut(BaseModel):
+    name: str
+
+@app.get("/items/{item_id}", response_model=ItemOut)
+async def read_item(item_id: int):
+    item = {"name": "Book", "id": item_id}
+    return item
+</code></pre>
+                    <p>This returns only the <code>name</code> field, filtering out others.</p>
+
+                    <h3 class="text-xl font-semibold mt-4">Status Codes</h3>
+                    <p>FastAPI returns 200 OK by default. Change it with <code>status_code</code>:</p>
+                    <pre><code class="language-python">from fastapi import status
+
+@app.post("/items/", status_code=status.HTTP_201_CREATED)
+async def create_item(item: Item):
+    return item
+</code></pre>
+                    <p>Use <code>status.HTTP_201_CREATED</code> for creation, <code>status.HTTP_404_NOT_FOUND</code> for errors, etc.</p>
+
+                    <h3 class="text-xl font-semibold mt-4">Return Types (JSON, dict, list)</h3>
+                    <p>FastAPI converts Python objects (dicts, lists, Pydantic models) to JSON:</p>
+                    <pre><code class="language-python">@app.get("/numbers/")
+async def get_numbers():
+    return [1, 2, 3]
+</code></pre>
+                    <p>This returns a JSON array <code>[1, 2, 3]</code>.</p>
+                </div>
+            </div>
+
+            <!-- 4. Intermediate Concepts -->
+            <div class="mb-4">
+                <h2 id="intermediate-concepts" class="text-2xl font-semibold text-blue-600 cursor-pointer flex items-center" onclick="toggleSection('intermediate-concepts-content')">
+                    <span class="mr-2">🔧</span> 4. Intermediate Concepts
+                </h2>
+                <div id="intermediate-concepts-content" class="section-content mt-2 p-4 bg-white rounded shadow">
+                    <h3 class="text-xl font-semibold">Path and Query Parameter Validation</h3>
+                    <p>Add rules to parameters, like length or range:</p>
+                    <pre><code class="language-python">from fastapi import Query, Path
+
+@app.get("/items/{item_id}")
+async def read_item(item_id: int = Path(..., gt=0), q: str = Query(None, min_length=3)):
+    return {"item_id": item_id, "q": q}
+</code></pre>
+                    <p><code>gt=0</code> ensures <code>item_id</code> is positive; <code>min_length=3</code> enforces a minimum query length.</p>
+
+                    <h3 class="text-xl font-semibold mt-4">Optional Parameters and Defaults</h3>
+                    <p>Make parameters optional by setting a default:</p>
+                    <pre><code class="language-python">@app.get("/items/")
+async def read_items(q: str | None = None):
+    return {"q": q}
+</code></pre>
+                    <p>If <code>q</code> isn't provided, it defaults to <code>None</code>.</p>
+
+                    <h3 class="text-xl font-semibold mt-4">Form Data</h3>
+                    <p>Handle HTML form data (e.g., login forms):</p>
+                    <pre><code class="language-python">from fastapi import Form
+
+@app.post("/login/")
+async def login(username: str = Form(...), password: str = Form(...)):
+    return {"username": username}
+</code></pre>
+                    <p>Install <code>python-multipart</code> to use <code>Form</code>.</p>
+
+                    <h3 class="text-xl font-semibold mt-4">File Uploads</h3>
+                    <p>Accept file uploads with <code>UploadFile</code>:</p>
+                    <pre><code class="language-python">from fastapi import File, UploadFile
+
+@app.post("/uploadfile/")
+async def create_upload_file(file: UploadFile = File(...)):
+    content = await file.read()
+    return {"filename": file.filename}
+</code></pre>
+                    <p><code>UploadFile</code> handles large files efficiently with metadata like <code>filename</code>.</p>
+
+                    <h3 class="text-xl font-semibold mt-4">Headers and Cookies</h3>
+                    <p>Access request headers or cookies:</p>
+                    <pre><code class="language-python">from fastapi import Header, Cookie
+
+@app.get("/items/")
+async def read_items(user_agent: str | None = Header(None), session_id: str | None = Cookie(None)):
+    return {"user_agent": user_agent, "session_id": session_id}
+</code></pre>
+
+                    <h3 class="text-xl font-semibold mt-4">Custom Response Classes</h3>
+                    <p>Return non-JSON responses, like HTML:</p>
+                    <pre><code class="language-python">from fastapi.responses import HTMLResponse
+
+@app.get("/", response_class=HTMLResponse)
+async def get_home():
+    return "<h1>Hello, World!</h1>"
+</code></pre>
+
+                    <h3 class="text-xl font-semibold mt-4">Custom Exception Handling</h3>
+                    <p>Raise custom errors with <code>HTTPException</code>:</p>
+                    <pre><code class="language-python">from fastapi import HTTPException
+
+@app.get("/items/{item_id}")
+async def read_item(item_id: str):
+    if item_id not in fake_db:
+        raise HTTPException(status_code=404, detail="Not found")
+    return {"item": fake_db[item_id]}
+</code></pre>
+
+                    <h3 class="text-xl font-semibold mt-4">Dependency Injection (Depends)</h3>
+                    <p>Reuse code with dependencies:</p>
+                    <pre><code class="language-python">from fastapi import Depends
+
+async def common_params(q: str | None = None):
+    return {"q": q}
+
+@app.get("/items/")
+async def read_items(params: dict = Depends(common_params)):
+    return params
+</code></pre>
+                    <p>FastAPI calls <code>common_params</code> and passes its result to the endpoint.</p>
+
+                    <h3 class="text-xl font-semibold mt-4">Background Tasks</h3>
+                    <p>Run tasks after sending a response:</p>
+                    <pre><code class="language-python">from fastapi import BackgroundTasks
+
+def write_notification(email: str, message: str):
+    with open("log.txt", mode="w") as f:
+        f.write(f"notification for {email}: {message}")
+
+@app.post("/send-notification/{email}")
+async def send_notification(email: str, background_tasks: BackgroundTasks):
+    background_tasks.add_task(write_notification, email, message="Hello")
+    return {"message": "Notification sent in the background"}
+</code></pre>
+
+                    <h3 class="text-xl font-semibold mt-4">Middleware</h3>
+                    <p>Middleware processes requests before and after your endpoints:</p>
+                    <pre><code class="language-python">from fastapi import Request
+import time
+
+@app.middleware("http")
+async def add_process_time_header(request: Request, call_next):
+    start_time = time.perf_counter()
+    response = await call_next(request)
+    process_time = time.perf_counter() - start_time
+    response.headers["X-Process-Time"] = str(process_time)
+    return response
+</code></pre>
+
+                    <h3 class="text-xl font-semibold mt-4">CORS (Cross-Origin Resource Sharing)</h3>
+                    <p>Allow web apps on different domains to access your API:</p>
+                    <pre><code class="language-python">from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+</code></pre>
+                </div>
+            </div>
+
+            <!-- 5. Advanced Backend Features -->
+            <div class="mb-4">
+                <h2 id="advanced-features" class="text-2xl font-semibold text-blue-600 cursor-pointer flex items-center" onclick="toggleSection('advanced-features-content')">
+                    <span class="mr-2">🔗</span> 5. Advanced Backend Features
+                </h2>
+                <div id="advanced-features-content" class="section-content mt-2 p-4 bg-white rounded shadow">
+                    <h3 class="text-xl font-semibold">Database Integration</h3>
+                    <p>Connect FastAPI to databases for storing data.</p>
+                    <p><strong>SQL (SQLAlchemy):</strong></p>
+                    <pre><code class="language-python">from sqlalchemy.orm import Session
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+@app.post("/items/")
+def create_item(item: ItemSchema, db: Session = Depends(get_db)):
+    db_item = models.Item(**item.dict())
+    db.add(db_item)
+    db.commit()
+    return db_item
+</code></pre>
+                    <p><strong>NoSQL (MongoDB with Motor):</strong></p>
+                    <p>Use Motor for async MongoDB access, similar to SQLAlchemy but for NoSQL.</p>
+
+                    <h3 class="text-xl font-semibold mt-4">CRUD Operations</h3>
+                    <p>CRUD stands for Create, Read, Update, Delete:</p>
+                    <pre><code class="language-python">@app.get("/items/")
+def read_items(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
+    items = db.query(models.Item).offset(skip).limit(limit).all()
+    return items
+
+@app.post("/items/")
+def create_item(item: ItemCreate, db: Session = Depends(get_db)):
+    db_item = models.Item(**item.dict())
+    db.add(db_item)
+    db.commit()
+    return db_item
+</code></pre>
+
+                    <h3 class="text-xl font-semibold mt-4">Async Database Operations</h3>
+                    <p>Use async ORMs like Tortoise for non-blocking database calls:</p>
+                    <pre><code class="language-python">from tortoise.contrib.fastapi import register_tortoise
+
+register_tortoise(app, db_url="sqlite:///db.sqlite3", modules={"models": ["models"]})
+
+@app.get("/users/{user_id}")
+async def get_user(user_id: int):
+    user = await User.get(id=user_id)
+    return user
+</code></pre>
+
+                    <h3 class="text-xl font-semibold mt-4">Pydantic with ORM Models</h3>
+                    <p>Combine database models with Pydantic for validation and serialization:</p>
+                    <pre><code class="language-python">class ItemSchema(BaseModel):
+    id: int
+    name: str
+
+@app.get("/items/{item_id}", response_model=ItemSchema)
+def read_item(item_id: int, db: Session = Depends(get_db)):
+    item = db.query(models.Item).filter(models.Item.id == item_id).first()
+    return item
+</code></pre>
+
+                    <h3 class="text-xl font-semibold mt-4">Relationships and Joins</h3>
+                    <p>Define relationships in SQLAlchemy for linked data:</p>
+                    <pre><code class="language-python">class User(Base):
+    __tablename__ = "users"
+    id = Column(Integer, primary_key=True)
+    items = relationship("Item", back_populates="owner")
+
+class Item(Base):
+    __tablename__ = "items"
+    id = Column(Integer, primary_key=True)
+    owner_id = Column(Integer, ForeignKey("users.id"))
+    owner = relationship("User", back_populates="items")
+</code></pre>
+
+                    <h3 class="text-xl font-semibold mt-4">Pagination and Filtering</h3>
+                    <p>Add pagination and search to list endpoints:</p>
+                    <pre><code class="language-python">@app.get("/items/")
+def list_items(skip: int = 0, limit: int = 10, q: str | None = None, db: Session = Depends(get_db)):
+    query = db.query(models.Item)
+    if q:
+        query = query.filter(models.Item.name.contains(q))
+    items = query.offset(skip).limit(limit).all()
+    return items
+</code></pre>
+                </div>
+            </div>
+
+            <!-- 6. User Authentication & Authorization -->
+            <div class="mb-4">
+                <h2 id="authentication-authorization" class="text-2xl font-semibold text-blue-600 cursor-pointer flex items-center" onclick="toggleSection('authentication-authorization-content')">
+                    <span class="mr-2">🔒</span> 6. User Authentication & Authorization
+                </h2>
+                <div id="authentication-authorization-content" class="section-content mt-2 p-4 bg-white rounded shadow">
+                    <h3 class="text-xl font-semibold">OAuth2 Password Flow</h3>
+                    <p>Secure your API with OAuth2 and tokens:</p>
+                    <pre><code class="language-python">from fastapi.security import OAuth2PasswordBearer
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+@app.post("/token")
+async def login(form_data: OAuth2PasswordRequestForm = Depends()):
+    token = create_access_token({"sub": form_data.username})
+    return {"access_token": token, "token_type": "bearer"}
+
+@app.get("/users/me")
+async def read_users_me(token: str = Depends(oauth2_scheme)):
+    user = get_user_from_token(token)
+    return user
+</code></pre>
+
+                    <h3 class="text-xl font-semibold mt-4">JWT Tokens (pyjwt)</h3>
+                    <p>Use JSON Web Tokens for secure authentication:</p>
+                    <pre><code class="language-python">import jwt
+
+SECRET_KEY = "your-secret-key"
+ALGORITHM = "HS256"
+
+def create_access_token(data: dict):
+    return jwt.encode(data, SECRET_KEY, algorithm=ALGORITHM)
+
+def verify_token(token: str):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        return payload
+    except:
+        raise HTTPException(status_code=401, detail="Invalid token")
+</code></pre>
+
+                    <h3 class="text-xl font-semibold mt-4">Dependency-based Auth</h3>
+                    <p>Check user authentication with dependencies:</p>
+                    <pre><code class="language-python">async def get_current_user(token: str = Depends(oauth2_scheme)):
+    credentials = verify_token(token)
+    user = get_user(credentials["sub"])
+    if not user:
+        raise HTTPException(401, "User not found")
+    return user
+
+@app.get("/private/")
+def private_route(current_user: User = Depends(get_current_user)):
+    return {"username": current_user.username}
+</code></pre>
+
+                    <h3 class="text-xl font-semibold mt-4">Role-based Access Control</h3>
+                    <p>Restrict access based on user roles:</p>
+                    <p>Check <code>current_user.role</code> in a dependency and raise a 403 error if unauthorized.</p>
+
+                    <h3 class="text-xl font-semibold mt-4">Password Hashing (passlib)</h3>
+                    <p>Securely store passwords with hashing:</p>
+                    <pre><code class="language-python">from passlib.context import CryptContext
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+def verify_password(plain, hashed):
+    return pwd_context.verify(plain, hashed)
+
+def get_password_hash(password):
+    return pwd_context.hash(password)
+</code></pre>
+                </div>
+            </div>
+
+            <!-- 7. Application Management -->
+            <div class="mb-4">
+                <h2 id="application-management" class="text-2xl font-semibold text-blue-600 cursor-pointer flex items-center" onclick="toggleSection('application-management-content')">
+                    <span class="mr-2">🛠️</span> 7. Application Management
+                </h2>
+                <div id="application-management-content" class="section-content mt-2 p-4 bg-white rounded shadow">
+                    <h3 class="text-xl font-semibold">Environment Configurations</h3>
+                    <p>Use <code>.env</code> files and Pydantic for settings, as shown in Environment Setup.</p>
+
+                    <h3 class="text-xl font-semibold mt-4">Logging</h3>
+                    <p>Add logs to track what your app does:</p>
+                    <pre><code class="language-python">import logging
+
+logger = logging.getLogger("uvicorn.error")
+
+@app.get("/")
+async def read_root():
+    logger.info("Root endpoint called")
+    return {"message": "Hello"}
+</code></pre>
+
+                    <h3 class="text-xl font-semibold mt-4">Configuration Management with BaseSettings</h3>
+                    <p>Centralize settings with Pydantic:</p>
+                    <pre><code class="language-python">from pydantic_settings import BaseSettings
+
+class Settings(BaseSettings):
+    api_key: str
+    model_config = SettingsConfigDict(env_file=".env")
+
+settings = Settings()
+</code></pre>
+
+                    <h3 class="text-xl font-semibold mt-4">Project Layout (Modular Structure)</h3>
+                    <p>Split code into modules:</p>
+                    <pre><code class="language-python">from fastapi import APIRouter
+
+users_router = APIRouter()
+
+@users_router.get("/users/")
+def read_users():
+    return ["user1", "user2"]
+
+app.include_router(users_router, prefix="/v1")
+</code></pre>
+
+                    <h3 class="text-xl font-semibold mt-4">API Versioning</h3>
+                    <p>Add versions to your API with prefixes:</p>
+                    <pre><code class="language-python">app.include_router(api_v1_router, prefix="/v1")
+app.include_router(api_v2_router, prefix="/v2")
+</code></pre>
+
+                    <h3 class="text-xl font-semibold mt-4">Error Handling and Custom Exceptions</h3>
+                    <p>Handle errors globally:</p>
+                    <pre><code class="language-python">from fastapi.responses import JSONResponse
+
+@app.exception_handler(SomeCustomError)
+async def custom_exception_handler(request, exc):
+    return JSONResponse({"message": str(exc)}, status_code=418)
+</code></pre>
+
+                    <h3 class="text-xl font-semibold mt-4">Testing (pytest, httpx, TestClient)</h3>
+                    <p>Test your API with <code>TestClient</code>:</p>
+                    <pre><code class="language-python">from fastapi.testclient import TestClient
+
+client = TestClient(app)
+
+def test_read_main():
+    response = client.get("/")
+    assert response.status_code == 200
+    assert response.json() == {"message": "Hello World"}
+</code></pre>
+                </div>
+            </div>
+
+            <!-- 8. FastAPI Utilities -->
+            <div class="mb-4">
+                <h2 id="fastapi-utilities" class="text-2xl font-semibold text-blue-600 cursor-pointer flex items-center" onclick="toggleSection('fastapi-utilities-content')">
+                    <span class="mr-2">🔩</span> 8. FastAPI Utilities
+                </h2>
+                <div id="fastapi-utilities-content" class="section-content mt-2 p-4 bg-white rounded shadow">
+                    <h3 class="text-xl font-semibold">Custom Middleware</h3>
+                    <p>Add custom logic to every request:</p>
+                    <pre><code class="language-python">from fastapi import Request
+import time
+
+@app.middleware("http")
+async def add_process_time(request: Request, call_next):
+    start = time.perf_counter()
+    response = await call_next(request)
+    response.headers["X-Process-Time"] = str(time.perf_counter() - start)
+    return response
+</code></pre>
+
+                    <h3 class="text-xl font-semibold mt-4">Custom Decorators</h3>
+                    <p>Create your own decorators:</p>
+                    <pre><code class="language-python">from fastapi import Header, HTTPException
+
+def require_token(f):
+    async def wrapper(*args, token: str = Header(None), **kwargs):
+        if token != "expected":
+            raise HTTPException(400, "Invalid token")
+        return await f(*args, **kwargs)
+    return wrapper
+
+@app.get("/secure")
+@require_token
+async def secure_endpoint():
+    return {"secret": "data"}
+</code></pre>
+
+                    <h3 class="text-xl font-semibold mt-4">Response Time Tracking</h3>
+                    <p>Track how long requests take (see middleware example above).</p>
+
+                    <h3 class="text-xl font-semibold mt-4">Caching (Redis)</h3>
+                    <p>Cache data to speed up responses:</p>
+                    <pre><code class="language-python">import aioredis
+import json
+
+redis = aioredis.from_url("redis://localhost")
+
+@app.get("/data")
+async def get_data():
+    cached = await redis.get("mydata")
+    if cached:
+        return {"data": json.loads(cached)}
+    result = heavy_computation()
+    await redis.set("mydata", json.dumps(result))
+    return {"data": result}
+</code></pre>
+
+                    <h3 class="text-xl font-semibold mt-4">Throttling / Rate Limiting</h3>
+                    <p>Limit requests with <code>slowapi</code>:</p>
+                    <pre><code class="language-python">from slowapi import Limiter
+
+limiter = Limiter(key_func=get_remote_address)
+app.state.limiter = limiter
+
+@app.get("/", limited=True)
+@limiter.limit("5/minute")
+async def limited_endpoint():
+    return {"message": "This endpoint is rate-limited"}
+</code></pre>
+
+                    <h3 class="text-xl font-semibold mt-4">WebSockets</h3>
+                    <p>Enable real-time communication:</p>
+                    <pre><code class="language-python">from fastapi import WebSocket
+
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    while True:
+        data = await websocket.receive_text()
+        await websocket.send_text(f"Message text was: {data}")
+</code></pre>
+
+                    <h3 class="text-xl font-semibold mt-4">Background Tasks</h3>
+                    <p>Run tasks in the background (see Intermediate Concepts).</p>
+                </div>
+            </div>
+
+            <!-- 9. Deployment -->
+            <div class="mb-4">
+                <h2 id="deployment" class="text-2xl font-semibold text-blue-600 cursor-pointer flex items-center" onclick="toggleSection('deployment-content')">
+                    <span class="mr-2">🚀</span> 9. Deployment
+                </h2>
+                <div id="deployment-content" class="section-content mt-2 p-4 bg-white rounded shadow">
+                    <h3 class="text-xl font-semibold">Uvicorn with Gunicorn</h3>
+                    <p>Run FastAPI in production with Gunicorn and Uvicorn workers:</p>
+                    <pre><code class="language-bash">gunicorn -k uvicorn.workers.UvicornWorker main:app
+</code></pre>
+
+                    <h3 class="text-xl font-semibold mt-4">Dockerizing FastAPI App</h3>
+                    <p>Create a Docker container:</p>
+                    <pre><code class="language-docker">FROM python:3.9
+WORKDIR /code
+COPY requirements.txt /code/
+RUN pip install --no-cache-dir -r requirements.txt
+COPY app /code/app
+CMD ["fastapi", "run", "app/main.py", "--port", "80"]
+</code></pre>
+
+                    <h3 class="text-xl font-semibold mt-4">Nginx + FastAPI</h3>
+                    <p>Use Nginx as a reverse proxy:</p>
+                    <pre><code class="language-nginx">server {
+    listen 80;
+    server_name example.com;
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
+</code></pre>
+
+                    <h3 class="text-xl font-semibold mt-4">Hosting</h3>
+                    <p>Deploy on platforms like Heroku, Render, AWS, or DigitalOcean using Docker or Python setups.</p>
+
+                    <h3 class="text-xl font-semibold mt-4">CI/CD Basics (GitHub Actions)</h3>
+                    <p>Automate testing and deployment:</p>
+                    <pre><code class="language-yaml">name: CI
+on: [push]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - run: |
+          pip install -r requirements.txt
+          pip install pytest httpx
+          pytest
+</code></pre>
+
+                    <h3 class="text-xl font-semibold mt-4">Production Settings and Optimization</h3>
+                    <p>Optimize your app:</p>
+                    <ul class="list-disc pl-6">
+                        <li>Disable <code>--reload</code> in production.</li>
+                        <li>Use multiple Uvicorn workers.</li>
+                        <li>Enable HTTPS via Nginx.</li>
+                        <li>Use caching and monitor performance.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 10. Extra Tools & Topics -->
+            <div class="mb-4">
+                <h2 id="extra-tools" class="text-2xl font-semibold text-blue-600 cursor-pointer flex items-center" onclick="toggleSection('extra-tools-content')">
+                    <span class="mr-2">🧰</span> 10. Extra Tools & Topics
+                </h2>
+                <div id="extra-tools-content" class="section-content mt-2 p-4 bg-white rounded shadow">
+                    <h3 class="text-xl font-semibold">GraphQL (Strawberry or Ariadne)</h3>
+                    <p>Add GraphQL support with Strawberry:</p>
+                    <pre><code class="language-python">import strawberry
+from strawberry.fastapi import GraphQLRouter
+
+@strawberry.type
+class Query:
+    @strawberry.field
+    def hello(self) -> str:
+        return "Hello World"
+
+schema = strawberry.Schema(Query)
+graphql_app = GraphQLRouter(schema)
+app.include_router(graphql_app, prefix="/graphql")
+</code></pre>
+
+                    <h3 class="text-xl font-semibold mt-4">Admin Panels (Piccolo Admin)</h3>
+                    <p>Use Piccolo for an auto-generated admin interface, similar to Django's admin, for quick CRUD operations.</p>
+
+                    <h3 class="text-xl font-semibold mt-4">FastAPI Plugins</h3>
+                    <p>Useful plugins include:</p>
+                    <ul class="list-disc pl-6">
+                        <li><code>fastapi-crudrouter</code>: Auto-generate CRUD routes.</li>
+                        <li><code>fastapi-pagination</code>: Simplify pagination.</li>
+                        <li><code>fastapi-mail</code>: Send emails.</li>
+                    </ul>
+
+                    <h3 class="text-xl font-semibold mt-4">Async Task Queues (Celery + Redis)</h3>
+                    <p>Run heavy tasks with Celery:</p>
+                    <pre><code class="language-python">from celery import Celery
+
+celery_app = Celery(__name__, broker="redis://...")
+@app.post("/process/")
+async def trigger_task():
+    celery_app.send_task("myapp.tasks.do_work", args=[42])
+    return {"message": "Task triggered"}
+</code></pre>
+
+                    <h3 class="text-xl font-semibold mt-4">API Rate Limiting</h3>
+                    <p>Limit requests with <code>slowapi</code> (see FastAPI Utilities).</p>
+
+                    <h3 class="text-xl font-semibold mt-4">Real-time Notifications (WebSockets / SSE)</h3>
+                    <p>Send server updates with Server-Sent Events:</p>
+                    <pre><code class="language-python">from sse_starlette.sse import EventSourceResponse
+
+@app.get("/stream")
+async def message_stream():
+    async def event_generator():
+        while True:
+            await asyncio.sleep(1)
+            yield {"event": "ping", "data": "pong"}
+    return EventSourceResponse(event_generator())
+</code></pre>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function toggleSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            const isActive = section.classList.contains('active');
+            document.querySelectorAll('.section-content').forEach(el => el.classList.remove('active'));
+            if (!isActive) {
+                section.classList.add('active');
+            }
+        }
+
+        document.querySelectorAll('.sidebar a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+                targetElement.scrollIntoView({ behavior: 'smooth' });
+                toggleSection(targetId + '-content');
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Understanding Database Systems</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/cytoscape@3.23.0/dist/cytoscape.min.js"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        #erd-container { height: 400px; width: 100%; border: 1px solid #e5e7eb; }
+        .section-content { display: none; }
+        .section-content.active { display: block; }
+        .quiz-option:hover { cursor: pointer; background-color: #e5e7eb; }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto p-4">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-gray-800">Understanding Database Systems</h1>
+            <p class="text-lg text-gray-600 mt-2">A comprehensive guide to the world of databases, their models, SQL, and design principles.</p>
+        </header>
+
+        <nav class="bg-white shadow rounded-lg p-4 mb-8">
+            <ul class="flex flex-wrap gap-4 justify-center">
+                <li><button class="nav-btn px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" data-section="intro">Introduction</button></li>
+                <li><button class="nav-btn px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" data-section="models">Database Models</button></li>
+                <li><button class="nav-btn px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" data-section="sql">SQL Fundamentals</button></li>
+                <li><button class="nav-btn px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" data-section="design">Database Design</button></li>
+                <li><button class="nav-btn px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" data-section="management">Advanced Management</button></li>
+                <li><button class="nav-btn px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" data-section="quiz">Quiz</button></li>
+            </ul>
+        </nav>
+
+        <main>
+            <section id="intro" class="section-content active bg-white p-6 rounded-lg shadow">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Introduction to Databases</h2>
+                <p class="text-gray-600 mb-4">Databases are the backbone of modern digital infrastructure, organizing and managing vast amounts of data for efficient retrieval and analysis. They power everything from mobile apps to enterprise systems.</p>
+                <h3 class="text-xl font-semibold text-gray-700 mb-2">What is a Database?</h3>
+                <p class="text-gray-600 mb-4">A database is an electronically stored, systematic collection of data managed by a Database Management System (DBMS). It supports scalability, data integrity, security, and analytics.</p>
+                <h3 class="text-xl font-semibold text-gray-700 mb-2">Database vs. Spreadsheets</h3>
+                <table class="w-full border-collapse mb-4">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="border p-2">Feature</th>
+                            <th class="border p-2">Spreadsheet</th>
+                            <th class="border p-2">Database</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="border p-2">Data Storage</td>
+                            <td class="border p-2">In cells</td>
+                            <td class="border p-2">In tables</td>
+                        </tr>
+                        <tr>
+                            <td class="border p-2">Scalability</td>
+                            <td class="border p-2">Limited</td>
+                            <td class="border p-2">High</td>
+                        </tr>
+                        <tr>
+                            <td class="border p-2">Collaboration</td>
+                            <td class="border p-2">Challenging</td>
+                            <td class="border p-2">Multi-user</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <h3 class="text-xl font-semibold text-gray-700 mb-2">Evolution of Databases</h3>
+                <p class="text-gray-600">From punched cards to relational models (introduced by E.F. Codd in 1970) to modern cloud databases, the evolution reflects increasing abstraction and scalability.</p>
+            </section>
+
+            <section id="models" class="section-content bg-white p-6 rounded-lg shadow">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Database Models</h2>
+                <p class="text-gray-600 mb-4">Database models define how data is organized and accessed. The main types include:</p>
+                <h3 class="text-xl font-semibold text-gray-700 mb-2">Relational Databases (RDBMS)</h3>
+                <p class="text-gray-600 mb-4">Organize data into tables with predefined schemas. Use SQL for querying. Examples: MySQL, PostgreSQL, Oracle.</p>
+                <h3 class="text-xl font-semibold text-gray-700 mb-2">NoSQL Databases</h3>
+                <p class="text-gray-600 mb-4">Designed for flexibility and scale, handling unstructured data. Types include:</p>
+                <ul class="list-disc pl-6 text-gray-600">
+                    <li><strong>Document:</strong> Stores JSON/BSON documents (e.g., MongoDB).</li>
+                    <li><strong>Key-Value:</strong> Simple key-value pairs (e.g., Redis).</li>
+                    <li><strong>Column-Family:</strong> Column-based storage (e.g., Cassandra).</li>
+                    <li><strong>Graph:</strong> Focuses on relationships (e.g., Neo4j).</li>
+                </ul>
+                <h3 class="text-xl font-semibold text-gray-700 mb-2">Specialized Databases</h3>
+                <p class="text-gray-600">In-memory (Redis), time-series (InfluxDB), and vector databases (Pinecone) cater to specific workloads like AI/ML and IoT.</p>
+            </section>
+
+            <section id="sql" class="section-content bg-white p-6 rounded-lg shadow">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">SQL Fundamentals</h2>
+                <p class="text-gray-600 mb-4">Structured Query Language (SQL) is the standard for managing relational databases.</p>
+                <h3 class="text-xl font-semibold text-gray-700 mb-2">Key SQL Commands</h3>
+                <ul class="list-disc pl-6 text-gray-600 mb-4">
+                    <li><strong>DDL (Data Definition Language):</strong> CREATE, ALTER, DROP for schema management.</li>
+                    <li><strong>DML (Data Manipulation Language):</strong> SELECT, INSERT, UPDATE, DELETE for data operations.</li>
+                    <li><strong>DCL (Data Control Language):</strong> GRANT, REVOKE for permissions.</li>
+                    <li><strong>TCL (Transaction Control Language):</strong> COMMIT, ROLLBACK for transaction management.</li>
+                </ul>
+                <h3 class="text-xl font-semibold text-gray-700 mb-2">Example: Creating a Table</h3>
+                <pre class="bg-gray-800 text-white p-4 rounded"><code>CREATE TABLE employees (
+    id INT PRIMARY KEY,
+    name VARCHAR(100),
+    salary DECIMAL(10, 2)
+);</code></pre>
+                <h3 class="text-xl font-semibold text-gray-700 mb-2">Interactive SQL Example</h3>
+                <p class="text-gray-600 mb-2">Try this SQL query:</p>
+                <textarea id="sql-input" class="w-full p-2 border rounded" rows="4">SELECT name, salary FROM employees WHERE salary > 50000;</textarea>
+                <button id="run-sql" class="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Run Query</button>
+                <div id="sql-output" class="mt-4 text-gray-600"></div>
+            </section>
+
+            <section id="design" class="section-content bg-white p-6 rounded-lg shadow">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Database Design</h2>
+                <p class="text-gray-600 mb-4">Effective database design ensures data integrity and performance.</p>
+                <h3 class="text-xl font-semibold text-gray-700 mb-2">Entity-Relationship Diagrams (ERDs)</h3>
+                <p class="text-gray-600 mb-4">ERDs visualize entities, attributes, and relationships. Explore the interactive ERD below:</p>
+                <div id="erd-container" class="mb-4"></div>
+                <h3 class="text-xl font-semibold text-gray-700 mb-2">Normalization</h3>
+                <p class="text-gray-600 mb-4">Normalization reduces redundancy through normal forms (1NF, 2NF, 3NF, BCNF).</p>
+                <h3 class="text-xl font-semibold text-gray-700 mb-2">Keys</h3>
+                <ul class="list-disc pl-6 text-gray-600">
+                    <li><strong>Primary Key:</strong> Uniquely identifies a record.</li>
+                    <li><strong>Foreign Key:</strong> Links tables for referential integrity.</li>
+                    <li><strong>Surrogate vs. Natural Keys:</strong> Trade-offs between artificial IDs and business data.</li>
+                </ul>
+            </section>
+
+            <section id="management" class="section-content bg-white p-6 rounded-lg shadow">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Advanced Database Management</h2>
+                <p class="text-gray-600 mb-4">Advanced techniques ensure performance and reliability.</p>
+                <h3 class="text-xl font-semibold text-gray-700 mb-2">ACID Properties</h3>
+                <p class="text-gray-600 mb-4">Atomicity, Consistency, Isolation, Durability ensure reliable transactions.</p>
+                <h3 class="text-xl font-semibold text-gray-700 mb-2">Concurrency Control</h3>
+                <p class="text-gray-600 mb-4">Manages simultaneous access with isolation levels and locking mechanisms.</p>
+                <h3 class="text-xl font-semibold text-gray-700 mb-2">Indexing</h3>
+                <p class="text-gray-600">Clustered and non-clustered indexes speed up data retrieval but may slow writes.</p>
+            </section>
+
+            <section id="quiz" class="section-content bg-white p-6 rounded-lg shadow">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Test Your Knowledge</h2>
+                <p class="text-gray-600 mb-4">Take this quiz to reinforce your understanding of database systems.</p>
+                <div id="quiz-container">
+                    <div class="quiz-question mb-4">
+                        <p class="font-semibold">1. What is the primary purpose of a database?</p>
+                        <div class="quiz-option p-2" data-correct="true">To organize, manage, and secure data</div>
+                        <div class="quiz-option p-2">To create web applications</div>
+                        <div class="quiz-option p-2">To design user interfaces</div>
+                    </div>
+                    <div class="quiz-question mb-4">
+                        <p class="font-semibold">2. Which database model uses a flexible schema?</p>
+                        <div class="quiz-option p-2" data-correct="true">NoSQL</div>
+                        <div class="quiz-option p-2">Relational</div>
+                        <div class="quiz-option p-2">Hierarchical</div>
+                    </div>
+                    <div class="quiz-question mb-4">
+                        <p class="font-semibold">3. What does the SQL command 'CREATE' do?</p>
+                        <div class="quiz-option p-2" data-correct="true">Defines new database objects</div>
+                        <div class="quiz-option p-2">Deletes data</div>
+                        <div class="quiz-option p-2">Updates records</div>
+                    </div>
+                </div>
+                <button id="submit-quiz" class="mt-4 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Submit Quiz</button>
+                <div id="quiz-result" class="mt-4 text-gray-600"></div>
+            </section>
+        </main>
+
+        <footer class="text-center mt-8 text-gray-600">
+            <p>Created by Grok | Powered by xAI</p>
+        </footer>
+    </div>
+
+    <script>
+        // Navigation
+        const navButtons = document.querySelectorAll('.nav-btn');
+        const sections = document.querySelectorAll('.section-content');
+        navButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                sections.forEach(section => section.classList.remove('active'));
+                document.getElementById(button.dataset.section).classList.add('active');
+            });
+        });
+
+        // Interactive ERD with Cytoscape.js
+        const cy = cytoscape({
+            container: document.getElementById('erd-container'),
+            elements: [
+                { data: { id: 'customers', label: 'Customers' } },
+                { data: { id: 'orders', label: 'Orders' } },
+                { data: { id: 'c1', source: 'customers', target: 'orders', label: 'Places' } }
+            ],
+            style: [
+                { selector: 'node', style: { 'label': 'data(label)', 'shape': 'rectangle', 'background-color': '#60a5fa', 'color': '#fff', 'text-valign': 'center', 'text-halign': 'center' } },
+                { selector: 'edge', style: { 'label': 'data(label)', 'curve-style': 'bezier', 'target-arrow-shape': 'triangle' } }
+            ],
+            layout: { name: 'grid', rows: 1 }
+        });
+
+        // Interactive SQL Simulation
+        document.getElementById('run-sql').addEventListener('click', () => {
+            const query = document.getElementById('sql-input').value;
+            const output = document.getElementById('sql-output');
+            // Simulated data
+            const employees = [
+                { name: 'Alice', salary: 75000 },
+                { name: 'Bob', salary: 60000 },
+                { name: 'Charlie', salary: 45000 }
+            ];
+            if (query.includes('SELECT') && query.includes('salary > 50000')) {
+                const result = employees.filter(emp => emp.salary > 50000);
+                output.innerHTML = '<strong>Result:</strong><br>' + result.map(emp => `${emp.name}: $${emp.salary}`).join('<br>');
+            } else {
+                output.innerHTML = '<strong>Error:</strong> Please enter a valid SELECT query with a salary condition.';
+            }
+        });
+
+        // Quiz Logic
+        let score = 0;
+        const quizOptions = document.querySelectorAll('.quiz-option');
+        quizOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                const question = option.parentElement;
+                question.querySelectorAll('.quiz-option').forEach(opt => opt.classList.remove('bg-blue-200'));
+                option.classList.add('bg-blue-200');
+                if (option.dataset.correct === 'true') {
+                    score++;
+                }
+            });
+        });
+
+        document.getElementById('submit-quiz').addEventListener('click', () => {
+            const result = document.getElementById('quiz-result');
+            result.innerHTML = `You scored ${score} out of 3! ${score === 3 ? 'Perfect!' : 'Try again to improve your score!'}`;
+            score = 0; // Reset score
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive OOP Concepts Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Visualization & Content Choices: 
+    * Report Info: OOP Pillars Table -> Goal: Inform/Compare -> Viz/Presentation: HTML Table -> Interaction: Static display -> Justification: Direct representation of key summarized info.
+    * Report Info: Code Examples (Python, Java, C++) for each pillar -> Goal: Demonstrate/Educate -> Viz/Presentation: Tabbed code blocks (HTML/CSS/JS for tabs) with explanations -> Interaction: User clicks tabs to switch language -> Justification: Allows users to see examples in their preferred language without clutter.
+    * Report Info: Real-World Analogies -> Goal: Explain/Relate -> Viz/Presentation: Card-like elements with icons (Unicode/HTML+CSS) and text -> Interaction: Hover effects for visual feedback -> Justification: Visually separates analogies for better recall.
+    * Report Info: Relationship between concepts -> Goal: Illustrate connections -> Viz/Presentation: HTML/CSS based diagram (e.g., connected boxes or a simple flowchart-like structure) with explanatory text -> Interaction: Static display with clear visual hierarchy -> Justification: Visual aid for complex interdependencies.
+    * CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. All visual diagrams will be constructed using HTML elements and Tailwind CSS. Charts are not applicable as the source is textual.
+    -->
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f9fafb; /* bg-gray-50 */ color: #4b5563; /* text-slate-600 */ }
+        .sidebar { transition: transform 0.3s ease-in-out; }
+        .sidebar-link { display: block; padding: 0.75rem 1.5rem; margin-bottom: 0.25rem; border-radius: 0.375rem; transition: background-color 0.2s ease, color 0.2s ease; }
+        .sidebar-link:hover { background-color: #38bdf8; /* hover:bg-sky-400 */ color: white; }
+        .sidebar-link.active { background-color: #0284c7; /* bg-sky-600 */ color: white; font-weight: 600; }
+        .content-section { display: none; }
+        .content-section.active { display: block; }
+        .code-tabs button { padding: 0.5rem 1rem; margin-right: 0.25rem; border-radius: 0.375rem 0.375rem 0 0; background-color: #e5e7eb; /* bg-gray-200 */ }
+        .code-tabs button.active { background-color: #3b82f6; /* bg-blue-500 */ color: white; }
+        .code-block { display: none; }
+        .code-block.active { display: block; }
+        .analogy-card { background-color: #ffffff; border: 1px solid #e5e7eb; /* border-gray-200 */ border-radius: 0.5rem; padding: 1.5rem; box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1), 0 1px 2px -1px rgba(0,0,0,0.1); margin-bottom: 1rem; }
+        .analogy-card h5 { color: #0ea5e9; /* text-sky-500 */ }
+        h1, h2, h3, h4 { color: #334155; /* text-slate-700 */ }
+        h1 { font-size: 2.25rem; line-height: 2.5rem; font-weight: 700; margin-bottom: 1.5rem; }
+        h2 { font-size: 1.875rem; line-height: 2.25rem; font-weight: 600; margin-top: 2.5rem; margin-bottom: 1rem; border-bottom: 2px solid #e0f2fe; /* border-sky-100 */ padding-bottom: 0.5rem;}
+        h3 { font-size: 1.5rem; line-height: 2rem; font-weight: 600; margin-top: 2rem; margin-bottom: 0.75rem; }
+        h4 { font-size: 1.25rem; line-height: 1.75rem; font-weight: 500; margin-top: 1.5rem; margin-bottom: 0.5rem; }
+        p, ul, ol { margin-bottom: 1rem; line-height: 1.6; }
+        ul { list-style-type: disc; padding-left: 1.5rem; }
+        ol { list-style-type: decimal; padding-left: 1.5rem; }
+        pre { background-color: #1e293b; /* bg-slate-800 */ color: #e2e8f0; /* text-slate-200 */ padding: 1rem; border-radius: 0.5rem; overflow-x: auto; font-size: 0.875em; line-height: 1.25rem;}
+        code { font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace; }
+        .inline-code { background-color: #e2e8f0; /* bg-slate-200 */ color: #ef4444; /* text-red-500 */ padding: 0.1em 0.3em; border-radius: 0.25rem; font-size: 0.9em; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+        th, td { border: 1px solid #cbd5e1; /* border-slate-300 */ padding: 0.75rem; text-align: left; }
+        th { background-color: #f1f5f9; /* bg-slate-100 */ font-weight: 600; }
+        .responsive-table-container { overflow-x: auto; }
+        .relationship-diagram .pillar { background-color: #e0f2fe; /* bg-sky-100 */ border: 2px solid #7dd3fc; /* border-sky-300 */ padding: 1rem; margin: 0.5rem; border-radius: 0.5rem; text-align: center; }
+        .relationship-diagram .connector { display: flex; align-items: center; justify-content: center; padding: 0.5rem; font-weight: 500; color: #0369a1; /* text-sky-700 */ }
+        .tooltip { position: relative; display: inline-block; cursor: help; }
+        .tooltip .tooltiptext { visibility: hidden; width: 220px; background-color: #334155; color: #fff; text-align: center; border-radius: 6px; padding: 5px 0; position: absolute; z-index: 1; bottom: 125%; left: 50%; margin-left: -110px; opacity: 0; transition: opacity 0.3s; font-size: 0.8rem; }
+        .tooltip:hover .tooltiptext { visibility: visible; opacity: 1; }
+
+        @media (max-width: 768px) {
+            .flex-container { flex-direction: column; }
+            .sidebar { position: static; width: 100%; max-height: none; transform: translateX(0); border-bottom: 2px solid #0284c7;}
+            .sidebar-toggle { display: block; }
+            .main-content { margin-left: 0; padding-top: 1rem; }
+            h1 {font-size: 1.875rem; line-height: 2.25rem;}
+            h2 {font-size: 1.5rem; line-height: 2rem;}
+            h3 {font-size: 1.25rem; line-height: 1.75rem;}
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-slate-600">
+    <div class="flex-container flex min-h-screen">
+        <button id="sidebarToggle" class="sidebar-toggle md:hidden fixed top-4 left-4 z-20 p-2 bg-slate-700 text-white rounded-md">
+            ☰ Menu
+        </button>
+
+        <nav id="sidebar" class="sidebar fixed md:static inset-y-0 left-0 w-64 bg-slate-800 text-slate-100 p-4 space-y-2 overflow-y-auto transform -translate-x-full md:translate-x-0 z-10">
+            <h1 class="text-xl font-semibold text-sky-400 p-2 mb-4 border-b border-slate-700">OOP Pillars</h1>
+            <a href="#introduction" class="sidebar-link active">Introduction</a>
+            <a href="#encapsulation" class="sidebar-link">Encapsulation</a>
+            <a href="#abstraction" class="sidebar-link">Abstraction</a>
+            <a href="#polymorphism" class="sidebar-link">Polymorphism</a>
+            <a href="#inheritance" class="sidebar-link">Inheritance</a>
+            <a href="#relationships" class="sidebar-link">Relationships</a>
+            <a href="#design-patterns" class="sidebar-link">Design Patterns</a>
+            <a href="#conclusions" class="sidebar-link">Conclusions</a>
+        </nav>
+
+        <main class="main-content flex-1 p-6 md:p-10 overflow-y-auto bg-white shadow-lg md:ml-64">
+            
+            <section id="introduction" class="content-section active">
+                <h1>Mastering the Pillars of Object-Oriented Programming</h1>
+                <p class="text-lg text-slate-500 mb-6">This guide provides a practical exploration of Encapsulation, Abstraction, Polymorphism, and Inheritance – the core principles of Object-Oriented Programming. Understanding these concepts is crucial for building robust, maintainable, and scalable software.</p>
+
+                <h2>I. Introduction to Object-Oriented Programming (OOP)</h2>
+                <p>Object-Oriented Programming (OOP) represents a fundamental paradigm in modern software development. This approach structures software around the concept of "objects," which are instances of "classes," rather than focusing solely on functions and logic. This conceptual shift aims to model real-world entities and their intricate interactions more intuitively within code.</p>
+                
+                <h3>A. What is OOP?</h3>
+                <p>At its core, OOP is a programming paradigm that organizes software design around data, encapsulated within objects, rather than around actions or functions. A class serves as a blueprint or template from which individual objects are created. This methodology seeks to represent real-world entities, such as a "Person," "Car," or "Bank Account," and their behaviors directly within the software system.</p>
+                <p>The emphasis on "real-world modeling" is not merely an analogy; it constitutes a foundational design philosophy that underpins all four major pillars of OOP. This perspective drives the design of encapsulation, which bundles real-world attributes and behaviors; abstraction, which simplifies real-world complexity; polymorphism, which allows real-world entities to exhibit multiple forms or behaviors; and inheritance, which establishes hierarchical relationships observed in the real world. The effectiveness of an OOP design frequently correlates with how accurately and effectively it models the problem domain, ensuring that the software behaves in a manner consistent with its real-world counterpart.</p>
+                
+                <h3>B. Why OOP Matters: Core Benefits in Software Design</h3>
+                <p>OOP offers substantial advantages in managing complexity, fostering collaboration among developers, and enhancing overall code quality. These benefits collectively contribute to the development of robust, scalable, and maintainable software systems:</p>
+                <ul>
+                    <li><strong>Modularity:</strong> OOP facilitates the decomposition of complex systems into smaller, self-contained, and manageable objects. Each object can be developed and understood in isolation, simplifying the overall system architecture.</li>
+                    <li><strong>Reusability:</strong> Classes and objects, once defined and tested, can be reused across different parts of an application or in entirely new projects. This significantly reduces development time and effort by minimizing redundant code creation.</li>
+                    <li><strong>Maintainability:</strong> Modular and reusable code is inherently easier to debug, update, and extend. Changes within one encapsulated component are less likely to propagate and affect other parts of the system, streamlining the maintenance process.</li>
+                    <li><strong>Extensibility:</strong> New features and functionalities can be added to an existing system with minimal impact on the existing codebase. Polymorphism, in particular, enhances flexibility by allowing the addition of new subclasses without modifying established code.</li>
+                    <li><strong>Security:</strong> Principles such as encapsulation play a critical role in protecting sensitive data from unintended or unauthorized external access and modification, thereby enhancing the security posture of the application.</li>
+                    <li><strong>Scalability:</strong> Well-designed OOP systems, with their inherent modularity and extensibility, can grow and adapt more effectively to increasing demands and evolving requirements.</li>
+                </ul>
+                <p>The benefits derived from OOP are highly interconnected and often mutually reinforcing. For instance, achieving modularity through effective encapsulation frequently facilitates greater code reusability and improved maintainability. Similarly, polymorphism, by promoting flexibility, directly contributes to the extensibility of a system. This synergistic relationship implies that the effective application of one OOP principle often contributes to the realization of multiple benefits across the entire software development lifecycle, leading to the creation of highly adaptable and robust software.</p>
+                
+                <h3>Table 1: OOP Pillars at a Glance</h3>
+                <div class="responsive-table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Concept</th>
+                                <th>"10-year-old" Explanation</th>
+                                <th>Technical Definition (Concise)</th>
+                                <th>Primary Benefit</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Encapsulation</strong></td>
+                                <td>Like a medicine capsule holding ingredients to do a job, hiding internal details.</td>
+                                <td>Bundling data and methods into a single unit (class), controlling access to internal state.</td>
+                                <td>Data Protection, Information Hiding</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Abstraction</strong></td>
+                                <td>Like a TV remote: you press "Volume Up" without knowing <em>how</em> it works, just <em>what</em> it does.</td>
+                                <td>Focusing on essential features while hiding irrelevant details; providing a simplified view.</td>
+                                <td>Complexity Reduction, Improved Efficiency</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Polymorphism</strong></td>
+                                <td>Like a "Play" button: it plays a song on a music player, a movie on a video player. Same button, different actions.</td>
+                                <td>Allowing objects of different types to be treated as objects of a common superclass or interface, enabling varied behavior through a single interface.</td>
+                                <td>Code Reusability, Flexibility, Extensibility</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Inheritance</strong></td>
+                                <td>Like a child inheriting traits from parents, gaining existing features and adding new ones.</td>
+                                <td>A mechanism where a new class acquires properties and behaviors from an existing class, establishing an "is-a" relationship.</td>
+                                <td>Code Reusability, Modularity, Polymorphism Support</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="encapsulation" class="content-section">
+                <h2>II. Encapsulation: The Art of Data Hiding and Bundling</h2>
+                <p>This section delves into Encapsulation, the OOP pillar that focuses on bundling data with the methods that operate on that data, and restricting direct access to some of an object's components. This is crucial for data protection and creating modular, maintainable code. Explore its definitions, importance, real-world examples, and practical code demonstrations below.</p>
+
+                <h3>A. Defining Encapsulation</h3>
+                <h4>1. The "10-year-old" Explanation:</h4>
+                <p>Imagine a medicine capsule. Inside this capsule, various ingredients (representing data) are combined and precisely mixed to perform a specific function (representing methods). As a user, one simply takes the capsule, and it delivers its intended effect; there is no need to see the individual ingredients or understand their intricate interactions. Encapsulation in programming operates similarly: it involves packaging related data and the code that operates on it into a single, self-contained unit, typically a class, thereby keeping the complex or "messy" internal details hidden from external view.</p>
+                <h4>2. Technical Definition:</h4>
+                <p>Encapsulation is an object-oriented programming principle that involves bundling data (attributes or variables) and the methods (functions or operations) that operate on that data into a single cohesive unit, most commonly a class. A critical aspect of encapsulation is its ability to control access to the internal state of an object. This is typically achieved by declaring data members as <code class="inline-code">private</code> or <code class="inline-code">protected</code> and exposing them only through <code class="inline-code">public</code> methods, often referred to as "getters" (for retrieving data) and "setters" (for modifying data). This mechanism is instrumental in achieving data hiding, which is a specific outcome and benefit of proper encapsulation.</p>
+                <p>It is important to recognize that encapsulation is often mistakenly equated solely with "data hiding," but it is a broader concept of "bundling" data and methods. While data hiding is indeed a crucial consequence and benefit of proper encapsulation, the principle itself encompasses the creation of self-contained, coherent units that manage their own state and behavior. Data hiding serves as the primary means by which the internal integrity of such a unit is protected, preventing external code from directly manipulating its state in unintended or uncontrolled ways. This distinction is vital for designing robust and maintainable systems, as it emphasizes the structural aspect of bundling as much as the protective aspect of hiding.</p>
+
+                <h3>B. Why Encapsulation is Crucial: Benefits and Problems Solved</h3>
+                <p>Encapsulation addresses several critical challenges in software development, contributing significantly to the robustness and maintainability of applications:</p>
+                <ul>
+                    <li><strong>Data Protection and Integrity:</strong> A primary function of encapsulation is to safeguard the internal state of an object from unintended or unauthorized external access and modification. By restricting direct access to data members and requiring interaction through controlled methods, encapsulation allows for the implementation of validation logic. This ensures that data can only be manipulated in valid ways, thereby maintaining data integrity and preventing an object from entering an inconsistent state.</li>
+                    <li><strong>Information Hiding:</strong> Encapsulation conceals the intricate internal implementation details of a class from external code. Users of the class are only required to understand its public interface—that is, <em>what</em> it does—without needing to know <em>how</em> it achieves its functionality. This simplification enhances usability and allows developers to modify the internal workings of a class without necessitating changes to the external code that interacts with it.</li>
+                    <li><strong>Modularity and Decoupling:</strong> By bundling related data and functions into self-sufficient units, encapsulation fosters the creation of independent and cohesive components. This modularity decouples different parts of a system, enabling them to be developed, tested, and debugged concurrently and independently. Consequently, modifications within one component are less likely to have unintended ripple effects on other parts of the system.</li>
+                    <li><strong>Maintainability and Flexibility:</strong> Code that is clean, organized, and encapsulated is inherently easier to read, comprehend, and maintain. The hiding of internal implementation details means that changes to these details do not typically require corresponding changes to the external code that utilizes the class, significantly enhancing the system's flexibility and adaptability.</li>
+                    <li><strong>Security:</strong> By restricting unauthorized direct access to sensitive data members, encapsulation acts as a protective barrier, thereby improving the overall security of the application and its data.</li>
+                </ul>
+                <p>The "freedom of implementation details" afforded by encapsulation is a profound advantage that directly supports agile development methodologies and enables long-term software evolution. This means that developers can refactor, optimize, or even completely rewrite the internal mechanisms of a component without disrupting external dependencies or requiring changes in other parts of the system. In a rapidly evolving technological landscape, this "freedom" is not merely a convenience but a strategic asset. It empowers development teams to innovate, adopt new technologies, or enhance performance within a specific component without the risk of a cascading failure across the entire system. This capability drastically reduces the risk and cost associated with software evolution, making the codebase resilient to change and fostering continuous improvement.</p>
+
+                <h3>C. Real-World Analogies for Intuition</h3>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="analogy-card">
+                        <h5>🚗 Car Engine</h5>
+                        <p>A car engine exemplifies encapsulation. It is a highly complex piece of machinery. As a driver, one does not need to comprehend the intricate workings of its internal parts. Interaction occurs through a simplified, public interface: the ignition key, accelerator, and brake. The internal mechanisms are hidden.</p>
+                    </div>
+                    <div class="analogy-card">
+                        <h5>🏦 Bank Account</h5>
+                        <p>A bank account's balance is private. Account holders interact through authorized methods like `deposit()` or `withdraw()`, which ensure valid transactions and protect the balance's integrity.</p>
+                    </div>
+                    <div class="analogy-card">
+                        <h5>📱 Smartphone</h5>
+                        <p>Users interact with smartphone apps via buttons and icons, unaware of the complex internal circuits, OS processes, or memory management. The phone encapsulates its logic, presenting a simple interface.</p>
+                    </div>
+                </div>
+
+                <h3>D. Code Examples for Hands-On Application</h3>
+                <div class="code-example-container" data-example-id="encapsulation-simple">
+                    <h4>1. Simple Example: Basic Data Hiding</h4>
+                    <p>This example demonstrates how data members are made private and accessed exclusively through public methods.</p>
+                    <div class="code-tabs my-2">
+                        <button data-lang="python" class="active">Python</button>
+                        <button data-lang="java">Java</button>
+                        <button data-lang="cpp">C++</button>
+                    </div>
+                    <div data-lang="python" class="code-block active">
+                        <pre><code>class BankAccount:
+    def __init__(self, initial_balance):
+        self.__balance = initial_balance # Private attribute
+
+    def get_balance(self):
+        """Returns the current balance."""
+        return self.__balance
+
+# Usage
+account = BankAccount(1000)
+print(f"Initial balance: {account.get_balance()}")
+# Attempting to access account.__balance directly would raise an AttributeError</code></pre>
+                        <p class="mt-2 text-sm text-slate-500"><strong>Explanation:</strong> In Python, `__balance` is private by convention (double underscore). Access is through `get_balance()`, preventing direct manipulation.</p>
+                    </div>
+                    <div data-lang="java" class="code-block">
+                        <pre><code>class Person {
+    private String name; // Private data member
+
+    public String getName() { // Public getter method
+        return name;
+    }
+
+    public void setName(String name) { // Public setter method
+        this.name = name;
+    }
+}
+
+public class SimpleEncapsulation {
+    public static void main(String[] args) { // Note: Changed String args to String[] args for standard Java main
+        Person p = new Person();
+        p.setName("Alice");
+        System.out.println("Person's name: " + p.getName());
+        // Attempting p.name = "Bob"; would cause a compile-time error.
+    }
+}</code></pre>
+                        <p class="mt-2 text-sm text-slate-500"><strong>Explanation:</strong> The `name` field is `private`. Access is controlled via `public getName()` and `setName()` methods.</p>
+                    </div>
+                    <div data-lang="cpp" class="code-block">
+                        <pre><code>#include &lt;iostream&gt;
+#include &lt;string&gt;
+
+class Employee {
+private:
+    std::string name; // Private data member
+public:
+    void setName(std::string empName) {
+        name = empName;
+    }
+    std::string getName() {
+        return name;
+    }
+};
+
+int main() {
+    Employee emp1;
+    emp1.setName("John Doe");
+    std::cout &lt;&lt; "Employee Name: " &lt;&lt; emp1.getName() &lt;&lt; std::endl;
+    // Attempting emp1.name = "Jane Doe"; would cause a compile-time error.
+    return 0;
+}</code></pre>
+                        <p class="mt-2 text-sm text-slate-500"><strong>Explanation:</strong> The `name` variable is `private`. The `public setName()` and `getName()` methods provide controlled access.</p>
+                    </div>
+                </div>
+                
+                <div class="code-example-container mt-6" data-example-id="encapsulation-complex">
+                    <h4>2. Complex Example: Controlled Access with Validation</h4>
+                    <p>This example shows how setter methods can include validation logic to maintain data integrity.</p>
+                    <div class="code-tabs my-2">
+                        <button data-lang="python" class="active">Python</button>
+                        <button data-lang="java">Java</button>
+                        <button data-lang="cpp">C++</button>
+                    </div>
+                    <div data-lang="python" class="code-block active">
+                        <pre><code>class Product:
+    def __init__(self, name, price):
+        self.__name = name
+        # Use internal validation through a "protected" method
+        self.__price = self._validate_price(price) 
+
+    def get_name(self):
+        return self.__name
+
+    def get_price(self):
+        return self.__price
+
+    def set_price(self, new_price):
+        self.__price = self._validate_price(new_price)
+
+    def _validate_price(self, price): # Protected helper method
+        if not isinstance(price, (int, float)) or price < 0:
+            raise ValueError("Price must be a non-negative number.")
+        return price
+
+# Usage
+try:
+    item1 = Product("Laptop", 1200)
+    print(f"{item1.get_name()}: ${item1.get_price()}")
+    item1.set_price(1150.50)
+    print(f"Updated price: ${item1.get_price()}")
+    item1.set_price(-100) # This will raise a ValueError
+except ValueError as e:
+    print(f"Error: {e}")</code></pre>
+                        <p class="mt-2 text-sm text-slate-500"><strong>Explanation:</strong> `_validate_price` (conventionally protected) ensures the price is always a valid non-negative number, protecting object state integrity.</p>
+                    </div>
+                    <div data-lang="java" class="code-block">
+                        <pre><code>class BankAccount {
+    private long accountNumber;
+    private double balance;
+
+    public BankAccount(long accNo, double initialBalance) {
+        this.accountNumber = accNo;
+        this.balance = initialBalance;
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public void deposit(double amount) {
+        if (amount > 0) {
+            this.balance += amount;
+            System.out.println("Deposited: " + amount + ". New balance: " + this.balance);
+        } else {
+            System.out.println("Deposit amount must be positive.");
+        }
+    }
+
+    public void withdraw(double amount) {
+        if (amount > 0 && amount <= this.balance) {
+            this.balance -= amount;
+            System.out.println("Withdrew: " + amount + ". New balance: " + this.balance);
+        } else {
+            System.out.println("Invalid withdrawal amount or insufficient funds.");
+        }
+    }
+}
+
+public class ComplexEncapsulation {
+    public static void main(String[] args) { // Note: Changed String args to String[] args
+        BankAccount myAccount = new BankAccount(123456789, 1000.0);
+        System.out.println("Current balance: " + myAccount.getBalance());
+        myAccount.deposit(500.0);
+        myAccount.withdraw(200.0);
+        myAccount.withdraw(2000.0); // Invalid withdrawal
+        myAccount.deposit(-100.0);  // Invalid deposit
+    }
+}</code></pre>
+                        <p class="mt-2 text-sm text-slate-500"><strong>Explanation:</strong> `deposit` and `withdraw` methods include validation, preventing invalid states (e.g., negative deposit, over-withdrawal).</p>
+                    </div>
+                    <div data-lang="cpp" class="code-block">
+                        <pre><code>#include &lt;iostream&gt;
+#include &lt;string&gt;
+
+class Student {
+private:
+    std::string name;
+    int age;
+
+public:
+    Student(std::string studentName, int studentAge) {
+        name = studentName;
+        setAge(studentAge); // Use setter for initial validation
+    }
+
+    std::string getName() const { return name; }
+    int getAge() const { return age; }
+
+    void setAge(int newAge) {
+        if (newAge >= 0 && newAge <= 120) { // Validation logic
+            age = newAge;
+            std::cout << "Age set to: " << age << std::endl;
+        } else {
+            std::cout << "Invalid age. Age must be between 0 and 120." << std::endl;
+        }
+    }
+};
+
+int main() {
+    Student student1("Sarah", 22);
+    std::cout << "Student: " << student1.getName() << ", Age: " << student1.getAge() << std::endl;
+    student1.setAge(25);
+    student1.setAge(-5);  // Invalid age
+    student1.setAge(150); // Invalid age
+    return 0;
+}</code></pre>
+                        <p class="mt-2 text-sm text-slate-500"><strong>Explanation:</strong> `setAge()` includes validation to ensure age is within 0-120, enforcing data integrity.</p>
+                    </div>
+                </div>
+
+                <h3>E. Key Keywords and Phrases</h3>
+                <p>Essential terms: <code class="inline-code">private</code>, <code class="inline-code">protected</code>, <code class="inline-code">public</code>, <code class="inline-code">access modifiers</code>, <code class="inline-code">data hiding</code>, <code class="inline-code">information hiding</code>, <code class="inline-code">bundling</code>, <code class="inline-code">wrapping</code>, <code class="inline-code">getters</code>, <code class="inline-code">setters</code>, <code class="inline-code">controlled access</code>, <code class="inline-code">data integrity</code>, <code class="inline-code">decoupling</code>, <code class="inline-code">cohesion</code>.</p>
+
+                <h3>F. Common Pitfalls and Misconceptions</h3>
+                <h4>1. Overuse of Getters and Setters (Anemic Domain Model):</h4>
+                <p>Providing public getters/setters for nearly every private attribute can expose too much internal state, negating encapsulation benefits. This leads to "anemic domain models" where objects are mere data containers. Design classes with behaviors (methods) that operate on their data, not just expose it.</p>
+                <p class="mt-1 italic text-sm">The tension between "data hiding" and "flexibility" requires balance: hide implementation details prone to change, but expose a clear, stable interface for interaction.</p>
+                <h4>2. Increased Code Size and Performance Overhead:</h4>
+                <p>Getter/setter methods can increase code size and add minor performance overhead. However, encapsulation benefits (maintainability, security, flexibility) usually outweigh these for most apps.</p>
+                <h4>3. Rigid Design (Over-encapsulation):</h4>
+                <p>Excessively strict encapsulation can make designs hard to extend. Balance is key: encapsulate what needs hiding (internal state) while exposing a clear, stable public interface.</p>
+                <h4>4. Confusing Encapsulation with Data Hiding:</h4>
+                <p>Encapsulation is the broader concept of bundling data and methods. Data hiding is an outcome achieved by making data private and controlling access via methods. Encapsulation is the "capsule"; data hiding protects its contents.</p>
+            </section>
+
+            <section id="abstraction" class="content-section">
+                <h2>III. Abstraction: Simplifying Complexity</h2>
+                <p>Abstraction focuses on showing essential features while hiding unnecessary details. This section explains its role in reducing complexity and improving efficiency in software design. You'll find definitions, why it's essential, analogies, and code examples demonstrating abstract classes and interfaces.</p>
+                
+                <h3>A. Defining Abstraction</h3>
+                <h4>1. The "10-year-old" Explanation:</h4>
+                <p>Consider a remote control for a television. When the "Volume Up" button is pressed, the television's volume increases. The user does not need to understand <em>how</em> the remote transmits the signal, nor <em>how</em> the television internally processes that signal to adjust the sound. The user simply knows <em>what</em> the button does. Abstraction functions similarly: it involves focusing on the "what" (the essential functionality) and deliberately disregarding the "how" (the underlying implementation details).</p>
+                <h4>2. Technical Definition:</h4>
+                <p>Abstraction is a design technique in OOP that focuses on representing the essential features of an entity while intentionally hiding or ignoring less important or irrelevant details. Its primary objective is to simplify complex systems by providing a streamlined, high-level view, enabling programmers to concentrate on higher-level operations without being burdened by the intricate mechanics operating behind the scenes. This principle is commonly implemented through the use of abstract classes or interfaces.</p>
+                <p>It is important to clarify that abstraction is not about <em>removing</em> complexity from a system, but rather about <em>managing</em> and <em>containing</em> it within clearly defined boundaries. A common misunderstanding is that abstraction renders concepts vague or unclear. Instead, it establishes a distinct boundary: the internal workings of an abstraction may be complex, but the interface provided for interaction remains simple and straightforward. This distinction is crucial as it allows different teams or individuals to work on various components of a large, complex system without needing to grasp every minute detail of every other part. This significantly enhances collaboration and accelerates development by enabling focused work on specific conceptual boundaries.</p>
+
+                <h3>B. Why Abstraction is Essential: Benefits and Problems Solved</h3>
+                <ul>
+                    <li><strong>Reduces Complexity:</strong> By concealing internal details, abstraction simplifies the user's interaction with a system, making it inherently easier to understand, manage, and solve problems.</li>
+                    <li><strong>Improves Efficiency and Productivity:</strong> Programmers can concentrate on the overarching logic and functionality without becoming bogged down by the minutiae of implementation details.</li>
+                    <li><strong>Enhances Maintainability and Scalability:</strong> A simplified and modular view of the system makes it easier to maintain and scale. Changes to internal implementation details do not typically affect external users or client code, as long as the abstract interface remains consistent.</li>
+                    <li><strong>Promotes Code Reusability:</strong> By defining common interfaces or abstract classes, developers can create reusable components that can be implemented in various specific ways.</li>
+                    <li><strong>Ensures Data Integrity and Security:</strong> By hiding implementation specifics related to data structures, abstraction helps to safeguard data integrity and protects sensitive information from unauthorized access.</li>
+                    <li><strong>Facilitates Modular Design:</strong> Abstraction enables the creation of highly modular systems where individual components interact through well-defined and simplified interfaces.</li>
+                </ul>
+                <p class="italic text-sm">The "goodness" of an abstraction is subjective and context-dependent, requiring experience. It's about modeling concepts effectively for their intended purpose, not just applying syntax. An effective abstraction is "well named, coherent, accurate, minimal, and complete" for its intended use.</p>
+
+                <h3>C. Real-World Analogies for Intuition</h3>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="analogy-card">
+                        <h5>☕ Coffee Maker</h5>
+                        <p>Users add water/coffee and press a button, unaware of the internal heating or pumping mechanisms. The coffee maker abstracts these complexities.</p>
+                    </div>
+                    <div class="analogy-card">
+                        <h5>🚗 Driving a Car</h5>
+                        <p>Drivers use steering wheel, pedals, and gear shift without needing to understand the engine's combustion or transmission mechanics. The car provides an abstract interface for control.</p>
+                    </div>
+                    <div class="analogy-card">
+                        <h5>🎂 Baking a Cake from a Recipe</h5>
+                        <p>A recipe provides simplified steps (mix, bake) without detailing the complex chemical reactions. It abstracts the underlying food science.</p>
+                    </div>
+                     <div class="analogy-card">
+                        <h5>📱 Using a Smartphone App</h5>
+                        <p>When sending a message, users are unaware of network protocols, server interactions, or encryption. The app abstracts these details with a simple UI.</p>
+                    </div>
+                </div>
+
+                <h3>D. Code Examples for Hands-On Application</h3>
+                <div class="code-example-container" data-example-id="abstraction-simple">
+                    <h4>1. Simple Example: Abstract Class/Interface</h4>
+                    <p>This example illustrates defining an abstract base class with an abstract method that subclasses must implement.</p>
+                    <div class="code-tabs my-2">
+                        <button data-lang="python" class="active">Python</button>
+                        <button data-lang="java">Java</button>
+                        <button data-lang="cpp">C++</button>
+                    </div>
+                    <div data-lang="python" class="code-block active">
+                        <pre><code>from abc import ABC, abstractmethod
+
+class Animal(ABC): # Abstract Base Class
+    @abstractmethod
+    def sound(self):
+        """Abstract method that must be implemented by subclasses."""
+        pass # No implementation here
+
+class Dog(Animal):
+    def sound(self):
+        return "Bark"
+
+# Usage
+dog = Dog()
+print(dog.sound())
+# Attempting to instantiate Animal() directly would result in a TypeError.</code></pre>
+                        <p class="mt-2 text-sm text-slate-500"><strong>Explanation:</strong> `Animal` (inheriting `ABC`) defines `sound()` as an `@abstractmethod`. `Dog` must implement `sound()`. `Animal` cannot be instantiated directly.</p>
+                    </div>
+                    <div data-lang="java" class="code-block">
+                        <pre><code>abstract class Shape { // Abstract class
+    abstract double calculateArea(); // Abstract method
+}
+
+class Circle extends Shape {
+    private double radius;
+    public Circle(double r) { this.radius = r; }
+    @Override
+    double calculateArea() {
+        return Math.PI * radius * radius;
+    }
+}
+
+public class SimpleAbstraction {
+    public static void main(String[] args) { // Note: Changed String args to String[] args
+        Shape circle = new Circle(5.0); // Can reference abstract class
+        System.out.println("Area of Circle: " + circle.calculateArea());
+        // Attempting Shape s = new Shape(); would cause a compile-time error.
+    }
+}</code></pre>
+                        <p class="mt-2 text-sm text-slate-500"><strong>Explanation:</strong> `Shape` is abstract with an abstract `calculateArea()`. `Circle` extends `Shape` and implements `calculateArea()`. `Shape` cannot be instantiated.</p>
+                    </div>
+                    <div data-lang="cpp" class="code-block">
+                        <pre><code>#include &lt;iostream&gt;
+#define _USE_MATH_DEFINES // For M_PI if not available by default
+#include &lt;cmath&gt;         // For M_PI
+
+class Shape { // Abstract class
+public:
+    virtual double calculateArea() = 0; // Pure virtual function
+    virtual ~Shape() {} // Good practice: virtual destructor
+};
+
+class Rectangle : public Shape {
+private:
+    double length;
+    double width;
+public:
+    Rectangle(double l, double w) : length(l), width(w) {}
+    double calculateArea() override {
+        return length * width;
+    }
+};
+
+int main() {
+    Shape* rect = new Rectangle(4.0, 6.0);
+    std::cout &lt;&lt; "Area of Rectangle: " &lt;&lt; rect-&gt;calculateArea() &lt;&lt; std::endl;
+    delete rect;
+    // Attempting Shape s; would cause a compile-time error.
+    return 0;
+}</code></pre>
+                        <p class="mt-2 text-sm text-slate-500"><strong>Explanation:</strong> `Shape` is abstract due to `calculateArea() = 0` (pure virtual function). `Rectangle` implements it. `Shape` cannot be instantiated directly.</p>
+                    </div>
+                </div>
+
+                <div class="code-example-container mt-6" data-example-id="abstraction-complex">
+                    <h4>2. Complex Example: Multiple Implementations</h4>
+                    <p>Demonstrates how different classes implement the same abstract interface/class uniquely.</p>
+                     <div class="code-tabs my-2">
+                        <button data-lang="python" class="active">Python</button>
+                        <button data-lang="java">Java</button>
+                        <button data-lang="cpp">C++</button>
+                    </div>
+                    <div data-lang="python" class="code-block active">
+                        <pre><code>from abc import ABC, abstractmethod
+
+class Car(ABC):
+    @abstractmethod
+    def start_engine(self): pass
+    @abstractmethod
+    def stop_engine(self): pass
+
+class Kia(Car):
+    def start_engine(self): return "Kia engine started with a push button."
+    def stop_engine(self): return "Kia engine stopped smoothly."
+
+class Honda(Car):
+    def start_engine(self): return "Honda engine started with a key turn."
+    def stop_engine(self): return "Honda engine stopped with a pull."
+
+# Usage
+cars = [Kia(), Honda()]
+for car in cars:
+    print(car.start_engine())
+    print(car.stop_engine())</code></pre>
+                        <p class="mt-2 text-sm text-slate-500"><strong>Explanation:</strong> `Car` (ABC) defines `start_engine()` and `stop_engine()`. `Kia` and `Honda` provide distinct implementations.</p>
+                    </div>
+                    <div data-lang="java" class="code-block">
+                        <pre><code>interface PaymentProcessor { // Interface
+    void processPayment(double amount);
+}
+
+class CreditCardProcessor implements PaymentProcessor {
+    @Override
+    public void processPayment(double amount) {
+        System.out.println("Processing credit card payment of $" + amount);
+        // ... complex logic ...
+    }
+}
+
+class PayPalProcessor implements PaymentProcessor {
+    @Override
+    public void processPayment(double amount) {
+        System.out.println("Processing PayPal payment of $" + amount);
+        // ... complex logic ...
+    }
+}
+
+public class ComplexAbstraction {
+    public static void main(String[] args) { // Note: Changed String args to String[] args
+        PaymentProcessor ccProcessor = new CreditCardProcessor();
+        PaymentProcessor ppProcessor = new PayPalProcessor();
+        ccProcessor.processPayment(100.50);
+        ppProcessor.processPayment(75.25);
+    }
+}</code></pre>
+                        <p class="mt-2 text-sm text-slate-500"><strong>Explanation:</strong> `PaymentProcessor` interface. `CreditCardProcessor` and `PayPalProcessor` implement it with specific logic. Client code uses the `PaymentProcessor` type.</p>
+                    </div>
+                    <div data-lang="cpp" class="code-block">
+                        <pre><code>#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;memory&gt; // For std::unique_ptr
+#include &lt;string&gt;
+
+class Logger { // Abstract class as an interface
+public:
+    virtual void log(const std::string& message) = 0;
+    virtual ~Logger() {}
+};
+
+class ConsoleLogger : public Logger {
+public:
+    void log(const std::string& message) override {
+        std::cout &lt;&lt; "CONSOLE: " &lt;&lt; message &lt;&lt; std::endl;
+    }
+};
+
+class FileLogger : public Logger {
+private:
+    std::string filename;
+public:
+    FileLogger(const std::string& fname) : filename(fname) {}
+    void log(const std::string& message) override {
+        // In a real app, this would write to filename
+        std::cout &lt;&lt; "[FILE:" &lt;&lt; filename &lt;&lt; "] " &lt;&lt; message &lt;&lt; std::endl;
+    }
+};
+
+int main() {
+    std::vector&lt;std::unique_ptr&lt;Logger&gt;&gt; loggers;
+    loggers.push_back(std::make_unique&lt;ConsoleLogger&gt;());
+    loggers.push_back(std::make_unique&lt;FileLogger&gt;("app.log"));
+
+    for (const auto& logger_ptr : loggers) { // Changed variable name for clarity
+        logger_ptr-&gt;log("This is a test log message.");
+    }
+    return 0;
+}</code></pre>
+                        <p class="mt-2 text-sm text-slate-500"><strong>Explanation:</strong> `Logger` abstract class defines `log()`. `ConsoleLogger` and `FileLogger` provide distinct mechanisms. `main` interacts via `Logger` interface.</p>
+                    </div>
+                </div>
+
+                <h3>E. Key Keywords and Phrases</h3>
+                <p>Key terms: <code class="inline-code">abstract class</code>, <code class="inline-code">interface</code>, <code class="inline-code">pure virtual function</code> (C++), <code class="inline-code">virtual</code>, <code class="inline-code">@abstractmethod</code> (Python), <code class="inline-code">ABC</code> (Python), <code class="inline-code">extends</code>, <code class="inline-code">implements</code>, <code class="inline-code">abstract</code>, <code class="inline-code">contract</code>, <code class="inline-code">simplified view</code>, <code class="inline-code">essential features</code>, <code class="inline-code">details hiding</code>.</p>
+
+                <h3>F. Common Pitfalls and Misconceptions</h3>
+                <h4>1. Over-Generalization:</h4>
+                <p>Creating abstractions that encompass too many disparate concepts results in bloated, unfocused components. Design abstractions with a clear, singular responsibility.</p>
+                <h4>2. Leaky Abstractions:</h4>
+                <p>When internal implementation details inadvertently become exposed, forcing users to deal with complexities the abstraction aimed to hide. Invest time in designing the public contract.</p>
+                <h4>3. Violation of Single Responsibility Principle (SRP):</h4>
+                <p>An abstraction doing too many distinct functions violates SRP, making it hard to maintain. Each abstraction should have one reason to change.</p>
+                <h4>4. Conditional Complexity:</h4>
+                <p>Over-reliance on conditionals (if-else, switch) within an abstraction to manage multiple cases often indicates behaviors should be separated via polymorphism or distinct abstractions.</p>
+                <h4>5. Misconception: Abstraction Obfuscates or Hides Too Much:</h4>
+                <p>Abstraction aims to *contain* complexity and provide a simplified *view*, not to make things vague. The "right" level of abstraction is key, exposing essential info while concealing irrelevant details.</p>
+            </section>
+
+            <section id="polymorphism" class="content-section">
+                <h2>IV. Polymorphism: Many Forms, One Interface</h2>
+                <p>Polymorphism, meaning "many forms," allows objects of different types to be treated uniformly through a common interface. This section explains how polymorphism leads to flexible and extensible code, covering method overloading, method overriding, and dynamic dispatch with illustrative examples.</p>
+
+                <h3>A. Defining Polymorphism</h3>
+                <h4>1. The "10-year-old" Explanation:</h4>
+                <p>Consider a "Play" button found on various electronic devices. On a music player, pressing "Play" initiates a song. On a video player, the same "Play" button starts a movie. On a game console, it launches a game. Despite being the identical button (representing a single interface), its action (its "form") differs depending on the context or the type of media being "played." Polymorphism operates on this principle: one action or interface can lead to many possible outcomes or behaviors.</p>
+                <h4>2. Technical Definition:</h4>
+                <p>Polymorphism is an object-oriented programming concept that allows objects of different types to be treated as instances of a common superclass or interface. This principle enables a single interface to represent various underlying forms or data types, allowing methods to perform different actions based on the specific object upon which they are invoked. Polymorphism is primarily achieved through two mechanisms: method overloading (a form of compile-time polymorphism) and method overriding (a form of runtime polymorphism).</p>
+                <p class="italic text-sm">Python's dynamic typing and "duck typing" inherently support polymorphism. If an object "walks like a duck and quacks like a duck," it's treated as such. Statically typed languages like Java and C++ require explicit contracts (interfaces, abstract classes, virtual functions) for compile-time type compatibility.</p>
+
+                <h3>B. Why Polymorphism is Powerful: Benefits and Problems Solved</h3>
+                <ul>
+                    <li><strong>Code Reusability:</strong> Allows the same interface/method name for different data types, reducing redundancy.</li>
+                    <li><strong>Flexibility and Extensibility:</strong> New subclasses can be added with minimal changes to existing code, operating through a common interface.</li>
+                    <li><strong>Modularity:</strong> Facilitates generic algorithms that operate uniformly on objects of different types.</li>
+                    <li><strong>Improved Readability and Maintainability:</strong> Polymorphic code is often cleaner and easier to understand by abstracting specific implementations.</li>
+                    <li><strong>Dynamic Behavior:</strong> Enables dynamic method resolution at runtime based on the actual object type.</li>
+                </ul>
+                <p class="italic text-sm">Polymorphism's ability to create "generic algorithms" is foundational for robust frameworks and libraries that work with diverse user-defined types without tight coupling, promoting reusable and extensible software components.</p>
+
+                <h3>C. Real-World Analogies for Intuition</h3>
+                 <div class="grid md:grid-cols-2 gap-4">
+                    <div class="analogy-card">
+                        <h5>🇨🇭 Swiss Army Knife</h5>
+                        <p>Multiple tools (knife, screwdriver) accessed via one handle. The tool and its function depend on the task, like one method name performing different actions based on object type.</p>
+                    </div>
+                    <div class="analogy-card">
+                        <h5>🚗 Vehicle `move()` Method</h5>
+                        <p>A `Vehicle` class has a `move()` method. Subclasses (`Car`, `Bicycle`, `Airplane`) implement `move()` differently (driving, pedaling, flying). The action depends on the specific vehicle object.</p>
+                    </div>
+                    <div class="analogy-card">
+                        <h5>🖱️ Cursor Behavior</h5>
+                        <p>A computer cursor changes form (arrow, line, hand icon) based on context or mode, but it's the same underlying cursor entity performing different implied actions.</p>
+                    </div>
+                </div>
+
+                <h3>D. Code Examples for Hands-On Application</h3>
+                <div class="code-example-container" data-example-id="polymorphism-simple">
+                    <h4>1. Simple Example: Method Overloading/Overriding</h4>
+                    <div class="code-tabs my-2">
+                        <button data-lang="python" class="active">Python (Overriding)</button>
+                        <button data-lang="java">Java (Overloading & Overriding)</button>
+                        <button data-lang="cpp">C++ (Overloading & Overriding)</button>
+                    </div>
+                    <div data-lang="python" class="code-block active">
+                        <pre><code>class Animal:
+    def speak(self):
+        return "Generic animal sound"
+
+class Dog(Animal):
+    def speak(self): # Method overriding
+        return "Woof!"
+
+class Cat(Animal):
+    def speak(self): # Method overriding
+        return "Meow!"
+
+# Usage
+animals = [Animal(), Dog(), Cat()]
+for animal in animals:
+    print(animal.speak()) # Calls the overridden method</code></pre>
+                        <p class="mt-2 text-sm text-slate-500"><strong>Explanation (Python):</strong> `Dog` and `Cat` override `speak()` from `Animal`. The correct `speak()` is called at runtime based on object type.</p>
+                    </div>
+                    <div data-lang="java" class="code-block">
+                        <pre><code>class Calculator {
+    // Method Overloading (Compile-time polymorphism)
+    int add(int a, int b) { return a + b; }
+    double add(double a, double b) { return a + b; }
+}
+
+class Vehicle {
+    void drive() { System.out.println("Vehicle is driving."); }
+}
+
+class Car extends Vehicle {
+    @Override
+    void drive() { System.out.println("Car is driving on the road."); } // Method Overriding
+}
+
+public class SimplePolymorphism {
+    public static void main(String[] args) { // Note: Changed String args to String[] args
+        Calculator calc = new Calculator();
+        System.out.println("Sum (int): " + calc.add(5, 10));
+        System.out.println("Sum (double): " + calc.add(2.5, 3.5));
+
+        Vehicle myCar = new Car(); // Polymorphic reference
+        myCar.drive(); // Calls Car's drive() method at runtime
+    }
+}</code></pre>
+                        <p class="mt-2 text-sm text-slate-500"><strong>Explanation (Java):</strong> `Calculator` shows overloading. `Car` overrides `drive()` from `Vehicle`. `myCar.drive()` is dynamically dispatched.</p>
+                    </div>
+                    <div data-lang="cpp" class="code-block">
+                        <pre><code>#include &lt;iostream&gt;
+
+class Calculator {
+public:
+    // Method Overloading
+    int add(int a, int b) { return a + b; }
+    double add(double a, double b) { return a + b; }
+};
+
+class Vehicle {
+public:
+    virtual void drive() { std::cout &lt;&lt; "Vehicle is driving." &lt;&lt; std::endl; } // Virtual for runtime
+};
+
+class Car : public Vehicle {
+public:
+    void drive() override { std::cout &lt;&lt; "Car is driving on the road." &lt;&lt; std::endl; } // Overriding
+};
+
+int main() {
+    Calculator calc;
+    std::cout &lt;&lt; "Sum (int): " &lt;&lt; calc.add(5, 10) &lt;&lt; std::endl;
+    std::cout &lt;&lt; "Sum (double): " &lt;&lt; calc.add(2.5, 3.5) &lt;&lt; std::endl;
+
+    Vehicle* myCar = new Car(); // Polymorphic pointer
+    myCar-&gt;drive(); // Calls Car's drive()
+    delete myCar;
+    return 0;
+}</code></pre>
+                        <p class="mt-2 text-sm text-slate-500"><strong>Explanation (C++):</strong> `Calculator` shows overloading. `Vehicle::drive()` is `virtual`, `Car` overrides it. `myCar->drive()` is dynamically dispatched.</p>
+                    </div>
+                </div>
+
+                <div class="code-example-container mt-6" data-example-id="polymorphism-complex">
+                    <h4>2. Complex Example: Dynamic Dispatch</h4>
+                    <p>Illustrates processing a collection of different objects uniformly, with method implementation chosen at runtime.</p>
+                    <div class="code-tabs my-2">
+                        <button data-lang="python" class="active">Python</button>
+                        <button data-lang="java">Java</button>
+                        <button data-lang="cpp">C++</button>
+                    </div>
+                     <div data-lang="python" class="code-block active">
+                        <pre><code>class Shape:
+    def area(self): return "Undefined"
+
+class Rectangle(Shape):
+    def __init__(self, length, width):
+        self.length = length
+        self.width = width
+    def area(self): return self.length * self.width
+
+class Circle(Shape):
+    def __init__(self, radius): self.radius = radius
+    def area(self): return 3.14 * self.radius ** 2
+
+# Usage
+shapes = [Rectangle(10, 5), Circle(7), Rectangle(3, 8)]
+for shape_obj in shapes: # Renamed for clarity
+    print(f"Area: {shape_obj.area()}") # Dynamic dispatch</code></pre>
+                        <p class="mt-2 text-sm text-slate-500"><strong>Explanation (Python):</strong> `shapes` list holds `Rectangle` and `Circle` objects. `area()` is called; Python dynamically selects the correct implementation.</p>
+                    </div>
+                    <div data-lang="java" class="code-block">
+                        <pre><code>import java.util.ArrayList;
+import java.util.List;
+
+abstract class Employee {
+    private String name;
+    public Employee(String name) { this.name = name; }
+    public String getName() { return name; }
+    abstract double calculateSalary();
+}
+
+class FullTimeEmployee extends Employee {
+    private double monthlySalary;
+    public FullTimeEmployee(String name, double salary) { super(name); this.monthlySalary = salary; }
+    @Override double calculateSalary() { return monthlySalary; }
+}
+
+class PartTimeEmployee extends Employee {
+    private double hourlyRate;
+    private int hoursWorked;
+    public PartTimeEmployee(String n, double rate, int hours) { super(n); this.hourlyRate = rate; this.hoursWorked = hours; }
+    @Override double calculateSalary() { return hourlyRate * hoursWorked; }
+}
+
+public class ComplexPolymorphism {
+    public static void main(String[] args) { // Note: Changed String args to String[] args
+        List&lt;Employee&gt; employees = new ArrayList&lt;&gt;();
+        employees.add(new FullTimeEmployee("Alice", 5000.0));
+        employees.add(new PartTimeEmployee("Bob", 25.0, 80));
+        employees.add(new FullTimeEmployee("Charlie", 6000.0));
+
+        for (Employee emp : employees) {
+            System.out.println(emp.getName() + " salary: $" + emp.calculateSalary()); // Dynamic dispatch
+        }
+    }
+}</code></pre>
+                        <p class="mt-2 text-sm text-slate-500"><strong>Explanation (Java):</strong> `Employee` is abstract. `FullTimeEmployee` and `PartTimeEmployee` provide salary logic. `calculateSalary()` is dynamically dispatched.</p>
+                    </div>
+                    <div data-lang="cpp" class="code-block">
+                        <pre><code>#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;memory&gt;
+#include &lt;string&gt;
+
+class PaymentMethod {
+public:
+    virtual void processPayment(double amount) = 0;
+    virtual ~PaymentMethod() {}
+};
+
+class CreditCardPayment : public PaymentMethod {
+public:
+    void processPayment(double amount) override {
+        std::cout &lt;&lt; "Processing Credit Card: $" &lt;&lt; amount &lt;&lt; std::endl;
+    }
+};
+
+class PayPalPayment : public PaymentMethod {
+public:
+    void processPayment(double amount) override {
+        std::cout &lt;&lt; "Processing PayPal: $" &lt;&lt; amount &lt;&lt; std::endl;
+    }
+};
+
+int main() {
+    std::vector&lt;std::unique_ptr&lt;PaymentMethod&gt;&gt; payments;
+    payments.push_back(std::make_unique&lt;CreditCardPayment&gt;());
+    payments.push_back(std::make_unique&lt;PayPalPayment&gt;());
+    payments.push_back(std::make_unique&lt;CreditCardPayment&gt;());
+
+    for (const auto& method_ptr : payments) { // Renamed for clarity
+        method_ptr-&gt;processPayment(50.0); // Dynamic dispatch
+    }
+    return 0;
+}</code></pre>
+                        <p class="mt-2 text-sm text-slate-500"><strong>Explanation (C++):</strong> `PaymentMethod` is abstract. `CreditCardPayment` and `PayPalPayment` implement payment. `processPayment()` is dynamically called.</p>
+                    </div>
+                </div>
+
+                <h3>E. Key Keywords and Phrases</h3>
+                <p>Key terms: <code class="inline-code">method overloading</code>, <code class="inline-code">method overriding</code>, <code class="inline-code">compile-time polymorphism</code>, <code class="inline-code">runtime polymorphism</code> (dynamic polymorphism), <code class="inline-code">virtual functions</code> (C++), <code class="inline-code">dynamic dispatch</code>, <code class="inline-code">duck typing</code> (Python), <code class="inline-code">interface</code>, <code class="inline-code">abstract method</code>, <code class="inline-code">common interface</code>, <code class="inline-code">many forms</code>.</p>
+
+                <h3>F. Common Pitfalls and Misconceptions</h3>
+                <h4>1. Overuse of Polymorphism:</h4>
+                <p>Applying polymorphism unnecessarily leads to complex code. Use judiciously where it adds value by simplifying design or promoting flexibility.</p>
+                <h4>2. Ignoring the Liskov Substitution Principle (LSP):</h4>
+                <p>Violating LSP (subclass cannot reliably substitute base class) leads to unpredictable behavior. Ensure subclasses maintain the behavioral contracts of their base classes.</p>
+                <h4>3. Misuse of Method Overriding:</h4>
+                <p>Incorrectly overriding methods (e.g., changing signature) can lead to errors. Use `@Override` (Java) or `override` (C++) to help compilers detect mismatches.</p>
+                <h4>4. Performance Overheads:</h4>
+                <p>Runtime polymorphism can have minor performance overhead. Usually, flexibility benefits outweigh this. Optimize only if profiling shows it's a bottleneck.</p>
+                <h4>5. Overloading vs. Overriding Confusion:</h4>
+                <p>Overloading: compile-time, same method name, different parameters within the *same* class. Overriding: runtime, same method name and parameters, different implementation in a *subclass*.</p>
+            </section>
+
+            <section id="inheritance" class="content-section">
+                 <h2>V. Inheritance: Building on Existing Foundations</h2>
+                <p>Inheritance allows classes to reuse and extend functionality from existing classes, forming hierarchical relationships. This section explores its definition, importance, analogies, and code examples showing basic extension and method overriding.</p>
+
+                <h3>A. Defining Inheritance</h3>
+                <h4>1. The "10-year-old" Explanation:</h4>
+                <p>Imagine a family. A child (new class) inherits traits (eye color, talent) from parents (existing class). The child gets these traits automatically but can also develop unique ones. Inheritance in programming is similar: a new class gets features from an existing class and can add its own.</p>
+                <h4>2. Technical Definition:</h4>
+                <p>Inheritance is an OOP mechanism allowing a new class (subclass/derived/child) to acquire properties (data members) and behaviors (methods) from an existing class (superclass/base/parent). It establishes an "is-a" relationship (subclass *is a* more specific type of superclass), promoting code reusability and hierarchical designs.</p>
+                <p class="italic text-sm">The "is-a" relationship is crucial. If a subclass isn't a specialized type of its superclass, inheritance is likely misused (e.g., a `Car` *has an* `Engine`, it *is not an* `Engine`; this would be composition).</p>
+
+                <h3>B. Why Inheritance is Important: Benefits and Problems Solved</h3>
+                <ul>
+                    <li><strong>Code Reusability:</strong> Subclasses reuse code from superclasses, reducing duplication.</li>
+                    <li><strong>Modularity and Extensibility:</strong> Creates organized hierarchies. New classes extend functionality without altering original code.</li>
+                    <li><strong>Polymorphism Support:</strong> Forms the basis for runtime polymorphism, allowing uniform treatment of subclass objects through a superclass interface.</li>
+                    <li><strong>Reduced Development and Maintenance Costs:</strong> Reusing tested base class code reduces development time and enhances reliability.</li>
+                    <li><strong>Facilitates Class Libraries:</strong> Key for creating structured class libraries.</li>
+                </ul>
+                <p class="italic text-sm">While promoting reusability, inheritance can cause coupling (the "fragile base class" problem): superclass changes can break child classes. "Favor composition over inheritance" is often advised when an "is-a" relationship isn't strict.</p>
+
+                <h3>C. Real-World Analogies for Intuition</h3>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="analogy-card">
+                        <h5>🌳 Biological Family Tree</h5>
+                        <p>A child inherits genetic traits from parents, who inherited from theirs. Each generation gets these traits but can develop new ones.</p>
+                    </div>
+                    <div class="analogy-card">
+                        <h5> clasificación de vehículos</h5>
+                        <p>A `Vehicle` is a general type. `Car`, `Bus`, `Bicycle` are specific `Vehicles`, inheriting common traits (wheels, transport) but having distinct features (engine, pedals).</p>
+                    </div>
+                    <div class="analogy-card">
+                        <h5>📄 Document Types</h5>
+                        <p>`Document` is a base type. `PDFDocument`, `WordDocument` are specialized `Documents`, inheriting common behaviors (`open`, `save`) but implementing them specifically.</p>
+                    </div>
+                </div>
+
+                <h3>D. Code Examples for Hands-On Application</h3>
+                <div class="code-example-container" data-example-id="inheritance-simple">
+                    <h4>1. Simple Example: Basic Class Extension</h4>
+                    <div class="code-tabs my-2">
+                        <button data-lang="python" class="active">Python</button>
+                        <button data-lang="java">Java</button>
+                        <button data-lang="cpp">C++</button>
+                    </div>
+                     <div data-lang="python" class="code-block active">
+                        <pre><code>class Sensor: # Parent class
+    def __init__(self, name, location):
+        self.name = name
+        self.location = location
+
+    def get_info(self):
+        return f"Sensor: {self.name} at {self.location}"
+
+class Accelerometer(Sensor): # Child class
+    def __init__(self, name, location, sensitivity):
+        super().__init__(name, location) # Call parent constructor
+        self.sensitivity = sensitivity
+
+    def get_sensor_type(self):
+        return "I am an Accelerometer!"
+
+# Usage
+acc1 = Accelerometer("ACC-001", "Engine Bay", 0.5)
+print(acc1.get_info()) # Inherited method
+print(acc1.get_sensor_type()) # Own method</code></pre>
+                        <p class="mt-2 text-sm text-slate-500"><strong>Explanation (Python):</strong> `Accelerometer` inherits from `Sensor`, reuses `__init__` via `super()`, and adds its own attribute/method.</p>
+                    </div>
+                    <div data-lang="java" class="code-block">
+                        <pre><code>class Employee { // Base class
+    int salary = 60000;
+}
+
+class Engineer extends Employee { // Derived class
+    int benefits = 10000;
+}
+
+public class SimpleInheritance {
+    public static void main(String[] args) { // Note: Changed String args to String[] args
+        Engineer e1 = new Engineer();
+        System.out.println("Engineer Salary: " + e1.salary); // Inherited
+        System.out.println("Engineer Benefits: " + e1.benefits); // Own
+    }
+}</code></pre>
+                        <p class="mt-2 text-sm text-slate-500"><strong>Explanation (Java):</strong> `Engineer` extends `Employee`, gaining access to the `salary` field.</p>
+                    </div>
+                    <div data-lang="cpp" class="code-block">
+                        <pre><code>#include &lt;iostream&gt;
+
+class Animal { // Base class
+public:
+    void eat() { std::cout &lt;&lt; "I can eat!" &lt;&lt; std::endl; }
+};
+
+class Dog : public Animal { // Derived class
+public:
+    void bark() { std::cout &lt;&lt; "I can bark! Woof woof!!" &lt;&lt; std::endl; }
+};
+
+int main() {
+    Dog dog1;
+    dog1.eat();  // Inherited
+    dog1.bark(); // Own
+    return 0;
+}</code></pre>
+                        <p class="mt-2 text-sm text-slate-500"><strong>Explanation (C++):</strong> `Dog` inherits `eat()` from `Animal`. A `Dog` object can call both its own `bark()` and inherited `eat()`.</p>
+                    </div>
+                </div>
+
+                <div class="code-example-container mt-6" data-example-id="inheritance-complex">
+                    <h4>2. Complex Example: Method Overriding and `super()`</h4>
+                    <div class="code-tabs my-2">
+                        <button data-lang="python" class="active">Python</button>
+                        <button data-lang="java">Java</button>
+                        <button data-lang="cpp">C++</button>
+                    </div>
+                     <div data-lang="python" class="code-block active">
+                        <pre><code>class Vehicle:
+    def __init__(self, brand): self.brand = brand
+    def describe(self): return f"This is a {self.brand} vehicle."
+
+class Car(Vehicle):
+    def __init__(self, brand, model):
+        super().__init__(brand) # Call parent's constructor
+        self.model = model
+    def describe(self): # Method overriding
+        return f"{super().describe()} It's a {self.model} car."
+
+# Usage
+my_car = Car("Toyota", "Camry")
+print(my_car.describe())</code></pre>
+                        <p class="mt-2 text-sm text-slate-500"><strong>Explanation (Python):</strong> `Car` overrides `describe()` from `Vehicle`. `super().describe()` calls parent's implementation.</p>
+                    </div>
+                    <div data-lang="java" class="code-block">
+                        <pre><code>class Bicycle {
+    public int gear;
+    public int speed;
+    public Bicycle(int gear, int speed) { this.gear=gear; this.speed=speed; }
+    public String toString() {
+        return ("No of gears are "+gear+"\n"+"speed of bicycle is "+speed);
+    }
+}
+class MountainBike extends Bicycle {
+    public int seatHeight;
+    public MountainBike(int gear,int speed,int height) {
+        super(gear, speed); // Invoke base-class constructor
+        seatHeight = height;
+    }
+    @Override public String toString() { // Overriding
+        return (super.toString() + "\nseat height is " + seatHeight);
+    }
+}
+public class ComplexInheritance {
+    public static void main(String[] args) { // Note: Changed String args to String[] args
+        MountainBike mb = new MountainBike(3, 100, 25);
+        System.out.println(mb.toString());
+    }
+}</code></pre>
+                        <p class="mt-2 text-sm text-slate-500"><strong>Explanation (Java):</strong> `MountainBike` constructor calls `super()` for `Bicycle` constructor. `toString()` is overridden, calling `super.toString()`.</p>
+                    </div>
+                    <div data-lang="cpp" class="code-block">
+                        <pre><code>#include &lt;iostream&gt;
+#include &lt;string&gt; // Added for std::string
+
+class Parent {
+public:
+    void printMessage() {
+        std::cout &lt;&lt; "Message from Parent class" &lt;&lt; std::endl;
+    }
+};
+
+class Child : public Parent {
+public:
+    // Overriding (hiding in C++ if Parent::printMessage isn't virtual)
+    void printMessage() { 
+        std::cout &lt;&lt; "Message from Child class" &lt;&lt; std::endl;
+    }
+    void callParentMessage() {
+        Parent::printMessage(); // Explicitly call parent's method
+    }
+};
+
+int main() {
+    Child c;
+    c.printMessage();       // Calls Child's printMessage()
+    c.callParentMessage();  // Calls Parent's printMessage()
+    return 0;
+}</code></pre>
+                        <p class="mt-2 text-sm text-slate-500"><strong>Explanation (C++):</strong> `Child::printMessage()` hides parent's. `Parent::printMessage()` explicitly calls parent's method.</p>
+                    </div>
+                </div>
+
+                <h3>E. Key Keywords and Phrases</h3>
+                <p>Key terms: <code class="inline-code">extends</code> (Java), <code class="inline-code">super</code> (Java, Python), <code class="inline-code">is-a relationship</code>, <code class="inline-code">base class</code>/`superclass`/`parent class`, <code class="inline-code">derived class</code>/`subclass`/`child class`, `single/multilevel/hierarchical/multiple inheritance` (Java multiple via interfaces), `method overriding`, `constructor chaining`.</p>
+
+                <h3>F. Common Pitfalls and Misconceptions</h3>
+                <h4>1. Overusing Inheritance (Deep Inheritance Trees):</h4>
+                <p>Deep hierarchies lead to rigid, coupled code. Favor flatter hierarchies; consider composition ("has-a") as an alternative.</p>
+                <h4>2. Misuse of Inheritance vs. Composition:</h4>
+                <p>Using inheritance for "has-a" relationships (e.g., `Car` *is an* `Engine`) is wrong. Apply the "is-a" test; if not, use composition.</p>
+                <h4>3. Violating the Liskov Substitution Principle (LSP):</h4>
+                <p>If a subclass can't substitute its superclass without breaking correctness (e.g., `Square` from `Rectangle` where setting width changes height inconsistently). Overridden methods must maintain superclass contract.</p>
+                <h4>4. Tight Coupling:</h4>
+                <p>Inheritance creates strong dependency ("fragile base class" problem). Favor composition over inheritance for greater flexibility when "is-a" isn't strict. Design base classes to be stable; use interfaces/abstract classes for contracts.</p>
+                <h4>5. Overriding Methods Incorrectly:</h4>
+                <p>Changing signatures/return types results in overloading, not overriding. Use `@Override` (Java) or `override` (C++) to catch errors.</p>
+            </section>
+
+            <section id="relationships" class="content-section">
+                <h2>VI. Relationship Between Concepts</h2>
+                <p>The four pillars of OOP—Encapsulation, Abstraction, Polymorphism, and Inheritance—are not isolated. They are deeply interconnected and work together to create robust and flexible software. This section explores how these fundamental principles rely on and build upon each other, illustrated with common scenarios like framework design and design patterns.</p>
+
+                <p><strong>How Abstraction Often Relies on Encapsulation:</strong><br>
+                Abstraction presents essential details while hiding complexity. Encapsulation provides the *mechanism* for this hiding. It bundles data and methods, controlling access to internal state (e.g., <code class="inline-code">private</code> fields, <code class="inline-code">public</code> getters/setters). This "containing information" (encapsulation) enables the "hiding of unwanted information" (abstraction). For instance, an abstract <code class="inline-code">Vehicle</code> class might define a <code class="inline-code">start()</code> method (abstraction), but how <code class="inline-code">start()</code> works for a specific <code class="inline-code">Car</code> object is encapsulated within the <code class="inline-code">Car</code> class.</p>
+
+                <p><strong>How Polymorphism Builds Upon Inheritance:</strong><br>
+                Polymorphism ("many forms") allows different object types to be treated as a common superclass/interface. Inheritance provides the necessary hierarchical structure. A subclass inherits superclass methods and can *override* them with specific implementations. This method overriding (runtime polymorphism) relies directly on inheritance. For example, if <code class="inline-code">Dog</code> inherits from <code class="inline-code">Animal</code>, both having <code class="inline-code">makeSound()</code>, a <code class="inline-code">Dog</code> object treated as an <code class="inline-code">Animal</code> will use the <code class="inline-code">Dog</code>'s "bark" (polymorphism via inheritance).</p>
+                
+                <div class="relationship-diagram my-6 p-4 border border-slate-200 rounded-lg bg-slate-50">
+                    <h4 class="text-center text-slate-600 mb-4">Conceptual Interplay of OOP Pillars</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+                        <div class="pillar"><strong>Encapsulation</strong><br>(Bundling & Hiding Data)</div>
+                        <div class="pillar"><strong>Abstraction</strong><br>(Simplifying Interface, Hiding Complexity)</div>
+                    </div>
+                    <div class="text-center my-2 text-2xl text-sky-600">&darr;</div>
+                    <p class="text-center connector p-2 bg-sky-50 rounded">Abstraction uses Encapsulation to hide implementation details.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-start mt-4">
+                        <div class="pillar"><strong>Inheritance</strong><br>(Code Reusability, "is-a" Hierarchy)</div>
+                        <div class="pillar"><strong>Polymorphism</strong><br>(Many Forms via One Interface)</div>
+                    </div>
+                     <div class="text-center my-2 text-2xl text-sky-600">&darr;</div>
+                    <p class="text-center connector p-2 bg-sky-50 rounded">Polymorphism (esp. overriding) relies on Inheritance for its structure.</p>
+                    <p class="mt-4 text-center text-slate-500 italic">All pillars work together to create modular, flexible, and maintainable systems.</p>
+                </div>
+
+
+                <p><strong>Scenarios Where They Are Used Together:</strong></p>
+                <ul>
+                    <li><strong>Framework Design:</strong> Frameworks define abstract interfaces/classes (abstraction). Concrete implementations inherit and override methods (inheritance, polymorphism). Internals are encapsulated. E.g., a GUI framework's abstract <code class="inline-code">Widget</code> with a <code class="inline-code">draw()</code> method; <code class="inline-code">Button</code> and <code class="inline-code">TextBox</code> inherit and provide specific <code class="inline-code">draw()</code> implementations.</li>
+                    <li><strong>Plugin Architectures:</strong> A core app defines an abstract <code class="inline-code">Plugin</code> interface (abstraction). Plugins inherit and implement (inheritance). The app interacts via the common interface (polymorphism). Plugin internals are encapsulated.</li>
+                    <li><strong>Strategy Pattern:</strong> Defines an abstract <code class="inline-code">Strategy</code> interface (abstraction). Concrete strategies implement algorithms (polymorphism via inheritance/implementation). A <code class="inline-code">Context</code> delegates to a strategy. Algorithms are encapsulated.</li>
+                    <li><strong>Factory Method Pattern:</strong> Provides an interface for creating objects (abstraction via factory method, often abstract). Subclasses alter object types created (inheritance, polymorphism in creation). Creation logic is encapsulated.</li>
+                </ul>
+                <p>These examples show how OOP principles synergize for flexible, maintainable, and extensible software.</p>
+            </section>
+
+            <section id="design-patterns" class="content-section">
+                <h2>VII. Design Patterns: Connecting Theory to Practical Software Design</h2>
+                <p>Design patterns are reusable solutions to common software design problems. They embody OOP principles, offering blueprints for flexible and robust code. Understanding how these pillars are applied in patterns links theory to practice. This section briefly introduces how Encapsulation, Abstraction, Polymorphism, and Inheritance are utilized in well-known patterns like Factory Method, Strategy, and Observer.</p>
+
+                <h4>1. Factory Method Pattern</h4>
+                <p>A creational pattern providing an interface for creating objects in a superclass, but letting subclasses alter the types of objects created.</p>
+                <ul>
+                    <li><strong>Abstraction:</strong> Defines an abstract <code class="inline-code">Creator</code> with an abstract <code class="inline-code">factoryMethod()</code>, hiding concrete instantiation.</li>
+                    <li><strong>Inheritance:</strong> Subclasses (Concrete Creators) inherit and implement <code class="inline-code">factoryMethod()</code> to produce specific <code class="inline-code">ConcreteProduct</code> objects.</li>
+                    <li><strong>Polymorphism:</strong> Client code uses abstract <code class="inline-code">Creator</code> and <code class="inline-code">Product</code>. The specific product type is determined polymorphically at runtime by the subclass's factory method.</li>
+                    <li><strong>Encapsulation:</strong> Object creation logic is encapsulated within the factory method.</li>
+                </ul>
+                <p><em>Example:</em> A <code class="inline-code">VehicleFactory</code> (abstract creator) with <code class="inline-code">createVehicle()</code>. <code class="inline-code">CarFactory</code> and <code class="inline-code">TruckFactory</code> (concrete creators) implement it to produce <code class="inline-code">Car</code> and <code class="inline-code">Truck</code> objects.</p>
+
+                <h4>2. Strategy Pattern</h4>
+                <p>A behavioral pattern defining a family of algorithms, encapsulating each, and making them interchangeable. Lets the algorithm vary independently from clients that use it.</p>
+                <ul>
+                    <li><strong>Abstraction:</strong> An <code class="inline-code">IStrategy</code> interface/abstract class defines the common interface for algorithms.</li>
+                    <li><strong>Polymorphism:</strong> <code class="inline-code">ConcreteStrategy</code> classes implement <code class="inline-code">IStrategy</code>. The <code class="inline-code">Context</code> interacts polymorphically, allowing algorithm swapping at runtime.</li>
+                    <li><strong>Encapsulation:</strong> Each algorithm is encapsulated in its own <code class="inline-code">ConcreteStrategy</code> class.</li>
+                     <li><strong>SRP & DIP:</strong> Promotes Single Responsibility (client for core logic, strategies for algorithms) and Dependency Inversion (context depends on abstraction, not concrete strategies).</li>
+                </ul>
+                <p><em>Example:</em> A <code class="inline-code">PaymentStrategy</code> interface. <code class="inline-code">CreditCardPaymentStrategy</code>, <code class="inline-code">PayPalPaymentStrategy</code> are concrete implementations. A <code class="inline-code">ShoppingCart</code> (context) delegates payment processing.</p>
+
+                <h4>3. Observer Pattern</h4>
+                <p>A behavioral pattern defining a one-to-many dependency: when one object (subject) changes state, all dependents (observers) are notified and updated automatically.</p>
+                <ul>
+                    <li><strong>Decoupling (Open/Closed Principle):</strong> Subject is decoupled from observers. New observers can be added without modifying the subject.</li>
+                    <li><strong>Abstraction:</strong> <code class="inline-code">Observable</code> (Subject) and <code class="inline-code">Observer</code> interfaces define the contract.</li>
+                    <li><strong>Encapsulation:</strong> Subject encapsulates state and notification logic. Observers encapsulate their update logic.</li>
+                    <li><strong>DIP:</strong> Subject and concrete observers depend on the <code class="inline-code">Observer</code> interface abstraction.</li>
+                </ul>
+                <p><em>Example:</em> A <code class="inline-code">NewsPublisher</code> (subject) notifies <code class="inline-code">Subscriber</code> objects (observers) of new articles. Different subscribers (<code class="inline-code">EmailSubscriber</code>) implement the <code class="inline-code">update()</code> method of the <code class="inline-code">Subscriber</code> interface.</p>
+                <p>These patterns demonstrate practical applications of OOP principles for effective software solutions.</p>
+            </section>
+
+            <section id="conclusions" class="content-section">
+                <h2>VIII. Conclusions</h2>
+                <p>This guide has explored Encapsulation, Abstraction, Polymorphism, and Inheritance as the foundational pillars of robust object-oriented software. They are not just theories but practical tools for modeling real-world complexities in code. Mastering them is an ongoing journey of combining theoretical knowledge with practical experience, enabling the creation of software that is efficient, elegant, adaptable, and ready for future demands.</p>
+
+                <p>Encapsulation bundles data with methods and controls access, ensuring data integrity and modularity. Abstraction simplifies system interaction by focusing on essentials and hiding complexity. Polymorphism enables code reusability and extensibility through its "many forms, one interface" paradigm, with the Liskov Substitution Principle being key for reliability. Inheritance fosters code reuse and hierarchical organization, though its tight coupling requires careful use, often favoring composition.</p>
+                <p>These principles are interconnected: Encapsulation supports Abstraction's detail-hiding; Inheritance provides the structure for Polymorphism. Together, they build adaptable, scalable, and resilient software.</p>
+                <p>To confidently apply and explain these principles:</p>
+                <ol>
+                    <li><strong>Deepen Conceptual Understanding:</strong> Grasp the "why"—the problems solved and benefits offered. Use analogies as mental models.</li>
+                    <li><strong>Hands-On Practice:</strong> Write code, from simple to complex. Experiment and debug.</li>
+                    <li><strong>Analyze Relationships:</strong> Consider how principles interact (e.g., encapsulation facilitating abstraction, polymorphism building on inheritance).</li>
+                    <li><strong>Recognize Pitfalls:</strong> Be aware of common misconceptions and anti-patterns.</li>
+                    <li><strong>Study Design Patterns:</strong> Explore patterns (Factory, Strategy, Observer) to see OOP principles in practical solutions, bridging theory and large-scale architecture.</li>
+                </ol>
+                <p>Mastering these pillars leads to crafting software that is not only efficient but also elegant, adaptable, and capable of evolving with future demands.</p>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const sidebarLinks = document.querySelectorAll('.sidebar-link');
+            const contentSections = document.querySelectorAll('.content-section');
+            const sidebar = document.getElementById('sidebar');
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const mainContent = document.querySelector('.main-content');
+
+            function updateActiveSection() {
+                let currentSectionId = window.location.hash || '#introduction';
+                if (currentSectionId === '#') currentSectionId = '#introduction';
+
+                let activeSectionFound = false;
+                contentSections.forEach(section => {
+                    if ('#' + section.id === currentSectionId) {
+                        section.classList.add('active');
+                        activeSectionFound = true;
+                    } else {
+                        section.classList.remove('active');
+                    }
+                });
+                
+                if (!activeSectionFound && contentSections.length > 0) {
+                    contentSections[0].classList.add('active');
+                    currentSectionId = '#' + contentSections[0].id;
+                }
+
+                sidebarLinks.forEach(link => {
+                    if (link.getAttribute('href') === currentSectionId) {
+                        link.classList.add('active');
+                    } else {
+                        link.classList.remove('active');
+                    }
+                });
+                 if (sidebar.classList.contains('transform') && sidebar.classList.contains('-translate-x-full') === false) {
+                    if (window.innerWidth < 768) { 
+                        sidebar.classList.add('-translate-x-full');
+                    }
+                }
+            }
+
+            sidebarLinks.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    // e.preventDefault(); // Keep for SPA-like behavior without full page reload if not using hashes
+                    const targetId = this.getAttribute('href');
+                    window.location.hash = targetId; // This will trigger hashchange or can be handled directly
+                    // updateActiveSection(); // Called by hashchange or directly
+                });
+            });
+            
+            window.addEventListener('hashchange', updateActiveSection);
+            updateActiveSection(); // Initial call
+
+            // Code example tabs
+            const exampleContainers = document.querySelectorAll('.code-example-container');
+            exampleContainers.forEach(container => {
+                const tabs = container.querySelectorAll('.code-tabs button');
+                const blocks = container.querySelectorAll('.code-block');
+
+                tabs.forEach(tab => {
+                    tab.addEventListener('click', function() {
+                        tabs.forEach(t => t.classList.remove('active'));
+                        this.classList.add('active');
+                        const lang = this.getAttribute('data-lang');
+                        blocks.forEach(block => {
+                            if (block.getAttribute('data-lang') === lang) {
+                                block.classList.add('active');
+                            } else {
+                                block.classList.remove('active');
+                            }
+                        });
+                    });
+                });
+            });
+
+            // Sidebar toggle for mobile
+            if (sidebarToggle) {
+                sidebarToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('-translate-x-full');
+                });
+            }
+             // Close sidebar when clicking on a link or outside on mobile
+            document.addEventListener('click', function(event) {
+                if (window.innerWidth < 768) {
+                    const isClickInsideSidebar = sidebar.contains(event.target);
+                    const isClickOnToggle = sidebarToggle ? sidebarToggle.contains(event.target) : false;
+                    const isSidebarLink = event.target.classList.contains('sidebar-link');
+
+                    if (!isClickInsideSidebar && !isClickOnToggle) {
+                        sidebar.classList.add('-translate-x-full');
+                    } else if (isSidebarLink) {
+                         sidebar.classList.add('-translate-x-full');
+                    }
+                }
+            });
+
+
+        });
+    </script>
+</body>
+</html>

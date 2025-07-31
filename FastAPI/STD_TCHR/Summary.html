@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FastAPI Student-Teacher-Course Project Details</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+            color: #343a40;
+        }
+        .container {
+            max-width: 960px;
+            margin: auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        h1, h2, h3, h4 {
+            color: #0056b3;
+            margin-top: 1.5em;
+            margin-bottom: 0.5em;
+        }
+        h1 { font-size: 2.2em; border-bottom: 2px solid #0056b3; padding-bottom: 10px; }
+        h2 { font-size: 1.8em; }
+        h3 { font-size: 1.4em; border-bottom: 1px solid #e9ecef; padding-bottom: 5px; }
+        h4 { font-size: 1.2em; color: #495057; }
+        pre {
+            background-color: #e9ecef;
+            border: 1px solid #dee2e6;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin-bottom: 1.5em;
+            font-size: 0.9em;
+        }
+        code {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            color: #007bff;
+            background-color: #e2e6ea;
+            padding: 2px 4px;
+            border-radius: 3px;
+            white-space: pre-wrap; /* Ensures code wraps */
+        }
+        pre code {
+            color: #333;
+            background-color: transparent;
+            padding: 0;
+            white-space: pre; /* Reverts to pre-wrap for pre block */
+        }
+        ul {
+            list-style-type: disc;
+            margin-left: 20px;
+            margin-bottom: 1em;
+        }
+        li {
+            margin-bottom: 0.5em;
+        }
+        .file-path {
+            font-style: italic;
+            color: #6c757d;
+            margin-top: 1em;
+            margin-bottom: 0.5em;
+        }
+        .note {
+            background-color: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 10px 15px;
+            margin-top: 1.5em;
+            border-radius: 4px;
+            color: #664d03;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>FastAPI Project: Student-Teacher-Course Management API</h1>
+        <p>This document provides a complete overview of your FastAPI application, detailing the folder structure and the code for each essential component.</p>
+
+        <h2>1. Project Folder Structure</h2>
+        <p>Your project is organized into a modular structure to keep concerns separated (models, schemas, CRUD operations, API routers).</p>
+<pre><code>STD_TCHR/
+├── app/
+│   ├── main.py               # Main FastAPI application entry point
+│   │
+│   ├── database/
+│   │   └── db.py             # Database connection (engine, session, get_db)
+│   │
+│   ├── models/               # SQLAlchemy ORM models (table definitions)
+│   │   ├── __init__.py       # (Can be empty)
+│   │   ├── students.py
+│   │   ├── teachers.py
+│   │   ├── courses.py
+│   │   └── associations.py   # For Student-Course Enrollment (many-to-many)
+│   │
+│   ├── schemas/              # Pydantic models for request validation &amp; response serialization
+│   │   ├── __init__.py       # (Can be empty)
+│   │   ├── std_schema.py
+│   │   ├── tchr_schema.py
+│   │   ├── crs_schema.py
+│   │   └── enrollment_schema.py # For Enrollment schemas
+│   │
+│   ├── crud/                 # Create, Read, Update, Delete (CRUD) operations for the database
+│   │   ├── __init__.py       # (Can be empty)
+│   │   ├── student_crud.py
+│   │   ├── tchr_crud.py
+│   │   ├── crs_crud.py
+│   │   └── enrollment_crud.py # For Enrollment CRUD
+│   │
+│   └── routers/              # FastAPI APIRouter definitions (API endpoints)
+│       ├── __init__.py       # (Can be empty)
+│       ├── std_router.py
+│       ├── tchr_router.py
+│       ├── crs_router.py
+│       └── enrollment_router.py # For Enrollment API endpoints
+│
+├── .gitignore                # Specifies files/folders Git should ignore
+├── README.md                 # Project description and setup instructions
+└── std_tchr.db               # SQLite database file (generated after first run)
+</code></pre>
+
+        <h2>2. Core Dependencies</h2>
+        <p>Make sure you have a virtual environment (e.g., <code>app_env</code>) activated, then install these packages:</p>
+<pre><code>pip install fastapi uvicorn[standard] sqlalchemy "pydantic[email]"</code></pre>
+
+        <h2>3. Code Details (File by File)</h2>
+
+        <h3>3.1. <code>app/database/db.py</code></h3>
+        <p>This file sets up the database connection and provides a dependency for getting a database session in your API routes.</p>
+<pre><code># app/database/db.py
+
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+
+# SQLite database URL
+SQLALCHEMY_DATABASE_URL = "sqlite:///./std_tchr.db"
+
+# Create the SQLAlchemy engine
+# connect_args={"check_same_thread": False} is needed for SQLite to allow multiple threads
+# to interact with the database, which FastAPI (Uvicorn) often does.
+engine = create_engine(
+    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
+)
+
+# Create a SessionLocal class
+# Each instance of SessionLocal will be a database session.
+# The 'autocommit=False' means we have to explicitly commit changes.
+# The 'autoflush=False' means data isn't flushed to the database until commit or query.
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+# Base class for your ORM models
+Base = declarative_base()
+
+# Dependency to get a database session
+# This function will be used with FastAPI's Depends()
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+</code></pre>
+
+        <h3>3.2. <code>app/models/students.py</code></h3>
+        <p>Defines the SQLAlchemy ORM model for the <code>students</code> table.</p>
+<pre><code># app/models/students.py
+
+from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import relationship
+
+from app.database.db import Base
+from app.models.associations import student_course_association # Import the association table
+
+class Student(Base):
+    __tablename__ = "students"
+
+    std_id = Column(Integer, primary_key=True, index=True)
+    std_name = Column(String, index=True)
+    std_email = Column(String, unique=True, index=True)
+    department = Column(String)
+
+    # Many-to-many relationship with Course through the association table
+    courses = relationship(
+        "Course",
+        secondary=student_course_association,
+        back_populates="students"
+    )
+</code></pre>
+
+        <h3>3.3. <code>app/models/teachers.py</code></h3>
+        <p>Defines the SQLAlchemy ORM model for the <code>teachers</code> table.</p>
+<pre><code># app/models/teachers.py
+
+from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import relationship
+
+from app.database.db import Base
+
+class Teacher(Base):
+    __tablename__ = "teachers"
+
+    tchr_id = Column(Integer, primary_key=True, index=True)
+    tchr_name = Column(String, index=True)
+    tchr_email = Column(String, unique=True, index=True)
+    department = Column(String)
+
+    # One-to-many relationship with Course
+    courses = relationship("Course", back_populates="teacher")
+</code></pre>
+
+        <h3>3.4. <code>app/models/courses.py</code></h3>
+        <p>Defines the SQLAlchemy ORM model for the <code>courses</code> table, including relationships to teachers and students.</p>
+<pre><code># app/models/courses.py
+
+from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy.orm import relationship
+
+from app.database.db import Base
+from app.models.associations import student_course_association # Import the association table
+
+class Course(Base):
+    __tablename__ = "courses"
+
+    crs_id = Column(Integer, primary_key=True, index=True)
+    crs_title = Column(String, index=True)
+    crs_code = Column(String, unique=True, index=True) # Unique course code
+    tchr_id = Column(Integer, ForeignKey("teachers.tchr_id")) # Foreign key to teachers
+
+    # One-to-many relationship with Teacher
+    teacher = relationship("Teacher", back_populates="courses")
+
+    # Many-to-many relationship with Student through the association table
+    students = relationship(
+        "Student",
+        secondary=student_course_association,
+        back_populates="courses"
+    )
+</code></pre>
+
+        <h3>3.5. <code>app/models/associations.py</code></h3>
+        <p>Defines the SQLAlchemy association table for the many-to-many relationship between Students and Courses (Enrollments).</p>
+<pre><code># app/models/associations.py
+
+from sqlalchemy import Column, ForeignKey, Integer, Table
+from app.database.db import Base
+
+# Association table for Student-Course many-to-many relationship
+student_course_association = Table(
+    "student_course_association",
+    Base.metadata,
+    Column("student_id", Integer, ForeignKey("students.std_id"), primary_key=True),
+    Column("course_id", Integer, ForeignKey("courses.crs_id"), primary_key=True)
+)
+</code></pre>
+
+        <h3>3.6. <code>app/schemas/std_schema.py</code></h3>
+        <p>Pydantic models for Student data validation and serialization.</p>
+<pre><code># app/schemas/std_schema.py
+
+from pydantic import BaseModel, EmailStr
+from typing import Optional, List # List for relationships
+
+# Base schema for common student attributes
+class Std_Base(BaseModel):
+    std_name: str
+    std_email: EmailStr
+    department: str
+
+# Schema for creating a new student (inherits from base)
+class Std_Create(Std_Base):
+    pass
+
+# Schema for updating an existing student (all fields optional)
+class Std_Update(BaseModel):
+    std_name: Optional[str] = None
+    std_email: Optional[EmailStr] = None
+    department: Optional[str] = None
+
+# Schema for reading/returning student data (includes ID)
+class Student(Std_Base):
+    std_id: int
+    # You might want to include courses here later with a forward ref or separate schema
+    # courses: List['Course'] = [] # Uncomment if you want to embed courses
+
+    class Config:
+        from_attributes = True # Allows conversion from ORM model to Pydantic
+</code></pre>
+
+        <h3>3.7. <code>app/schemas/tchr_schema.py</code></h3>
+        <p>Pydantic models for Teacher data validation and serialization.</p>
+<pre><code># app/schemas/tchr_schema.py
+
+from pydantic import BaseModel, EmailStr
+from typing import Optional, List
+
+# Base schema for common teacher attributes
+class Tchr_Base(BaseModel):
+    tchr_name: str
+    tchr_email: EmailStr
+    department: str
+
+# Schema for creating a new teacher
+class Tchr_Create(Tchr_Base):
+    pass
+
+# Schema for updating an existing teacher
+class Tchr_Update(BaseModel):
+    tchr_name: Optional[str] = None
+    tchr_email: Optional[EmailStr] = None
+    department: Optional[str] = None
+
+# Schema for reading/returning teacher data
+class Teacher(Tchr_Base):
+    tchr_id: int
+    # You might want to include courses here later
+    # courses: List['Course'] = [] # Uncomment if you want to embed courses
+
+    class Config:
+        from_attributes = True
+</code></pre>
+
+        <h3>3.8. <code>app/schemas/crs_schema.py</code></h3>
+        <p>Pydantic models for Course data validation and serialization.</p>
+<pre><code># app/schemas/crs_schema.py
+
+from pydantic import BaseModel
+from typing import Optional, List
+
+# Base schema for common course attributes
+class Crs_Base(BaseModel):
+    crs_title: str
+    crs_code: str
+    tchr_id: int # Foreign key to teacher
+
+# Schema for creating a new course
+class Crs_Create(Crs_Base):
+    pass
+
+# Schema for updating an existing course
+class Crs_Update(BaseModel):
+    crs_title: Optional[str] = None
+    crs_code: Optional[str] = None
+    tchr_id: Optional[int] = None
+
+# Schema for reading/returning course data
+class Course(Crs_Base):
+    crs_id: int
+    # You might want to include the teacher object or student list here later
+    # teacher: Teacher # Uncomment if you want to embed teacher object
+    # students: List['Student'] = [] # Uncomment if you want to embed students
+
+    class Config:
+        from_attributes = True
+</code></pre>
+
+        <h3>3.9. <code>app/schemas/enrollment_schema.py</code></h3>
+        <p>Pydantic models for Enrollment data validation and serialization.</p>
+<pre><code># app/schemas/enrollment_schema.py
+
+from pydantic import BaseModel
+from typing import Optional
+
+# Schema for creating a new enrollment
+class EnrollmentCreate(BaseModel):
+    student_id: int
+    course_id: int
+    # Optional fields like enrollment_date, grade could go here
+
+# Schema for reading/returning enrollment data (primary key not used for association table directly in ORM)
+class Enrollment(EnrollmentCreate):
+    # If your association table had its own primary key, it would be here
+    # Since it's a composite primary key (student_id, course_id),
+    # these two fields serve as the unique identifier for an enrollment record.
+    class Config:
+        from_attributes = True
+</code></pre>
+
+        <h3>3.10. <code>app/crud/student_crud.py</code></h3>
+        <p>Functions for performing CRUD operations on <code>Student</code> records.</p>
+<pre><code># app/crud/student_crud.py
+
+from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError # For handling unique constraints
+
+from app.models.students import Student
+from app.schemas.std_schema import Std_Create, Std_Update
+
+# Get a single student by ID
+def get_student(db: Session, student_id: int):
+    return db.query(Student).filter(Student.std_id == student_id).first()
+
+# Get a student by email (useful for uniqueness checks)
+def get_student_by_email(db: Session, email: str):
+    return db.query(Student).filter(Student.std_email == email).first()
+
+# Get multiple students with pagination
+def get_students(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(Student).offset(skip).limit(limit).all()
+
+# Create a new student
+def create_student(db: Session, student: Std_Create):
+    db_student = Student(
+        std_name=student.std_name,
+        std_email=student.std_email,
+        department=student.department
+    )
+    try:
+        db.add(db_student)
+        db.commit()
+        db.refresh(db_student) # Refresh to get the generated std_id
+        return db_student
+    except IntegrityError:
+        db.rollback()
+        # You would typically raise an HTTPException here in the router
+        # or a custom error that the router can catch.
+        raise ValueError("Student with this email already exists.")
+
+
+# Update an existing student
+def update_student(db: Session, student_id: int, student: Std_Update):
+    db_student = db.query(Student).filter(Student.std_id == student_id).first()
+    if db_student:
+        update_data = student.model_dump(exclude_unset=True) # Use model_dump to get only provided fields
+        for key, value in update_data.items():
+            setattr(db_student, key, value)
+        try:
+            db.add(db_student)
+            db.commit()
+            db.refresh(db_student)
+            return db_student
+        except IntegrityError:
+            db.rollback()
+            raise ValueError("Updated email already exists for another student.")
+    return None # Student not found
+
+# Delete a student
+def delete_student(db: Session, student_id: int):
+    db_student = db.query(Student).filter(Student.std_id == student_id).first()
+    if db_student:
+        db.delete(db_student)
+        db.commit()
+        return db_student # Return the deleted student object (or True/False)
+    return None # Student not found
+</code></pre>
+
+        <h3>3.11. <code>app/crud/tchr_crud.py</code></h3>
+        <p>Functions for performing CRUD operations on <code>Teacher</code> records.</p>
+<pre><code># app/crud/tchr_crud.py
+
+from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
+
+from app.models.teachers import Teacher
+from app.schemas.tchr_schema import Tchr_Create, Tchr_Update
+
+# Get a single teacher by ID
+def get_teacher(db: Session, teacher_id: int):
+    return db.query(Teacher).filter(Teacher.tchr_id == teacher_id).first()
+
+# Get a teacher by email
+def get_teacher_by_email(db: Session, email: str):
+    return db.query(Teacher).filter(Teacher.tchr_email == email).first()
+
+# Get multiple teachers
+def get_teachers(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(Teacher).offset(skip).limit(limit).all()
+
+# Create a new teacher
+def create_teacher(db: Session, teacher: Tchr_Create):
+    db_teacher = Teacher(
+        tchr_name=teacher.tchr_name,
+        tchr_email=teacher.tchr_email,
+        department=teacher.department
+    )
+    try:
+        db.add(db_teacher)
+        db.commit()
+        db.refresh(db_teacher)
+        return db_teacher
+    except IntegrityError:
+        db.rollback()
+        raise ValueError("Teacher with this email already exists.")
+
+# Update an existing teacher
+def update_teacher(db: Session, teacher_id: int, teacher: Tchr_Update):
+    db_teacher = db.query(Teacher).filter(Teacher.tchr_id == teacher_id).first()
+    if db_teacher:
+        update_data = teacher.model_dump(exclude_unset=True)
+        for key, value in update_data.items():
+            setattr(db_teacher, key, value)
+        try:
+            db.add(db_teacher)
+            db.commit()
+            db.refresh(db_teacher)
+            return db_teacher
+        except IntegrityError:
+            db.rollback()
+            raise ValueError("Updated email already exists for another teacher.")
+    return None
+
+# Delete a teacher
+def delete_teacher(db: Session, teacher_id: int):
+    db_teacher = db.query(Teacher).filter(Teacher.tchr_id == teacher_id).first()
+    if db_teacher:
+        db.delete(db_teacher)
+        db.commit()
+        return db_teacher
+    return None
+</code></pre>
+
+        <h3>3.12. <code>app/crud/crs_crud.py</code></h3>
+        <p>Functions for performing CRUD operations on <code>Course</code> records.</p>
+<pre><code># app/crud/crs_crud.py
+
+from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
+
+from app.models.courses import Course
+from app.models.teachers import Teacher # To check if teacher_id exists
+from app.schemas.crs_schema import Crs_Create, Crs_Update
+
+# Get a single course by ID
+def get_course(db: Session, course_id: int):
+    return db.query(Course).filter(Course.crs_id == course_id).first()
+
+# Get a course by code
+def get_course_by_code(db: Session, course_code: str):
+    return db.query(Course).filter(Course.crs_code == course_code).first()
+
+# Get multiple courses
+def get_courses(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(Course).offset(skip).limit(limit).all()
+
+# Create a new course
+def create_course(db: Session, course: Crs_Create):
+    # Optional: Check if the tchr_id exists
+    teacher = db.query(Teacher).filter(Teacher.tchr_id == course.tchr_id).first()
+    if not teacher:
+        raise ValueError(f"Teacher with ID {course.tchr_id} not found.")
+
+    db_course = Course(
+        crs_title=course.crs_title,
+        crs_code=course.crs_code,
+        tchr_id=course.tchr_id
+    )
+    try:
+        db.add(db_course)
+        db.commit()
+        db.refresh(db_course)
+        return db_course
+    except IntegrityError:
+        db.rollback()
+        raise ValueError("Course with this code already exists.")
+
+# Update an existing course
+def update_course(db: Session, course_id: int, course: Crs_Update):
+    db_course = db.query(Course).filter(Course.crs_id == course_id).first()
+    if db_course:
+        update_data = course.model_dump(exclude_unset=True)
+        # Optional: Check if new tchr_id exists if provided
+        if "tchr_id" in update_data:
+            teacher = db.query(Teacher).filter(Teacher.tchr_id == update_data["tchr_id"]).first()
+            if not teacher:
+                raise ValueError(f"Teacher with ID {update_data['tchr_id']} not found for update.")
+
+        for key, value in update_data.items():
+            setattr(db_course, key, value)
+        try:
+            db.add(db_course)
+            db.commit()
+            db.refresh(db_course)
+            return db_course
+        except IntegrityError:
+            db.rollback()
+            raise ValueError("Updated course code already exists for another course.")
+    return None
+
+# Delete a course
+def delete_course(db: Session, course_id: int):
+    db_course = db.query(Course).filter(Course.crs_id == course_id).first()
+    if db_course:
+        db.delete(db_course)
+        db.commit()
+        return db_course
+    return None
+</code></pre>
+
+        <h3>3.13. <code>app/crud/enrollment_crud.py</code></h3>
+        <p>Functions for managing Student-Course enrollments.</p>
+<pre><code># app/crud/enrollment_crud.py
+
+from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
+
+from app.models.students import Student
+from app.models.courses import Course
+from app.schemas.enrollment_schema import EnrollmentCreate # Using the Pydantic schema
+
+# Function to enroll a student in a course
+def enroll_student_in_course(db: Session, student_id: int, course_id: int):
+    # Get the student and course ORM objects
+    db_student = db.query(Student).filter(Student.std_id == student_id).first()
+    db_course = db.query(Course).filter(Course.crs_id == course_id).first()
+
+    if not db_student:
+        raise ValueError(f"Student with ID {student_id} not found.")
+    if not db_course:
+        raise ValueError(f"Course with ID {course_id} not found.")
+
+    # Check if enrollment already exists
+    if db_course in db_student.courses:
+        raise ValueError(f"Student {student_id} is already enrolled in course {course_id}.")
+
+    # Add the course to the student's courses relationship
+    # SQLAlchemy handles the association table insertion automatically
+    try:
+        db_student.courses.append(db_course)
+        db.commit()
+        db.refresh(db_student)
+        # We return a simple dictionary or a Pydantic model representation
+        # as the association table doesn't have its own ORM model usually.
+        return {"student_id": student_id, "course_id": course_id, "status": "enrolled"}
+    except IntegrityError:
+        db.rollback()
+        raise ValueError("Enrollment failed due to a database integrity error (e.g., duplicate).")
+
+
+# Function to get all enrollments for a student
+def get_student_enrollments(db: Session, student_id: int):
+    db_student = db.query(Student).filter(Student.std_id == student_id).first()
+    if not db_student:
+        return None
+    # Returns a list of Course objects
+    return db_student.courses
+
+# Function to get all students enrolled in a course
+def get_course_enrollments(db: Session, course_id: int):
+    db_course = db.query(Course).filter(Course.crs_id == course_id).first()
+    if not db_course:
+        return None
+    # Returns a list of Student objects
+    return db_course.students
+
+# Function to unenroll a student from a course
+def unenroll_student_from_course(db: Session, student_id: int, course_id: int):
+    db_student = db.query(Student).filter(Student.std_id == student_id).first()
+    db_course = db.query(Course).filter(Course.crs_id == course_id).first()
+
+    if not db_student:
+        raise ValueError(f"Student with ID {student_id} not found.")
+    if not db_course:
+        raise ValueError(f"Course with ID {course_id} not found.")
+
+    if db_course not in db_student.courses:
+        raise ValueError(f"Student {student_id} is not enrolled in course {course_id}.")
+
+    try:
+        # Remove the course from the student's courses relationship
+        db_student.courses.remove(db_course)
+        db.commit()
+        db.refresh(db_student)
+        return {"student_id": student_id, "course_id": course_id, "status": "unenrolled"}
+    except Exception as e:
+        db.rollback()
+        raise ValueError(f"Unenrollment failed: {e}")
+</code></pre>
+
+        <h3>3.14. <code>app/routers/std_router.py</code></h3>
+        <p>FastAPI routes for Student API.</p>
+<pre><code># app/routers/std_router.py
+
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session
+from typing import List
+
+from app.database.db import get_db
+from app.schemas.std_schema import Student, Std_Create, Std_Update
+from app.crud import student_crud
+
+router = APIRouter(
+    prefix="/students",
+    tags=["students"],
+    responses={404: {"description": "Student not found"}},
+)
+
+@router.post("/", response_model=Student, status_code=status.HTTP_201_CREATED)
+def create_student_route(student: Std_Create, db: Session = Depends(get_db)):
+    db_student_email = student_crud.get_student_by_email(db, email=student.std_email)
+    if db_student_email:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Student with this email already registered"
+        )
+    try:
+        return student_crud.create_student(db=db, student=student)
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+
+@router.get("/", response_model=List[Student])
+def read_students_route(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    students = student_crud.get_students(db, skip=skip, limit=limit)
+    return students
+
+@router.get("/{student_id}", response_model=Student)
+def read_student_route(student_id: int, db: Session = Depends(get_db)):
+    db_student = student_crud.get_student(db, student_id=student_id)
+    if db_student is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Student not found")
+    return db_student
+
+@router.put("/{student_id}", response_model=Student)
+def update_student_route(student_id: int, student: Std_Update, db: Session = Depends(get_db)):
+    # Check if the new email (if provided) conflicts with another student
+    if student.std_email:
+        existing_student_with_email = student_crud.get_student_by_email(db, email=student.std_email)
+        if existing_student_with_email and existing_student_with_email.std_id != student_id:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Email already belongs to another student"
+            )
+    try:
+        db_student = student_crud.update_student(db, student_id=student_id, student=student)
+        if db_student is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Student not found")
+        return db_student
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+@router.delete("/{student_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_student_route(student_id: int, db: Session = Depends(get_db)):
+    db_student = student_crud.delete_student(db, student_id=student_id)
+    if db_student is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Student not found")
+    return None # 204 No Content typically returns no body
+</code></pre>
+
+        <h3>3.15. <code>app/routers/tchr_router.py</code></h3>
+        <p>FastAPI routes for Teacher API.</p>
+<pre><code># app/routers/tchr_router.py
+
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session
+from typing import List
+
+from app.database.db import get_db
+from app.schemas.tchr_schema import Teacher, Tchr_Create, Tchr_Update
+from app.crud import tchr_crud
+
+router = APIRouter(
+    prefix="/teachers",
+    tags=["teachers"],
+    responses={404: {"description": "Teacher not found"}},
+)
+
+@router.post("/", response_model=Teacher, status_code=status.HTTP_201_CREATED)
+def create_teacher_route(teacher: Tchr_Create, db: Session = Depends(get_db)):
+    db_teacher_email = tchr_crud.get_teacher_by_email(db, email=teacher.tchr_email)
+    if db_teacher_email:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Teacher with this email already registered"
+        )
+    try:
+        return tchr_crud.create_teacher(db=db, teacher=teacher)
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+@router.get("/", response_model=List[Teacher])
+def read_teachers_route(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    teachers = tchr_crud.get_teachers(db, skip=skip, limit=limit)
+    return teachers
+
+@router.get("/{teacher_id}", response_model=Teacher)
+def read_teacher_route(teacher_id: int, db: Session = Depends(get_db)):
+    db_teacher = tchr_crud.get_teacher(db, teacher_id=teacher_id)
+    if db_teacher is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Teacher not found")
+    return db_teacher
+
+@router.put("/{teacher_id}", response_model=Teacher)
+def update_teacher_route(teacher_id: int, teacher: Tchr_Update, db: Session = Depends(get_db)):
+    if teacher.tchr_email:
+        existing_teacher_with_email = tchr_crud.get_teacher_by_email(db, email=teacher.tchr_email)
+        if existing_teacher_with_email and existing_teacher_with_email.tchr_id != teacher_id:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Email already belongs to another teacher"
+            )
+    try:
+        db_teacher = tchr_crud.update_teacher(db, teacher_id=teacher_id, teacher=teacher)
+        if db_teacher is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Teacher not found")
+        return db_teacher
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+@router.delete("/{teacher_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_teacher_route(teacher_id: int, db: Session = Depends(get_db)):
+    db_teacher = tchr_crud.delete_teacher(db, teacher_id=teacher_id)
+    if db_teacher is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Teacher not found")
+    return None
+</code></pre>
+
+        <h3>3.16. <code>app/routers/crs_router.py</code></h3>
+        <p>FastAPI routes for Course API.</p>
+<pre><code># app/routers/crs_router.py
+
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session
+from typing import List
+
+from app.database.db import get_db
+from app.schemas.crs_schema import Course, Crs_Create, Crs_Update
+from app.crud import crs_crud
+
+router = APIRouter(
+    prefix="/courses",
+    tags=["courses"],
+    responses={404: {"description": "Course not found"}},
+)
+
+@router.post("/", response_model=Course, status_code=status.HTTP_201_CREATED)
+def create_course_route(course: Crs_Create, db: Session = Depends(get_db)):
+    db_course_code = crs_crud.get_course_by_code(db, course_code=course.crs_code)
+    if db_course_code:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Course with this code already exists"
+        )
+    try:
+        return crs_crud.create_course(db=db, course=course)
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+
+@router.get("/", response_model=List[Course])
+def read_courses_route(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    courses = crs_crud.get_courses(db, skip=skip, limit=limit)
+    return courses
+
+@router.get("/{course_id}", response_model=Course)
+def read_course_route(course_id: int, db: Session = Depends(get_db)):
+    db_course = crs_crud.get_course(db, course_id=course_id)
+    if db_course is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Course not found")
+    return db_course
+
+@router.put("/{course_id}", response_model=Course)
+def update_course_route(course_id: int, course: Crs_Update, db: Session = Depends(get_db)):
+    if course.crs_code:
+        existing_course_with_code = crs_crud.get_course_by_code(db, course_code=course.crs_code)
+        if existing_course_with_code and existing_course_with_code.crs_id != course_id:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Course code already belongs to another course"
+            )
+    try:
+        db_course = crs_crud.update_course(db, course_id=course_id, course=course)
+        if db_course is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Course not found")
+        return db_course
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+@router.delete("/{course_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_course_route(course_id: int, db: Session = Depends(get_db)):
+    db_course = crs_crud.delete_course(db, course_id=course_id)
+    if db_course is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Course not found")
+    return None
+</code></pre>
+
+        <h3>3.17. <code>app/routers/enrollment_router.py</code></h3>
+        <p>FastAPI routes for Student-Course Enrollments.</p>
+<pre><code># app/routers/enrollment_router.py
+
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session
+from typing import List, Dict, Any
+
+from app.database.db import get_db
+from app.schemas.enrollment_schema import EnrollmentCreate, Enrollment
+from app.schemas.std_schema import Student as StudentSchema # Import Student schema for embedding
+from app.schemas.crs_schema import Course as CourseSchema   # Import Course schema for embedding
+from app.crud import enrollment_crud, student_crud, crs_crud # Need student and course crud for fetching details
+
+router = APIRouter(
+    prefix="/enrollments",
+    tags=["enrollments"],
+    responses={404: {"description": "Enrollment not found"}},
+)
+
+@router.post("/", response_model=Enrollment, status_code=status.HTTP_201_CREATED)
+def enroll_student(enrollment: EnrollmentCreate, db: Session = Depends(get_db)):
+    try:
+        # The CRUD function handles finding student/course and creating the link
+        enrollment_result = enrollment_crud.enroll_student_in_course(
+            db=db,
+            student_id=enrollment.student_id,
+            course_id=enrollment.course_id
+        )
+        return enrollment_result # This will be {"student_id": ..., "course_id": ..., "status": "enrolled"}
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"An unexpected error occurred: {e}")
+
+@router.delete("/", status_code=status.HTTP_204_NO_CONTENT)
+def unenroll_student(student_id: int, course_id: int, db: Session = Depends(get_db)):
+    try:
+        unenroll_result = enrollment_crud.unenroll_student_from_course(
+            db=db, student_id=student_id, course_id=course_id
+        )
+        if unenroll_result is None: # This check might be redundant if CRUD raises ValueError
+             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Enrollment not found or already deleted")
+        return None # 204 No Content
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"An unexpected error occurred: {e}")
+
+@router.get("/student/{student_id}/courses", response_model=List[CourseSchema])
+def get_student_courses(student_id: int, db: Session = Depends(get_db)):
+    courses = enrollment_crud.get_student_enrollments(db, student_id=student_id)
+    if courses is None: # Student not found
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Student not found")
+    return courses
+
+@router.get("/course/{course_id}/students", response_model=List[StudentSchema])
+def get_course_students(course_id: int, db: Session = Depends(get_db)):
+    students = enrollment_crud.get_course_enrollments(db, course_id=course_id)
+    if students is None: # Course not found
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Course not found")
+    return students
+</code></pre>
+
+        <h3>3.18. <code>app/main.py</code></h3>
+        <p>The main FastAPI application file, assembling all components.</p>
+<pre><code># app/main.py
+
+from fastapi import FastAPI
+from app.database.db import Base, engine # Import Base and engine
+from app.routers import std_router, tchr_router, crs_router, enrollment_router
+
+# Import models to ensure they are registered with Base.metadata
+from app.models import students, teachers, courses, associations
+
+# Create database tables
+# This command looks at all models that inherit from Base
+# and creates the corresponding tables in the database.
+Base.metadata.create_all(bind=engine)
+
+app = FastAPI(
+    title="Student Teacher Course API",
+    description="A RESTful API for managing students, teachers, courses, and their enrollments.",
+    version="1.0.0",
+)
+
+# Include the routers
+app.include_router(std_router.router)
+app.include_router(tchr_router.router)
+app.include_router(crs_router.router)
+app.include_router(enrollment_router.router)
+
+@app.get("/", tags=["Root"])
+def read_root():
+    return {"message": "Welcome to the Student Teacher Course API!"}
+
+</code></pre>
+
+        <h3>3.19. <code>app/__init__.py</code> (and other <code>__init__.py</code> files)</h3>
+        <p>These <code>__init__.py</code> files simply mark the directories as Python packages. For this project structure, they can often remain empty.</p>
+<pre><code># All __init__.py files in app/, app/models/, app/schemas/, app/crud/, app/routers/
+
+# This file can be empty.
+# Its presence indicates that the directory it resides in should be treated as a Python package.
+</code></pre>
+    </div>
+</body>
+</html>

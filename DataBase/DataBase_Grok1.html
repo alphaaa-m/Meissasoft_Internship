@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mastering Database Systems</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/cytoscape@3.23.0/dist/cytoscape.min.js"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .folder { cursor: pointer; }
+        .subtopic { display: none; }
+        .subtopic.active { display: block; }
+        #erd-container, #chart-container { height: 400px; width: 100%; border: 1px solid #e5e7eb; }
+        .quiz-option:hover { cursor: pointer; background-color: #e5e7eb; }
+        pre code { background: #1f2937; color: #fff; padding: 1rem; border-radius: 0.5rem; display: block; }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto p-4">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-gray-800">Mastering Database Systems</h1>
+            <p class="text-lg text-gray-600 mt-2">A complete, interactive guide to understanding and mastering database systems.</p>
+        </header>
+
+        <nav class="bg-white shadow rounded-lg p-4 mb-8">
+            <ul class="flex flex-wrap gap-4 justify-center">
+                <li><button class="nav-btn px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" data-section="folder1">1. Database Fundamentals</button></li>
+                <li><button class="nav-btn px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" data-section="folder2">2. Relational Databases & SQL</button></li>
+                <li><button class="nav-btn px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" data-section="folder3">3. Database Design</button></li>
+                <li><button class="nav-btn px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" data-section="folder4">4. Transactions & Concurrency</button></li>
+                <li><button class="nav-btn px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" data-section="folder5">5. Indexing & Performance</button></li>
+                <li><button class="nav-btn px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" data-section="folder6">6. Stored Programs</button></li>
+                <li><button class="nav-btn px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" data-section="folder7">7. Database Administration</button></li>
+                <li><button class="nav-btn px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" data-section="folder8">8. NoSQL Databases</button></li>
+                <li><button class="nav-btn px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" data-section="folder9">9. Distributed Databases</button></li>
+                <li><button class="nav-btn px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" data-section="folder10">10. Advanced Topics</button></li>
+                <li><button class="nav-btn px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" data-section="bonus">Bonus Topics</button></li>
+                <li><button class="nav-btn px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700" data-section="quiz">Quiz</button></li>
+            </ul>
+        </nav>
+
+        <main>
+            <section id="folder1" class="section-content active bg-white p-6 rounded-lg shadow">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4 folder">1. Database Fundamentals</h2>
+                <div class="subtopic active">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">What is a Database?</h3>
+                    <p class="text-gray-600 mb-4">A database is a structured collection of data managed by a Database Management System (DBMS). It ensures efficient storage, retrieval, and management, supporting applications like e-commerce, banking, and social media.</p>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Uses of Databases in Real Life</h3>
+                    <ul class="list-disc pl-6 text-gray-600 mb-4">
+                        <li>E-commerce: Managing product catalogs, orders, and payments (e.g., Amazon).</li>
+                        <li>Healthcare: Storing patient records and medical histories.</li>
+                        <li>Banking: Handling transactions and account details.</li>
+                        <li>Social Media: Storing user profiles, posts, and connections.</li>
+                        <li>Logistics: Tracking shipments and inventory.</li>
+                    </ul>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Database vs Spreadsheet</h3>
+                    <table class="w-full border-collapse mb-4">
+                        <thead>
+                            <tr class="bg-gray-200">
+                                <th class="border p-2">Feature</th>
+                                <th class="border p-2">Spreadsheet</th>
+                                <th class="border p-2">Database</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="border p-2">Data Volume</td><td class="border p-2">Limited</td><td class="border p-2">Large-scale</td></tr>
+                            <tr><td class="border p-2">Concurrency</td><td class="border p-2">Single-user</td><td class="border p-2">Multi-user</td></tr>
+                            <tr><td class="border p-2">Querying</td><td class="border p-2">Basic</td><td class="border p-2">Advanced (SQL/NoSQL)</td></tr>
+                            <tr><td class="border p-2">Data Integrity</td><td class="border p-2">Manual</td><td class="border p-2">Enforced</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Database Terminology</h3>
+                    <ul class="list-disc pl-6 text-gray-600 mb-4">
+                        <li><strong>Data:</strong> Raw facts (e.g., numbers, text).</li>
+                        <li><strong>Record:</strong> A row in a table representing a single entry.</li>
+                        <li><strong>Field:</strong> A column in a table storing a specific attribute.</li>
+                        <li><strong>Table:</strong> A collection of records with a defined structure.</li>
+                        <li><strong>Schema:</strong> Blueprint defining tables, fields, and relationships.</li>
+                        <li><strong>Attribute:</strong> A property of an entity (e.g., column name).</li>
+                        <li><strong>Tuple:</strong> A single row or record in a table.</li>
+                    </ul>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Types of Databases</h3>
+                    <ul class="list-disc pl-6 text-gray-600 mb-4">
+                        <li><strong>Relational (SQL):</strong> Structured, table-based (e.g., MySQL, PostgreSQL).</li>
+                        <li><strong>NoSQL:</strong> Flexible, schema-less:
+                            <ul class="list-circle pl-6">
+                                <li>Document: JSON/BSON data (e.g., MongoDB).</li>
+                                <li>Key-Value: Simple key-value pairs (e.g., Redis).</li>
+                                <li>Graph: Relationship-focused (e.g., Neo4j).</li>
+                                <li>Column-Family: Column-based storage (e.g., Cassandra).</li>
+                            </ul>
+                        </li>
+                        <li><strong>In-memory:</strong> Fast, RAM-based (e.g., Redis).</li>
+                        <li><strong>Time-series:</strong> Optimized for time-stamped data (e.g., InfluxDB).</li>
+                        <li><strong>NewSQL:</strong> Scalable SQL databases (e.g., CockroachDB).</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="folder2" class="section-content bg-white p-6 rounded-lg shadow">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4 folder">2. Relational Databases & SQL</h2>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Basic SQL</h3>
+                    <p class="text-gray-600 mb-4">SQL (Structured Query Language) is used to manage and query relational databases.</p>
+                    <h4 class="text-lg font-semibold text-gray-700 mb-2">DDL (Data Definition Language)</h4>
+                    <ul class="list-disc pl-6 text-gray-600 mb-4">
+                        <li><strong>CREATE:</strong> Defines new database objects (e.g., tables).</li>
+                        <li><strong>ALTER:</strong> Modifies existing objects.</li>
+                        <li><strong>DROP:</strong> Deletes objects.</li>
+                        <li><strong>TRUNCATE:</strong> Removes all records from a table.</li>
+                    </ul>
+                    <pre><code>CREATE TABLE employees (
+    id INT PRIMARY KEY,
+    name VARCHAR(100),
+    salary DECIMAL(10,2)
+);</code></pre>
+                    <h4 class="text-lg font-semibold text-gray-700 mb-2">DML (Data Manipulation Language)</h4>
+                    <ul class="list-disc pl-6 text-gray-600 mb-4">
+                        <li><strong>SELECT:</strong> Retrieves data.</li>
+                        <li><strong>INSERT:</strong> Adds new records.</li>
+                        <li><strong>UPDATE:</strong> Modifies existing records.</li>
+                        <li><strong>DELETE:</strong> Removes records.</li>
+                    </ul>
+                    <pre><code>INSERT INTO employees (id, name, salary) VALUES (1, 'Alice', 75000);</code></pre>
+                    <h4 class="text-lg font-semibold text-gray-700 mb-2">DCL (Data Control Language)</h4>
+                    <ul class="list-disc pl-6 text-gray-600 mb-4">
+                        <li><strong>GRANT:</strong> Assigns permissions.</li>
+                        <li><strong>REVOKE:</strong> Removes permissions.</li>
+                    </ul>
+                    <h4 class="text-lg font-semibold text-gray-700 mb-2">TCL (Transaction Control Language)</h4>
+                    <ul class="list-disc pl-6 text-gray-600 mb-4">
+                        <li><strong>COMMIT:</strong> Saves a transaction.</li>
+                        <li><strong>ROLLBACK:</strong> Reverts a transaction.</li>
+                        <li><strong>SAVEPOINT:</strong> Sets a transaction checkpoint.</li>
+                    </ul>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">SQL Querying</h3>
+                    <ul class="list-disc pl-6 text-gray-600 mb-4">
+                        <li><strong>WHERE:</strong> Filters rows (e.g., <code>WHERE salary > 50000</code>).</li>
+                        <li><strong>ORDER BY:</strong> Sorts results (e.g., <code>ORDER BY salary DESC</code>).</li>
+                        <li><strong>LIMIT/OFFSET:</strong> Restricts rows returned.</li>
+                        <li><strong>AS:</strong> Creates aliases for columns/tables.</li>
+                        <li><strong>Aggregate Functions:</strong> COUNT(), SUM(), AVG(), MAX(), MIN().</li>
+                        <li><strong>GROUP BY:</strong> Groups rows for aggregation.</li>
+                        <li><strong>HAVING:</strong> Filters grouped results.</li>
+                        <li><strong>LIKE:</strong> Pattern matching (e.g., <code>WHERE name LIKE 'A%'</code>).</li>
+                        <li><strong>Subqueries:</strong> Nested queries for complex logic.</li>
+                        <li><strong>CASE:</strong> Conditional logic in queries.</li>
+                    </ul>
+                    <p class="text-gray-600 mb-2">Try this SQL query:</p>
+                    <textarea id="sql-input" class="w-full p-2 border rounded" rows="4">SELECT name, salary FROM employees WHERE salary > 50000;</textarea>
+                    <button id="run-sql" class="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Run Query</button>
+                    <div id="sql-output" class="mt-4 text-gray-600"></div>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Joins</h3>
+                    <ul class="list-disc pl-6 text-gray-600 mb-4">
+                        <li><strong>INNER JOIN:</strong> Matches rows from both tables.</li>
+                        <li><strong>LEFT JOIN:</strong> Includes all rows from the left table.</li>
+                        <li><strong>RIGHT JOIN:</strong> Includes all rows from the right table.</li>
+                        <li><strong>FULL OUTER JOIN:</strong> Includes all rows from both tables.</li>
+                        <li><strong>Self Join:</strong> Joins a table with itself.</li>
+                        <li><strong>Cross Join:</strong> Cartesian product of two tables.</li>
+                    </ul>
+                    <pre><code>SELECT e.name, d.department
+FROM employees e
+INNER JOIN departments d ON e.dept_id = d.id;</code></pre>
+                </div>
+            </section>
+
+            <section id="folder3" class="section-content bg-white p-6 rounded-lg shadow">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4 folder">3. Database Design</h2>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">ERD (Entity-Relationship Diagrams)</h3>
+                    <p class="text-gray-600 mb-4">ERDs visualize entities, attributes, and relationships.</p>
+                    <div id="erd-container" class="mb-4"></div>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Keys</h3>
+                    <ul class="list-disc pl-6 text-gray-600 mb-4">
+                        <li><strong>Primary Key:</strong> Uniquely identifies a record.</li>
+                        <li><strong>Foreign Key:</strong> Links to a primary key in another table.</li>
+                        <li><strong>Candidate Key:</strong> Potential primary key.</li>
+                        <li><strong>Composite Key:</strong> Multiple columns as a primary key.</li>
+                    </ul>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Referential Integrity</h3>
+                    <p class="text-gray-600 mb-4">Ensures foreign keys reference valid primary keys.</p>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Relationships</h3>
+                    <ul class="list-disc pl-6 text-gray-600 mb-4">
+                        <li><strong>One-to-One:</strong> Single record links to one other (e.g., user ↔ profile).</li>
+                        <li><strong>One-to-Many:</strong> One record links to multiple (e.g., customer → orders).</li>
+                        <li><strong>Many-to-Many:</strong> Multiple records link to multiple (e.g., students ↔ courses, via junction table).</li>
+                    </ul>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Normalization</h3>
+                    <p class="text-gray-600 mb-4">Reduces redundancy and ensures data integrity.</p>
+                    <ul class="list-disc pl-6 text-gray-600 mb-4">
+                        <li><strong>1NF:</strong> No repeating groups, atomic values.</li>
+                        <li><strong>2NF:</strong> 1NF + no partial dependency.</li>
+                        <li><strong>3NF:</strong> 2NF + no transitive dependency.</li>
+                        <li><strong>BCNF:</strong> 3NF + stricter key constraints.</li>
+                    </ul>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Denormalization</h3>
+                    <p class="text-gray-600 mb-4">Introduces redundancy for performance (e.g., caching aggregates).</p>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Surrogate vs Natural Keys</h3>
+                    <p class="text-gray-600 mb-4">Surrogate: Artificial IDs (e.g., auto-increment). Natural: Business data (e.g., SSN). Surrogates are stable; naturals are meaningful but may change.</p>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Schema Design Best Practices</h3>
+                    <ul class="list-disc pl-6 text-gray-600 mb-4">
+                        <li>Use clear, consistent naming conventions.</li>
+                        <li>Enforce data types and constraints.</li>
+                        <li>Plan for scalability and indexing.</li>
+                        <li>Document relationships and constraints.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="folder4" class="section-content bg-white p-6 rounded-lg shadow">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4 folder">4. Transactions & Concurrency</h2>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">What is a Transaction?</h3>
+                    <p class="text-gray-600 mb-4">A sequence of operations treated as a single unit.</p>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">ACID Properties</h3>
+                    <ul class="list-disc pl-6 text-gray-600 mb-4">
+                        <li><strong>Atomicity:</strong> All or nothing execution.</li>
+                        <li><strong>Consistency:</strong> Maintains database integrity.</li>
+                        <li><strong>Isolation:</strong> Transactions are independent.</li>
+                        <li><strong>Durability:</strong> Committed changes are permanent.</li>
+                    </ul>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Concurrency Issues</h3>
+                    <ul class="list-disc pl-6 text-gray-600 mb-4">
+                        <li><strong>Dirty Read:</strong> Reading uncommitted data.</li>
+                        <li><strong>Non-repeatable Read:</strong> Inconsistent data within a transaction.</li>
+                        <li><strong>Phantom Read:</strong> New rows appear during a transaction.</li>
+                    </ul>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Isolation Levels</h3>
+                    <ul class="list-disc pl-6 text-gray-600 mb-4">
+                        <li><strong>Read Uncommitted:</strong> Allows dirty reads.</li>
+                        <li><strong>Read Committed:</strong> Prevents dirty reads.</li>
+                        <li><strong>Repeatable Read:</strong> Prevents non-repeatable reads.</li>
+                        <li><strong>Serializable:</strong> Highest isolation, prevents phantoms.</li>
+                    </ul>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Locks</h3>
+                    <p class="text-gray-600 mb-4"><strong>Pessimistic:</strong> Locks data during transactions. <strong>Optimistic:</strong> Assumes conflicts are rare, checks at commit.</p>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Deadlocks</h3>
+                    <p class="text-gray-600 mb-4">When transactions wait on each other’s locks. Resolved via timeouts or detection algorithms.</p>
+                </div>
+            </section>
+
+            <section id="folder5" class="section-content bg-white p-6 rounded-lg shadow">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4 folder">5. Indexing & Performance Tuning</h2>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">What is an Index?</h3>
+                    <p class="text-gray-600 mb-4">A data structure to speed up queries (e.g., B-Tree, Hash).</p>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Types of Indexes</h3>
+                    <ul class="list-disc pl-6 text-gray-600 mb-4">
+                        <li><strong>B-Tree:</strong> Balanced tree for range queries.</li>
+                        <li><strong>Hash:</strong> Fast for exact matches.</li>
+                        <li><strong>Composite:</strong> Indexes multiple columns.</li>
+                        <li><strong>Unique:</strong> Enforces uniqueness.</li>
+                        <li><strong>Full-Text:</strong> Optimized for text searches.</li>
+                    </ul>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Pros and Cons of Indexes</h3>
+                    <p class="text-gray-600 mb-4"><strong>Pros:</strong> Faster queries. <strong>Cons:</strong> Slower writes, increased storage.</p>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Query Optimization</h3>
+                    <ul class="list-disc pl-6 text-gray-600 mb-4">
+                        <li><strong>Execution Plan:</strong> Analyze query steps with EXPLAIN.</li>
+                        <li><strong>Caching:</strong> Store frequent query results.</li>
+                        <li><strong>Partitioning:</strong> Split tables for efficiency.</li>
+                        <li><strong>Sharding:</strong> Distribute data across servers.</li>
+                        <li><strong>Materialized Views:</strong> Precomputed query results.</li>
+                    </ul>
+                    <pre><code>EXPLAIN SELECT * FROM employees WHERE salary > 50000;</code></pre>
+                </div>
+            </section>
+
+            <section id="folder6" class="section-content bg-white p-6 rounded-lg shadow">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4 folder">6. Stored Programs and Extensions</h2>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Stored Procedures</h3>
+                    <p class="text-gray-600 mb-4">Precompiled SQL scripts for reusable logic.</p>
+                    <pre><code>CREATE PROCEDURE increase_salary()
+BEGIN
+    UPDATE employees SET salary = salary * 1.1;
+END;</code></pre>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Triggers</h3>
+                    <p class="text-gray-600 mb-4">Automatic actions on data changes (e.g., logging updates).</p>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Functions (UDFs)</h3>
+                    <p class="text-gray-600 mb-4">User-defined functions for custom computations.</p>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Views</h3>
+                    <p class="text-gray-600 mb-4">Virtual tables based on queries.</p>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Cursors</h3>
+                    <p class="text-gray-600 mb-4">Iterate over query results in stored programs.</p>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Transactions in Stored Procedures</h3>
+                    <p class="text-gray-600 mb-4">Ensure ACID compliance within procedures.</p>
+                </div>
+            </section>
+
+            <section id="folder7" class="section-content bg-white p-6 rounded-lg shadow">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4 folder">7. Database Administration</h2>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">User Roles & Permissions</h3>
+                    <p class="text-gray-600 mb-4">Control access with GRANT/REVOKE.</p>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Backup and Recovery</h3>
+                    <ul class="list-disc pl-6 text-gray-600 mb-4">
+                        <li><strong>Full Backup:</strong> Complete database copy.</li>
+                        <li><strong>Incremental:</strong> Changes since last backup.</li>
+                        <li><strong>Differential:</strong> Changes since last full backup.</li>
+                    </ul>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Database Migration</h3>
+                    <p class="text-gray-600 mb-4">Move data between systems with minimal downtime.</p>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">High Availability & Failover</h3>
+                    <p class="text-gray-600 mb-4">Ensure uptime with replication and failover strategies.</p>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Replication</h3>
+                    <p class="text-gray-600 mb-4"><strong>Master-Slave:</strong> One primary, multiple read-only replicas. <strong>Multi-Master:</strong> Multiple writable nodes.</p>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Monitoring & Auditing</h3>
+                    <p class="text-gray-600 mb-4">Track performance and security with logs and slow query analysis.</p>
+                </div>
+            </section>
+
+            <section id="folder8" class="section-content bg-white p-6 rounded-lg shadow">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4 folder">8. NoSQL Databases</h2>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Overview & Motivation</h3>
+                    <p class="text-gray-600 mb-4">NoSQL databases handle unstructured data and scale horizontally, ideal for big data and real-time applications.</p>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Types of NoSQL</h3>
+                    <ul class="list-disc pl-6 text-gray-600 mb-4">
+                        <li><strong>Document:</strong> JSON/BSON (e.g., MongoDB, CouchDB).</li>
+                        <li><strong>Key-Value:</strong> Simple pairs (e.g., Redis, DynamoDB).</li>
+                        <li><strong>Columnar:</strong> Column-based (e.g., Cassandra, HBase).</li>
+                        <li><strong>Graph:</strong> Relationship-focused (e.g., Neo4j).</li>
+                    </ul>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">CAP Theorem</h3>
+                    <p class="text-gray-600 mb-4">Trade-offs between Consistency, Availability, and Partition Tolerance.</p>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">BASE Model</h3>
+                    <p class="text-gray-600 mb-4">Basically Available, Soft state, Eventual consistency (vs. ACID).</p>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Schema-less Design</h3>
+                    <p class="text-gray-600 mb-4">Flexible structure for dynamic data.</p>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Querying NoSQL</h3>
+                    <p class="text-gray-600 mb-2">Example MongoDB query:</p>
+                    <textarea id="nosql-input" class="w-full p-2 border rounded" rows="4">db.employees.find({ salary: { $gt: 50000 } })</textarea>
+                    <button id="run-nosql" class="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Run Query</button>
+                    <div id="nosql-output" class="mt-4 text-gray-600"></div>
+                </div>
+            </section>
+
+            <section id="folder9" class="section-content bg-white p-6 rounded-lg shadow">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4 folder">9. Distributed Databases & Scalability</h2>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Horizontal vs Vertical Scaling</h3>
+                    <p class="text-gray-600 mb-4">Horizontal: Add servers. Vertical: Upgrade server resources.</p>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Sharding</h3>
+                    <p class="text-gray-600 mb-4">Split data across multiple servers.</p>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Replication and Consistency Models</h3>
+                    <p class="text-gray-600 mb-4">Ensure data availability and consistency (e.g., eventual consistency).</p>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Consistent Hashing</h3>
+                    <p class="text-gray-600 mb-4">Distributes data evenly across nodes.</p>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Consensus Algorithms</h3>
+                    <p class="text-gray-600 mb-4">Paxos and Raft ensure agreement in distributed systems.</p>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Cloud-based DBs</h3>
+                    <p class="text-gray-600 mb-4">Managed services like Amazon RDS, Google Firestore, Azure CosmosDB.</p>
+                </div>
+            </section>
+
+            <section id="folder10" class="section-content bg-white p-6 rounded-lg shadow">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4 folder">10. Advanced Topics</h2>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Data Warehousing</h3>
+                    <p class="text-gray-600 mb-4">Optimized for analytics (e.g., Snowflake, Redshift, BigQuery).</p>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">OLAP vs OLTP</h3>
+                    <p class="text-gray-600 mb-4">OLAP: Analytical queries. OLTP: Transactional processing.</p>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Data Lakes</h3>
+                    <p class="text-gray-600 mb-4">Store raw, unstructured data for big data analytics.</p>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Time-Series Databases</h3>
+                    <p class="text-gray-600 mb-4">Handle time-stamped data (e.g., InfluxDB).</p>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Graph Databases</h3>
+                    <p class="text-gray-600 mb-4">Use Cypher for querying relationships (e.g., Neo4j).</p>
+                    <pre><code>MATCH (n:Person)-[:FRIENDS_WITH]->(m) RETURN n, m;</code></pre>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Search Engines as DBs</h3>
+                    <p class="text-gray-600 mb-4">Elasticsearch for full-text search and analytics.</p>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Streaming Data</h3>
+                    <p class="text-gray-600 mb-4">Real-time processing with Kafka and databases.</p>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Database Security & Encryption</h3>
+                    <p class="text-gray-600 mb-4">Protect data with encryption and access controls.</p>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">GDPR/Data Compliance</h3>
+                    <p class="text-gray-600 mb-4">Ensure compliance with data protection regulations.</p>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">AI/ML-Integrated Databases</h3>
+                    <p class="text-gray-600 mb-4">Support machine learning workflows (e.g., vector databases).</p>
+                </div>
+            </section>
+
+            <section id="bonus" class="section-content bg-white p-6 rounded-lg shadow">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4 folder">Bonus Topics</h2>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">JSON, XML in Databases</h3>
+                    <p class="text-gray-600 mb-4">Store and query semi-structured data.</p>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">ORM (Object-Relational Mapping)</h3>
+                    <p class="text-gray-600 mb-4">Map database tables to objects (e.g., SQLAlchemy, Hibernate, Django ORM).</p>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Connection Pooling</h3>
+                    <p class="text-gray-600 mb-4">Reuse database connections for efficiency.</p>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">DB in Web Development</h3>
+                    <p class="text-gray-600 mb-4">Integrate databases with back-end frameworks.</p>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">ETL Pipelines</h3>
+                    <p class="text-gray-600 mb-4">Extract, Transform, Load for data integration.</p>
+                </div>
+                <div class="subtopic">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">CDC (Change Data Capture)</h3>
+                    <p class="text-gray-600 mb-4">Track and propagate data changes in real-time.</p>
+                </div>
+            </section>
+
+            <section id="quiz" class="section-content bg-white p-6 rounded-lg shadow">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Test Your Knowledge</h2>
+                <p class="text-gray-600 mb-4">Take this quiz to reinforce your understanding of database systems.</p>
+                <div id="quiz-container">
+                    <div class="quiz-question mb-4">
+                        <p class="font-semibold">1. What is the purpose of a primary key?</p>
+                        <div class="quiz-option p-2" data-correct="true">Uniquely identify a record</div>
+                        <div class="quiz-option p-2">Store text data</div>
+                        <div class="quiz-option p-2">Link multiple tables</div>
+                    </div>
+                    <div class="quiz-question mb-4">
+                        <p class="font-semibold">2. Which NoSQL database is best for relationships?</p>
+                        <div class="quiz-option p-2" data-correct="true">Graph</div>
+                        <div class="quiz-option p-2">Key-Value</div>
+                        <div class="quiz-option p-2">Document</div>
+                    </div>
+                    <div class="quiz-question mb-4">
+                        <p class="font-semibold">3. What does ACID stand for?</p>
+                        <div class="quiz-option p-2" data-correct="true">Atomicity, Consistency, Isolation, Durability</div>
+                        <div class="quiz-option p-2">Availability, Consistency, Integrity, Durability</div>
+                        <div class="quiz-option p-2">Atomicity, Control, Isolation, Data</div>
+                    </div>
+                    <div class="quiz-question mb-4">
+                        <p class="font-semibold">4. What is the purpose of normalization?</p>
+                        <div class="quiz-option p-2" data-correct="true">Reduce redundancy</div>
+                        <div class="quiz-option p-2">Increase query speed</div>
+                        <div class="quiz-option p-2">Add indexes</div>
+                    </div>
+                    <div class="quiz-question mb-4">
+                        <p class="font-semibold">5. What does sharding do?</p>
+                        <div class="quiz-option p-2" data-correct="true">Distributes data across servers</div>
+                        <div class="quiz-option p-2">Creates backups</div>
+                        <div class="quiz-option p-2">Encrypts data</div>
+                    </div>
+                </div>
+                <button id="submit-quiz" class="mt-4 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Submit Quiz</button>
+                <div id="quiz-result" class="mt-4 text-gray-600"></div>
+            </section>
+        </main>
+
+        <footer class="text-center mt-8 text-gray-600">
+            <p>Created by Grok | Powered by xAI</p>
+        </footer>
+    </div>
+
+    <script>
+        // Navigation
+        const navButtons = document.querySelectorAll('.nav-btn');
+        const sections = document.querySelectorAll('.section-content');
+        navButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                sections.forEach(section => section.classList.remove('active'));
+                document.getElementById(button.dataset.section).classList.add('active');
+            });
+        });
+
+        // Folder-like Subtopics
+        const folders = document.querySelectorAll('.folder');
+        folders.forEach(folder => {
+            folder.addEventListener('click', () => {
+                const subtopics = folder.nextElementSibling.parentElement.querySelectorAll('.subtopic');
+                subtopics.forEach(sub => sub.classList.toggle('active'));
+            });
+        });
+
+        // Interactive ERD
+        const cy = cytoscape({
+            container: document.getElementById('erd-container'),
+            elements: [
+                { data: { id: 'customers', label: 'Customers' } },
+                { data: { id: 'orders', label: 'Orders' } },
+                { data: { id: 'c1', source: 'customers', target: 'orders', label: 'Places' } }
+            ],
+            style: [
+                { selector: 'node', style: { 'label': 'data(label)', 'shape': 'rectangle', 'background-color': '#60a5fa', 'color': '#fff', 'text-valign': 'center', 'text-halign': 'center' } },
+                { selector: 'edge', style: { 'label': 'data(label)', 'curve-style': 'bezier', 'target-arrow-shape': 'triangle' } }
+            ],
+            layout: { name: 'grid', rows: 1 }
+        });
+
+        // SQL Simulator
+        document.getElementById('run-sql').addEventListener('click', () => {
+            const query = document.getElementById('sql-input').value;
+            const output = document.getElementById('sql-output');
+            const employees = [
+                { name: 'Alice', salary: 75000 },
+                { name: 'Bob', salary: 60000 },
+                { name: 'Charlie', salary: 45000 }
+            ];
+            if (query.includes('SELECT') && query.includes('salary > 50000')) {
+                const result = employees.filter(emp => emp.salary > 50000);
+                output.innerHTML = '<strong>Result:</strong><br>' + result.map(emp => `${emp.name}: $${emp.salary}`).join('<br>');
+            } else {
+                output.innerHTML = '<strong>Error:</strong> Please enter a valid SELECT query with a salary condition.';
+            }
+        });
+
+        // NoSQL Simulator
+        document.getElementById('run-nosql').addEventListener('click', () => {
+            const query = document.getElementById('nosql-input').value;
+            const output = document.getElementById('nosql-output');
+            const employees = [
+                { name: 'Alice', salary: 75000 },
+                { name: 'Bob', salary: 60000 },
+                { name: 'Charlie', salary: 45000 }
+            ];
+            if (query.includes('find') && query.includes('$gt: 50000')) {
+                const result = employees.filter(emp => emp.salary > 50000);
+                output.innerHTML = '<strong>Result:</strong><br>' + JSON.stringify(result, null, 2);
+            } else {
+                output.innerHTML = '<strong>Error:</strong> Please enter a valid MongoDB query with a salary condition.';
+            }
+        });
+
+        // Quiz Logic
+        let score = 0;
+        const quizOptions = document.querySelectorAll('.quiz-option');
+        quizOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                const question = option.parentElement;
+                question.querySelectorAll('.quiz-option').forEach(opt => opt.classList.remove('bg-blue-200'));
+                option.classList.add('bg-blue-200');
+                if (option.dataset.correct === 'true') {
+                    score++;
+                }
+            });
+        });
+
+        document.getElementById('submit-quiz').addEventListener('click', () => {
+            const result = document.getElementById('quiz-result');
+            result.innerHTML = `You scored ${score} out of 5! ${score === 5 ? 'Perfect!' : 'Try again to improve your score!'}`;
+            score = 0;
+        });
+    </script>
+</body>
+</html>

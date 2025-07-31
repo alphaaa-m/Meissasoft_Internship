@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DSA Learning Roadmap</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1, h2, h3 {
+            color: #0056b3;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        ul li {
+            background: #e9e9e9;
+            margin-bottom: 8px;
+            padding: 10px 15px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+        }
+        ul li.must-know {
+            background-color: #d4edda;
+            border-left: 5px solid #28a745;
+        }
+        ul li.core-algorithms {
+            background-color: #fff3cd;
+            border-left: 5px solid #ffc107;
+        }
+        ul li.dp {
+            background-color: #cce5ff;
+            border-left: 5px solid #007bff;
+        }
+        ul li.graph {
+            background-color: #d1ecf1;
+            border-left: 5px solid #17a2b8;
+        }
+        ul li.string {
+            background-color: #f8d7da;
+            border-left: 5px solid #dc3545;
+        }
+        ul li.advanced-trees {
+            background-color: #e2e3e5;
+            border-left: 5px solid #6c757d;
+        }
+        ul li.bit-manipulation {
+            background-color: #dae5ed;
+            border-left: 5px solid #3498db;
+        }
+        ul li.bonus {
+            background-color: #f0e68c; /* Khaki */
+            border-left: 5px solid #b8860b; /* Dark Goldenrod */
+        }
+        .category-icon {
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+        .learning-path {
+            margin-top: 30px;
+            border-top: 2px solid #ccc;
+            padding-top: 20px;
+        }
+        .learning-path h3 {
+            margin-bottom: 15px;
+        }
+        .learning-path ul {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+        }
+        .learning-path ul li {
+            flex: 1;
+            min-width: 150px;
+            text-align: center;
+            margin: 10px;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            color: #fff;
+        }
+        .learning-path ul li.beginner {
+            background-color: #28a745;
+        }
+        .learning-path ul li.intermediate {
+            background-color: #ffc107;
+        }
+        .learning-path ul li.advanced {
+            background-color: #007bff;
+        }
+        .learning-path ul li.expert {
+            background-color: #dc3545;
+        }
+        .links {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f0f8ff;
+            border-left: 5px solid #add8e6;
+            border-radius: 5px;
+        }
+        .links h3 {
+            color: #0056b3;
+            margin-top: 0;
+        }
+        .links ul {
+            list-style-type: disc;
+            margin-left: 20px;
+        }
+        .links ul li {
+            background: none;
+            margin-bottom: 5px;
+            padding: 0;
+            border-radius: 0;
+            border-left: none;
+        }
+        .links ul li a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .links ul li a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Data Structures and Algorithms (DSA) Learning Roadmap</h1>
+
+        <section>
+            <h2>✅ Must-Know (High Importance — Start Here)</h2>
+            <h3>🔹 Basic Essentials</h3>
+            <ul>
+                <li class="must-know"><span class="category-icon">💡</span> Linear Search</li>
+                <li class="must-know"><span class="category-icon">💡</span> Binary Search</li>
+                <li class="must-know"><span class="category-icon">💡</span> Bubble Sort</li>
+                <li class="must-know"><span class="category-icon">💡</span> Selection Sort</li>
+                <li class="must-know"><span class="category-icon">💡</span> Insertion Sort</li>
+                <li class="must-know"><span class="category-icon">💡</span> Merge Sort</li>
+                <li class="must-know"><span class="category-icon">💡</span> Quick Sort</li>
+            </ul>
+            <h3>🔹 Recursion Basics</h3>
+            <ul>
+                <li class="must-know"><span class="category-icon">🔄</span> Factorial / Fibonacci (Recursive)</li>
+                <li class="must-know"><span class="category-icon">🔙</span> Backtracking Basics (e.g., subsets, permutations)</li>
+            </ul>
+            <h3>🔹 Two Pointers & Sliding Window</h3>
+            <ul>
+                <li class="must-know"><span class="category-icon">↔️</span> Two Pointers Technique</li>
+                <li class="must-know"><span class="category-icon">➡️</span> Sliding Window (Fixed/Variable size)</li>
+            </ul>
+            <h3>🔹 Hashing</h3>
+            <ul>
+                <li class="must-know"><span class="category-icon">#️⃣</span> Hash Maps / Sets (not an algorithm but essential for logic)</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>⚙️ Core Algorithms (Frequently Used in Interviews)</h2>
+            <h3>🔹 Greedy Algorithms</h3>
+            <ul>
+                <li class="core-algorithms"><span class="category-icon">💰</span> Activity Selection Problem</li>
+                <li class="core-algorithms"><span class="category-icon">💰</span> Fractional Knapsack</li>
+                <li class="core-algorithms"><span class="category-icon">💰</span> Job Sequencing</li>
+                <li class="core-algorithms"><span class="category-icon">💰</span> Huffman Encoding</li>
+            </ul>
+            <h3>🔹 Binary Search Variants</h3>
+            <ul>
+                <li class="core-algorithms"><span class="category-icon">🔍</span> Lower Bound / Upper Bound</li>
+                <li class="core-algorithms"><span class="category-icon">🔍</span> Binary Search on Answer</li>
+            </ul>
+            <h3>🔹 Backtracking (Advanced)</h3>
+            <ul>
+                <li class="core-algorithms"><span class="category-icon">🕵️‍♀️</span> N-Queens</li>
+                <li class="core-algorithms"><span class="category-icon">🕵️‍♀️</span> Sudoku Solver</li>
+                <li class="core-algorithms"><span class="category-icon">🕵️‍♀️</span> Rat in a Maze</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>🧠 Dynamic Programming (Very High ROI)</h2>
+            <ul>
+                <li class="dp"><span class="category-icon">💡</span> 0/1 Knapsack</li>
+                <li class="dp"><span class="category-icon">💡</span> Longest Common Subsequence (LCS)</li>
+                <li class="dp"><span class="category-icon">💡</span> Longest Increasing Subsequence (LIS)</li>
+                <li class="dp"><span class="category-icon">💡</span> Matrix Chain Multiplication</li>
+                <li class="dp"><span class="category-icon">💡</span> Subset Sum / Partition</li>
+                <li class="dp"><span class="category-icon">💡</span> Edit Distance</li>
+                <li class="dp"><span class="category-icon">💡</span> DP with Memoization and Tabulation</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>🌐 Graph Algorithms (Critical for Interviews + Real-World)</h2>
+            <ul>
+                <li class="graph"><span class="category-icon">🌳</span> Breadth-First Search (BFS)</li>
+                <li class="graph"><span class="category-icon">🌳</span> Depth-First Search (DFS)</li>
+                <li class="graph"><span class="category-icon">🌳</span> Topological Sort</li>
+                <li class="graph"><span class="category-icon">🌳</span> Dijkstra’s Algorithm</li>
+                <li class="graph"><span class="category-icon">🌳</span> Prim’s Algorithm</li>
+                <li class="graph"><span class="category-icon">🌳</span> Kruskal’s Algorithm</li>
+                <li class="graph"><span class="category-icon">🌳</span> Union-Find / Disjoint Set</li>
+                <li class="graph"><span class="category-icon">🌳</span> Bellman-Ford</li>
+                <li class="graph"><span class="category-icon">🌳</span> Floyd-Warshall</li>
+                <li class="graph"><span class="category-icon">🌳</span> Cycle Detection in Graphs (Directed/Undirected)</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>📚 String Algorithms (For Pattern Matching / Text Processing)</h2>
+            <ul>
+                <li class="string"><span class="category-icon">🔠</span> Trie (Prefix Tree)</li>
+                <li class="string"><span class="category-icon">🔠</span> KMP Algorithm</li>
+                <li class="string"><span class="category-icon">🔠</span> Z-Algorithm</li>
+                <li class="string"><span class="category-icon">🔠</span> Rabin-Karp (Optional)</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>🌲 Advanced Trees and Data Structures</h2>
+            <ul>
+                <li class="advanced-trees"><span class="category-icon">🌲</span> Segment Tree</li>
+                <li class="advanced-trees"><span class="category-icon">🌲</span> Fenwick Tree (Binary Indexed Tree)</li>
+                <li class="advanced-trees"><span class="category-icon">🌲</span> Lazy Propagation</li>
+                <li class="advanced-trees"><span class="category-icon">🌲</span> Lowest Common Ancestor (LCA)</li>
+                <li class="advanced-trees"><span class="category-icon">🌲</span> AVL Tree / Red-Black Tree (theory)</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>🔢 Bit Manipulation (Very Handy for Competitive Coding)</h2>
+            <ul>
+                <li class="bit-manipulation"><span class="category-icon">⚡</span> Count Set Bits</li>
+                <li class="bit-manipulation"><span class="category-icon">⚡</span> XOR Tricks</li>
+                <li class="bit-manipulation"><span class="category-icon">⚡</span> Power of 2 / Odd-Even Checks</li>
+                <li class="bit-manipulation"><span class="category-icon">⚡</span> Subsets using Bits</li>
+                <li class="bit-manipulation"><span class="category-icon">⚡</span> Bitmask DP (Advanced)</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>🔭 Bonus: Advanced / Competitive Programming Algorithms</h2>
+            <ul>
+                <li class="bonus"><span class="category-icon">🌟</span> Mo’s Algorithm</li>
+                <li class="bonus"><span class="category-icon">🌟</span> Heavy-Light Decomposition (HLD)</li>
+                <li class="bonus"><span class="category-icon">🌟</span> Centroid Decomposition</li>
+                <li class="bonus"><span class="category-icon">🌟</span> Fast Fourier Transform (FFT)</li>
+                <li class="bonus"><span class="category-icon">🌟</span> Matrix Exponentiation</li>
+                <li class="bonus"><span class="category-icon">🌟</span> Suffix Array / Suffix Tree</li>
+                <li class="bonus"><span class="category-icon">🌟</span> Game Theory (Nim, Grundy Numbers)</li>
+                <li class="bonus"><span class="category-icon">🌟</span> Rolling Hash / Rabin-Karp</li>
+            </ul>
+        </section>
+
+        <section class="learning-path">
+            <h2>📌 Summary for Learning Path:</h2>
+            <ul>
+                <li class="beginner">📘 Beginner: Items 1–15</li>
+                <li class="intermediate">📙 Intermediate: Items 16–36</li>
+                <li class="advanced">📕 Advanced: Items 37–52</li>
+                <li class="expert">🔬 Expert (Optional unless doing CP): Items 53–60</li>
+            </ul>
+        </section>
+
+        <section class="links">
+            <h2>Learning Resources</h2>
+            <ul>
+                <li><a href="https://www.geeksforgeeks.org/data-structures/" target="_blank">GeeksforGeeks Data Structures</a> (Comprehensive guides)</li>
+                <li><a href="https://www.geeksforgeeks.org/fundamentals-of-algorithms/" target="_blank">GeeksforGeeks Algorithms</a> (Comprehensive guides)</li>
+                <li><a href="https://leetcode.com/discuss/general-discussion/460599/blind-75-leetcode-questions" target="_blank">Blind 75 LeetCode Questions</a> (Curated list of important problems)</li>
+                <li><a href="https://neetcode.io/" target="_blank">NeetCode.io</a> (Video explanations and solutions for common interview problems)</li>
+                <li><a href="https://www.freecodecamp.org/news/data-structures-and-algorithms-for-beginners/" target="_blank">freeCodeCamp DSA for Beginners</a> (Beginner-friendly articles and tutorials)</li>
+                <li><a href="https://www.youtube.com/playlist?list=PLDV1Q5_eYk1T3a7Tq80jF3R6-3vJp7Pj6" target="_blank">MyCodeSchool (YouTube)</a> (Good visual explanations for data structures)</li>
+                <li><a href="https://www.coursera.org/courses?query=data%20structures%20and%20algorithms" target="_blank">Coursera DSA Courses</a> (Structured courses from universities)</li>
+                <li><a href="https://www.udemy.com/courses/development/data-structures-algorithms/" target="_blank">Udemy DSA Courses</a> (Various instructors and teaching styles)</li>
+            </ul>
+        </section>
+
+        <section class="links">
+            <h2>Practice Problem Links</h2>
+            <ul>
+                <li><a href="https://leetcode.com/" target="_blank">LeetCode</a> (Vast collection of problems with difficulty levels and company tags)</li>
+                <li><a href="https://www.hackerrank.com/domains/data-structures" target="_blank">HackerRank Data Structures</a> (Structured challenges for different DS)</li>
+                <li><a href="https://www.hackerrank.com/domains/algorithms" target="_blank">HackerRank Algorithms</a> (Structured challenges for different algorithms)</li>
+                <li><a href="https://www.codechef.com/practice" target="_blank">CodeChef Practice</a> (Competitive programming platform with a wide range of problems)</li>
+                <li><a href="https://codeforces.com/problemset" target="_blank">Codeforces Problemset</a> (Another popular competitive programming platform)</li>
+                <li><a href="https://www.topcoder.com/thrive/tutorials/data-structures-and-algorithms" target="_blank">TopCoder Tutorials & Problems</a> (More advanced problems, often used in competitive programming)</li>
+                <li><a href="https://www.interviewbit.com/practice/" target="_blank">InterviewBit</a> (Focus on interview preparation, with a structured approach)</li>
+            </ul>
+        </section>
+    </div>
+</body>
+</html>

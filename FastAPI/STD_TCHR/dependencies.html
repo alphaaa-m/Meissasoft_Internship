@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FastAPI Project Dependency Map</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+            color: #343a40;
+        }
+        .container {
+            max-width: 960px;
+            margin: auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        h1, h2, h3, h4 {
+            color: #0056b3;
+            margin-top: 1.5em;
+            margin-bottom: 0.5em;
+        }
+        h1 { font-size: 2.2em; border-bottom: 2px solid #0056b3; padding-bottom: 10px; }
+        h2 { font-size: 1.8em; }
+        h3 { font-size: 1.4em; border-bottom: 1px solid #e9ecef; padding-bottom: 5px; }
+        h4 { font-size: 1.2em; color: #495057; }
+        code {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            color: #d9534f; /* A distinct color for code/file names */
+            background-color: #e9ecef;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        strong {
+            color: #007bff; /* Highlight important terms */
+        }
+        ul {
+            list-style-type: disc;
+            margin-left: 20px;
+            margin-bottom: 1em;
+        }
+        ul ul { /* For nested lists (e.g., 'Depends On', 'Imported By') */
+            list-style-type: circle;
+            margin-left: 30px;
+        }
+        li {
+            margin-bottom: 0.5em;
+        }
+        hr {
+            border: 0;
+            height: 1px;
+            background: #dee2e6;
+            margin: 2em 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Dependency Map: File by File Analysis</h1>
+        <p>This section details the dependencies between the files in your FastAPI project. Understanding these relationships helps you anticipate the impact of changes.</p>
+
+        <ul>
+            <li><strong>"Depends On (Imports)"</strong>: Lists files/modules from your <code>app</code> directory that <em>this file</em> imports and relies upon.</li>
+            <li><strong>"Imported By (Dependents)"</strong>: Lists files/modules from your <code>app</code> directory that <em>import this file</em> and would therefore be affected by changes.</li>
+        </ul>
+
+        <hr>
+
+        <h2>1. <code>app/database/db.py</code></h2>
+        <ul>
+            <li><strong>Purpose:</strong> Handles SQLAlchemy engine, session, and <code>Base</code> for ORM models. Provides <code>get_db</code> dependency.</li>
+            <li><strong>Depends On (Imports):</strong>
+                <ul>
+                    <li><code>sqlalchemy</code> (external library)</li>
+                </ul>
+            </li>
+            <li><strong>Imported By (Dependents):</strong>
+                <ul>
+                    <li><code>app/main.py</code> (to create tables)</li>
+                    <li><code>app/models/students.py</code></li>
+                    <li><code>app/models/teachers.py</code></li>
+                    <li><code>app/models/courses.py</code></li>
+                    <li><code>app/models/associations.py</code></li>
+                    <li><code>app/routers/std_router.py</code></li>
+                    <li><code>app/routers/tchr_router.py</code></li>
+                    <li><code>app/routers/crs_router.py</code></li>
+                    <li><code>app/routers/enrollment_router.py</code></li>
+                </ul>
+            </li>
+            <li><strong>Impact of Change:</strong> Changes here (e.g., database URL, session configuration) will impact <strong>all</strong> parts of your application that interact with the database. This is a foundational file.</li>
+        </ul>
+
+        <hr>
+
+        <h2>2. <code>app/models/associations.py</code></h2>
+        <ul>
+            <li><strong>Purpose:</strong> Defines the SQLAlchemy association table for the many-to-many relationship between students and courses.</li>
+            <li><strong>Depends On (Imports):</strong>
+                <ul>
+                    <li><code>app.database.db</code> (for <code>Base.metadata</code>)</li>
+                </ul>
+            </li>
+            <li><strong>Imported By (Dependents):</strong>
+                <ul>
+                    <li><code>app/models/students.py</code></li>
+                    <li><code>app/models/courses.py</code></li>
+                    <li><code>app/main.py</code> (implicitly, as <code>main.py</code> imports <code>app.models</code> to register all models with <code>Base.metadata</code>)</li>
+                </ul>
+            </li>
+            <li><strong>Impact of Change:</strong> Changes to this table structure will impact <code>students.py</code> and <code>courses.py</code> models, and potentially <code>enrollment_crud.py</code> and <code>enrollment_router.py</code> if the way enrollments are handled fundamentally changes.</li>
+        </ul>
+
+        <hr>
+
+        <h2>3. <code>app/models/students.py</code></h2>
+        <ul>
+            <li><strong>Purpose:</strong> Defines the SQLAlchemy ORM model for the <code>students</code> table.</li>
+            <li><strong>Depends On (Imports):</strong>
+                <ul>
+                    <li><code>app.database.db</code> (for <code>Base</code>)</li>
+                    <li><code>app.models.associations</code> (for <code>student_course_association</code>)</li>
+                </ul>
+            </li>
+            <li><strong>Imported By (Dependents):</strong>
+                <ul>
+                    <li><code>app/crud/student_crud.py</code></li>
+                    <li><code>app/crud/enrollment_crud.py</code></li>
+                    <li><code>app/main.py</code> (implicitly, via <code>app.models</code> import)</li>
+                </ul>
+            </li>
+            <li><strong>Impact of Change:</strong> Changes to <code>Student</code> model (e.g., adding/removing columns, changing relationships) will impact <code>std_schema.py</code>, <code>student_crud.py</code>, <code>enrollment_crud.py</code>, and any router (<code>std_router.py</code>, <code>enrollment_router.py</code>) that deals with student data directly or indirectly. Requires database migration or recreation.</li>
+        </ul>
+
+        <hr>
+
+        <h2>4. <code>app/models/teachers.py</code></h2>
+        <ul>
+            <li><strong>Purpose:</strong> Defines the SQLAlchemy ORM model for the <code>teachers</code> table.</li>
+            <li><strong>Depends On (Imports):</strong>
+                <ul>
+                    <li><code>app.database.db</code> (for <code>Base</code>)</li>
+                </ul>
+            </li>
+            <li><strong>Imported By (Dependents):</strong>
+                <ul>
+                    <li><code>app/crud/tchr_crud.py</code></li>
+                    <li><code>app/crud/crs_crud.py</code> (to check <code>tchr_id</code> existence)</li>
+                    <li><code>app/main.py</code> (implicitly, via <code>app.models</code> import)</li>
+                </ul>
+            </li>
+            <li><strong>Impact of Change:</strong> Changes to <code>Teacher</code> model will impact <code>tchr_schema.py</code>, <code>tchr_crud.py</code>, <code>crs_crud.py</code>, and <code>tchr_router.py</code>. Requires database migration or recreation.</li>
+        </ul>
+
+        <hr>
+
+        <h2>5. <code>app/models/courses.py</code></h2>
+        <ul>
+            <li><strong>Purpose:</strong> Defines the SQLAlchemy ORM model for the <code>courses</code> table.</li>
+            <li><strong>Depends On (Imports):</strong>
+                <ul>
+                    <li><code>app.database.db</code> (for <code>Base</code>)</li>
+                    <li><code>app.models.associations</code> (for <code>student_course_association</code>)</li>
+                </ul>
+            </li>
+            <li><strong>Imported By (Dependents):</strong>
+                <ul>
+                    <li><code>app/crud/crs_crud.py</code></li>
+                    <li><code>app/crud/enrollment_crud.py</code></li>
+                    <li><code>app/main.py</code> (implicitly, via <code>app.models</code> import)</li>
+                </ul>
+            </li>
+            <li><strong>Impact of Change:</strong> Changes to <code>Course</code> model will impact <code>crs_schema.py</code>, <code>crs_crud.py</code>, <code>enrollment_crud.py</code>, and any router (<code>crs_router.py</code>, <code>enrollment_router.py</code>) that deals with course data. Requires database migration or recreation.</li>
+        </ul>
+
+        <hr>
+
+        <h2>6. <code>app/schemas/std_schema.py</code></h2>
+        <ul>
+            <li><strong>Purpose:</strong> Pydantic models for Student request validation and response serialization.</li>
+            <li><strong>Depends On (Imports):</strong>
+                <ul>
+                    <li><code>pydantic</code> (external library)</li>
+                </ul>
+            </li>
+            <li><strong>Imported By (Dependents):</strong>
+                <ul>
+                    <li><code>app/crud/student_crud.py</code></li>
+                    <li><code>app/routers/std_router.py</code></li>
+                    <li><code>app/routers/enrollment_router.py</code> (if embedding Student schema in enrollment responses)</li>
+                </ul>
+            </li>
+            <li><strong>Impact of Change:</strong> Changes here will impact the <code>student_crud.py</code> functions that take <code>Std_Create</code> or <code>Std_Update</code> and the <code>std_router.py</code> endpoints that use <code>Std_Create</code>, <code>Std_Update</code>, or <code>Student</code> as request/response models.</li>
+        </ul>
+
+        <hr>
+
+        <h2>7. <code>app/schemas/tchr_schema.py</code></h2>
+        <ul>
+            <li><strong>Purpose:</strong> Pydantic models for Teacher data validation and serialization.</li>
+            <li><strong>Depends On (Imports):</strong>
+                <ul>
+                    <li><code>pydantic</code> (external library)</li>
+                </ul>
+            </li>
+            <li><strong>Imported By (Dependents):</strong>
+                <ul>
+                    <li><code>app/crud/tchr_crud.py</code></li>
+                    <li><code>app/routers/tchr_router.py</code></li>
+                </ul>
+            </li>
+            <li><strong>Impact of Change:</strong> Changes here will impact <code>tchr_crud.py</code> functions and <code>tchr_router.py</code> endpoints.</li>
+        </ul>
+
+        <hr>
+
+        <h2>8. <code>app/schemas/crs_schema.py</code></h2>
+        <ul>
+            <li><strong>Purpose:</strong> Pydantic models for Course data validation and serialization.</li>
+            <li><strong>Depends On (Imports):</strong>
+                <ul>
+                    <li><code>pydantic</code> (external library)</li>
+                </ul>
+            </li>
+            <li><strong>Imported By (Dependents):</strong>
+                <ul>
+                    <li><code>app/crud/crs_crud.py</code></li>
+                    <li><code>app/routers/crs_router.py</code></li>
+                    <li><code>app/routers/enrollment_router.py</code> (if embedding Course schema in enrollment responses)</li>
+                </ul>
+            </li>
+            <li><strong>Impact of Change:</strong> Changes here will impact <code>crs_crud.py</code> functions and <code>crs_router.py</code> endpoints.</li>
+        </ul>
+
+        <hr>
+
+        <h2>9. <code>app/schemas/enrollment_schema.py</code></h2>
+        <ul>
+            <li><strong>Purpose:</strong> Pydantic models for Enrollment data validation and serialization.</li>
+            <li><strong>Depends On (Imports):</strong>
+                <ul>
+                    <li><code>pydantic</code> (external library)</li>
+                </ul>
+            </li>
+            <li><strong>Imported By (Dependents):</strong>
+                <ul>
+                    <li><code>app/crud/enrollment_crud.py</code></li>
+                    <li><code>app/routers/enrollment_router.py</code></li>
+                </ul>
+            </li>
+            <li><strong>Impact of Change:</strong> Changes here will impact <code>enrollment_crud.py</code> functions and <code>enrollment_router.py</code> endpoints.</li>
+        </ul>
+
+        <hr>
+
+        <h2>10. <code>app/crud/student_crud.py</code></h2>
+        <ul>
+            <li><strong>Purpose:</strong> Functions for performing CRUD operations on <code>Student</code> records.</li>
+            <li><strong>Depends On (Imports):</strong>
+                <ul>
+                    <li><code>sqlalchemy.orm</code> (external library)</li>
+                    <li><code>app.models.students</code></li>
+                    <li><code>app.schemas.std_schema</code></li>
+                </ul>
+            </li>
+            <li><strong>Imported By (Dependents):</strong>
+                <ul>
+                    <li><code>app/routers/std_router.py</code></li>
+                    <li><code>app/crud/enrollment_crud.py</code> (indirectly via <code>student_crud</code> in <code>enrollment_router</code>)</li>
+                </ul>
+            </li>
+            <li><strong>Impact of Change:</strong> Changes here will primarily impact <code>std_router.py</code>.</li>
+        </ul>
+
+        <hr>
+
+        <h2>11. <code>app/crud/tchr_crud.py</code></h2>
+        <ul>
+            <li><strong>Purpose:</strong> Functions for performing CRUD operations on <code>Teacher</code> records.</li>
+            <li><strong>Depends On (Imports):</strong>
+                <ul>
+                    <li><code>sqlalchemy.orm</code> (external library)</li>
+                    <li><code>app.models.teachers</code></li>
+                    <li><code>app.schemas.tchr_schema</code></li>
+                </ul>
+            </li>
+            <li><strong>Imported By (Dependents):</strong>
+                <ul>
+                    <li><code>app/routers/tchr_router.py</code></li>
+                    <li><code>app/crud/crs_crud.py</code> (indirectly via <code>crs_router</code> if tchr_id validation is used)</li>
+                </ul>
+            </li>
+            <li><strong>Impact of Change:</strong> Changes here will primarily impact <code>tchr_router.py</code> and potentially <code>crs_crud.py</code> if teacher ID validation logic is altered.</li>
+        </ul>
+
+        <hr>
+
+        <h2>12. <code>app/crud/crs_crud.py</code></h2>
+        <ul>
+            <li><strong>Purpose:</strong> Functions for performing CRUD operations on <code>Course</code> records.</li>
+            <li><strong>Depends On (Imports):</strong>
+                <ul>
+                    <li><code>sqlalchemy.orm</code> (external library)</li>
+                    <li><code>app.models.courses</code></li>
+                    <li><code>app.models.teachers</code></li>
+                    <li><code>app.schemas.crs_schema</code></li>
+                </ul>
+            </li>
+            <li><strong>Imported By (Dependents):</strong>
+                <ul>
+                    <li><code>app/routers/crs_router.py</code></li>
+                    <li><code>app/crud/enrollment_crud.py</code> (indirectly via <code>crs_crud</code> in <code>enrollment_router</code>)</li>
+                </ul>
+            </li>
+            <li><strong>Impact of Change:</strong> Changes here will primarily impact <code>crs_router.py</code> and potentially <code>enrollment_crud.py</code>.</li>
+        </ul>
+
+        <hr>
+
+        <h2>13. <code>app/crud/enrollment_crud.py</code></h2>
+        <ul>
+            <li><strong>Purpose:</strong> Functions for managing Student-Course enrollments.</li>
+            <li><strong>Depends On (Imports):</strong>
+                <ul>
+                    <li><code>sqlalchemy.orm</code> (external library)</li>
+                    <li><code>app.models.students</code></li>
+                    <li><code>app.models.courses</code></li>
+                    <li><code>app.schemas.enrollment_schema</code></li>
+                </ul>
+            </li>
+            <li><strong>Imported By (Dependents):</strong>
+                <ul>
+                    <li><code>app/routers/enrollment_router.py</code></li>
+                </ul>
+            </li>
+            <li><strong>Impact of Change:</strong> Changes here will primarily impact <code>enrollment_router.py</code>.</li>
+        </ul>
+
+        <hr>
+
+        <h2>14. <code>app/routers/std_router.py</code></h2>
+        <ul>
+            <li><strong>Purpose:</strong> Defines FastAPI API endpoints for Student management.</li>
+            <li><strong>Depends On (Imports):</strong>
+                <ul>
+                    <li><code>fastapi</code> (external library)</li>
+                    <li><code>sqlalchemy.orm</code> (external library, for <code>Session</code> typing)</li>
+                    <li><code>app.database.db</code> (for <code>get_db</code>)</li>
+                    <li><code>app.schemas.std_schema</code></li>
+                    <li><code>app.crud.student_crud</code></li>
+                </ul>
+            </li>
+            <li><strong>Imported By (Dependents):</strong>
+                <ul>
+                    <li><code>app/main.py</code></li>
+                </ul>
+            </li>
+            <li><strong>Impact of Change:</strong> Changes here will impact the API's behavior for student-related operations and how <code>main.py</code> includes this router.</li>
+        </ul>
+
+        <hr>
+
+        <h2>15. <code>app/routers/tchr_router.py</code></h2>
+        <ul>
+            <li><strong>Purpose:</strong> Defines FastAPI API endpoints for Teacher management.</li>
+            <li><strong>Depends On (Imports):</strong>
+                <ul>
+                    <li><code>fastapi</code> (external library)</li>
+                    <li><code>sqlalchemy.orm</code> (external library)</li>
+                    <li><code>app.database.db</code> (for <code>get_db</code>)</li>
+                    <li><code>app.schemas.tchr_schema</code></li>
+                    <li><code>app.crud.tchr_crud</code></li>
+                </ul>
+            </li>
+            <li><strong>Imported By (Dependents):</strong>
+                <ul>
+                    <li><code>app/main.py</code></li>
+                </ul>
+            </li>
+            <li><strong>Impact of Change:</strong> Changes here will impact the API's behavior for teacher-related operations and how <code>main.py</code> includes this router.</li>
+        </ul>
+
+        <hr>
+
+        <h2>16. <code>app/routers/crs_router.py</code></h2>
+        <ul>
+            <li><strong>Purpose:</strong> Defines FastAPI API endpoints for Course management.</li>
+            <li><strong>Depends On (Imports):</strong>
+                <ul>
+                    <li><code>fastapi</code> (external library)</li>
+                    <li><code>sqlalchemy.orm</code> (external library)</li>
+                    <li><code>app.database.db</code> (for <code>get_db</code>)</li>
+                    <li><code>app.schemas.crs_schema</code></li>
+                    <li><code>app.crud.crs_crud</code></li>
+                </ul>
+            </li>
+            <li><strong>Imported By (Dependents):</strong>
+                <ul>
+                    <li><code>app/main.py</code></li>
+                </ul>
+            </li>
+            <li><strong>Impact of Change:</strong> Changes here will impact the API's behavior for course-related operations and how <code>main.py</code> includes this router.</li>
+        </ul>
+
+        <hr>
+
+        <h2>17. <code>app/routers/enrollment_router.py</code></h2>
+        <ul>
+            <li><strong>Purpose:</strong> Defines FastAPI API endpoints for Student-Course enrollments.</li>
+            <li><strong>Depends On (Imports):</strong>
+                <ul>
+                    <li><code>fastapi</code> (external library)</li>
+                    <li><code>sqlalchemy.orm</code> (external library)</li>
+                    <li><code>app.database.db</code> (for <code>get_db</code>)</li>
+                    <li><code>app.schemas.enrollment_schema</code></li>
+                    <li><code>app.schemas.std_schema</code></li>
+                    <li><code>app.schemas.crs_schema</code></li>
+                    <li><code>app.crud.enrollment_crud</code></li>
+                    <li><code>app.crud.student_crud</code> (for fetching student details in <code>get_student_courses</code>)</li>
+                    <li><code>app.crud.crs_crud</code> (for fetching course details in <code>get_course_students</code>)</li>
+                </ul>
+            </li>
+            <li><strong>Imported By (Dependents):</strong>
+                <ul>
+                    <li><code>app/main.py</code></li>
+                </ul>
+            </li>
+            <li><strong>Impact of Change:</strong> Changes here will impact the API's behavior for enrollment operations and how <code>main.py</code> includes this router.</li>
+        </ul>
+
+        <hr>
+
+        <h2>18. <code>app/main.py</code></h2>
+        <ul>
+            <li><strong>Purpose:</strong> The main FastAPI application instance. Connects all routers, initializes the database tables.</li>
+            <li><strong>Depends On (Imports):</strong>
+                <ul>
+                    <li><code>fastapi</code> (external library)</li>
+                    <li><code>app.database.db</code> (for <code>Base</code>, <code>engine</code>)</li>
+                    <li><code>app.routers.std_router</code></li>
+                    <li><code>app.routers.tchr_router</code></li>
+                    <li><code>app.routers.crs_router</code></li>
+                    <li><code>app.routers.enrollment_router</code></li>
+                    <li><code>app.models.students</code> (implicitly imports all other models due to <code>Base.metadata.create_all</code>)</li>
+                    <li><code>app.models.teachers</code></li>
+                    <li><code>app.models.courses</code></li>
+                    <li><code>app.models.associations</code></li>
+                </ul>
+            </li>
+            <li><strong>Imported By (Dependents):</strong>
+                <ul>
+                    <li>(No other files in the <code>app</code> directory directly import <code>main.py</code>)</li>
+                </ul>
+            </li>
+            <li><strong>Impact of Change:</strong> Changes here affect the overall application startup, which API endpoints are available, and how the database is initialized. This is the top-level orchestrator.</li>
+        </ul>
+
+        <hr>
+
+        <h3>General Principles for Changes:</h3>
+        <ul>
+            <li><strong>Changes in <code>models/</code> or <code>schemas/</code>:</strong> These are usually propagated "upwards" to <code>crud/</code> functions and then to <code>routers/</code>. If you change an ORM model, you <strong>must</strong> update its corresponding Pydantic schema and any CRUD functions or router endpoints that use it. Model changes often imply database migrations (though for SQLite in development, you might just delete <code>std_tchr.db</code> and let <code>Base.metadata.create_all</code> rebuild).</li>
+            <li><strong>Changes in <code>crud/</code>:</strong> These are propagated to the <code>routers/</code> that call them. If a CRUD function changes its signature or return type, the router calling it must be updated.</li>
+            <li><strong>Changes in <code>routers/</code>:</strong> These affect the API's exposed endpoints and how they behave. No other Python files within the project <em>depend</em> on a router, but your API consumers (frontends, other services) do.</li>
+            <li><strong>Changes in <code>database/db.py</code>:</strong> These are foundational and impact almost everything. Tread carefully here.</li>
+        </ul>
+    </div>
+</body>
+</html>

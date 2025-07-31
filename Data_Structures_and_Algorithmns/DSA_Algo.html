@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algorithm Learning Resources</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f2f5;
+            color: #333;
+        }
+        .container {
+            max-width: 960px;
+            margin: 20px auto;
+            background: #ffffff;
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2.5em;
+            font-weight: 600;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 8px;
+        }
+        h3 {
+            color: #555;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+        .algorithm-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            background-color: #fdfdfd;
+            transition: all 0.3s ease;
+        }
+        .algorithm-section:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border-color: #a0a0a0;
+        }
+        .resource-list {
+            list-style: none; /* Remove default bullet */
+            padding: 0;
+            margin-left: 15px;
+        }
+        .resource-list li {
+            margin-bottom: 8px;
+            position: relative;
+            padding-left: 25px; /* Space for custom bullet */
+        }
+        .resource-list li::before {
+            content: '🔗'; /* Custom bullet icon */
+            position: absolute;
+            left: 0;
+            color: #3498db;
+            font-size: 1.1em;
+            line-height: 1.6; /* Align with text */
+        }
+        .resource-list li a {
+            color: #007bff;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        .resource-list li a:hover {
+            color: #0056b3;
+            text-decoration: underline;
+        }
+        .note {
+            font-style: italic;
+            color: #777;
+            margin-top: 5px;
+            display: block; /* Ensures it's on its own line */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Essential Algorithm Learning Resources</h1>
+
+        <section class="algorithm-section">
+            <h2>Search Algorithms</h2>
+            <h3>Linear Search</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/linear-search/" target="_blank">GeeksforGeeks</a></li>
+                <li><a href="https://www.programiz.com/dsa/linear-search" target="_blank">Programiz</a></li>
+                <li><span class="note">For video explanations, search "Linear Search Algorithm" on YouTube.</span></li>
+            </ul>
+
+            <h3>Binary Search</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/binary-search/" target="_blank">GeeksforGeeks</a></li>
+                <li><a href="https://www.programiz.com/dsa/binary-search" target="_blank">Programiz</a></li>
+                <li><span class="note">For video explanations, search "Binary Search Algorithm" on YouTube.</span></li>
+            </ul>
+        </section>
+
+        <section class="algorithm-section">
+            <h2>Sorting Algorithms</h2>
+            <h3>Bubble Sort</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/bubble-sort/" target="_blank">GeeksforGeeks</a></li>
+                <li><a href="https://www.programiz.com/dsa/bubble-sort" target="_blank">Programiz</a></li>
+                <li><span class="note">For video explanations, search "Bubble Sort Algorithm" on YouTube.</span></li>
+            </ul>
+
+            <h3>Selection Sort</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/selection-sort/" target="_blank">GeeksforGeeks</a></li>
+                <li><a href="https://www.programiz.com/dsa/selection-sort" target="_blank">Programiz</a></li>
+                <li><span class="note">For video explanations, search "Selection Sort Algorithm" on YouTube.</span></li>
+            </ul>
+
+            <h3>Insertion Sort</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/insertion-sort/" target="_blank">GeeksforGeeks</a></li>
+                <li><a href="https://www.programiz.com/dsa/insertion-sort" target="_blank">Programiz</a></li>
+                <li><span class="note">For video explanations, search "Insertion Sort Algorithm" on YouTube.</span></li>
+            </ul>
+
+            <h3>Merge Sort</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/merge-sort/" target="_blank">GeeksforGeeks</a></li>
+                <li><a href="https://www.programiz.com/dsa/merge-sort" target="_blank">Programiz</a></li>
+                <li><span class="note">For video explanations, search "Merge Sort Algorithm" on YouTube.</span></li>
+            </ul>
+
+            <h3>Quick Sort</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/quick-sort/" target="_blank">GeeksforGeeks</a></li>
+                <li><a href="https://www.programiz.com/dsa/quick-sort" target="_blank">Programiz</a></li>
+                <li><span class="note">For video explanations, search "Quick Sort Algorithm" on YouTube.</span></li>
+            </ul>
+        </section>
+
+        <section class="algorithm-section">
+            <h2>Recursion & Backtracking Basics</h2>
+            <h3>Factorial / Fibonacci (Recursive)</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/program-for-factorial-of-a-number/" target="_blank">GeeksforGeeks (Factorial)</a></li>
+                <li><a href="https://www.geeksforgeeks.org/program-for-nth-fibonacci-number/" target="_blank">GeeksforGeeks (Fibonacci)</a></li>
+                <li><a href="https://www.programiz.com/java-programming/recursion" target="_blank">Programiz (Recursion Tutorial)</a></li>
+                <li><span class="note">For video explanations, search "Factorial Recursion" or "Fibonacci Recursion" on YouTube.</span></li>
+            </ul>
+
+            <h3>Backtracking Basics (Subsets, Permutations)</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/introduction-to-backtracking-algorithm/" target="_blank">GeeksforGeeks (Backtracking Intro)</a></li>
+                <li><span class="note">For specific examples, search "Backtracking Subsets" or "Backtracking Permutations" on YouTube and LeetCode.</span></li>
+            </ul>
+        </section>
+
+        <section class="algorithm-section">
+            <h2>Two Pointers & Sliding Window</h2>
+            <h3>Two Pointers Technique</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/two-pointers-technique/" target="_blank">GeeksforGeeks</a></li>
+                <li><span class="note">For video explanations, search "Two Pointers Algorithm" on YouTube.</span></li>
+            </ul>
+
+            <h3>Sliding Window (Fixed/Variable size)</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/window-sliding-technique/" target="_blank">GeeksforGeeks</a></li>
+                <li><span class="note">For video explanations, search "Sliding Window Algorithm" on YouTube.</span></li>
+            </ul>
+        </section>
+
+        <section class="algorithm-section">
+            <h2>Hashing</h2>
+            <h3>Hash Maps / Sets</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/hashing-data-structure/" target="_blank">GeeksforGeeks (Hash Map)</a></li>
+                <li><a href="https://www.geeksforgeeks.org/set-in-cpp-stl/" target="_blank">GeeksforGeeks (Hash Set - C++ concept, general principles apply)</a></li>
+                <li><span class="note">For video explanations, search "Hash Map Data Structure" or "Hash Set Data Structure" on YouTube.</span></li>
+            </ul>
+        </section>
+
+        <section class="algorithm-section">
+            <h2>Greedy Algorithms</h2>
+            <h3>Activity Selection Problem</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/activity-selection-problem-greedy-algo-1/" target="_blank">GeeksforGeeks</a></li>
+                <li><span class="note">For video explanations, search "Activity Selection Problem" on YouTube.</span></li>
+            </ul>
+
+            <h3>Fractional Knapsack</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/fractional-knapsack-problem/" target="_blank">GeeksforGeeks</a></li>
+                <li><span class="note">For video explanations, search "Fractional Knapsack Problem" on YouTube.</span></li>
+            </ul>
+
+            <h3>Job Sequencing</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/job-sequencing-problem/" target="_blank">GeeksforGeeks</a></li>
+                <li><span class="note">For video explanations, search "Job Sequencing Problem" on YouTube.</span></li>
+            </ul>
+
+            <h3>Huffman Encoding</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/huffman-coding-greedy-algo-3/" target="_blank">GeeksforGeeks</a></li>
+                <li><span class="note">For video explanations, search "Huffman Encoding" on YouTube.</span></li>
+            </ul>
+        </section>
+
+        <section class="algorithm-section">
+            <h2>Binary Search Variants</h2>
+            <h3>Lower Bound / Upper Bound</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/binary-search-for-lower-bound-and-upper-bound/" target="_blank">GeeksforGeeks</a></li>
+                <li><span class="note">For video explanations, search "Lower Bound Binary Search" or "Upper Bound Binary Search" on YouTube.</span></li>
+            </ul>
+
+            <h3>Binary Search on Answer</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/binary-search-on-answer/" target="_blank">GeeksforGeeks</a></li>
+                <li><span class="note">For video explanations, search "Binary Search on Answer" on YouTube.</span></li>
+            </ul>
+        </section>
+
+        <section class="algorithm-section">
+            <h2>Advanced Backtracking</h2>
+            <h3>N-Queens</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/n-queen-problem-backtracking-3/" target="_blank">GeeksforGeeks</a></li>
+                <li><span class="note">For video explanations, search "N-Queens Problem Backtracking" on YouTube.</span></li>
+            </ul>
+
+            <h3>Sudoku Solver</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/sudoku-backtracking-algorithm/" target="_blank">GeeksforGeeks</a></li>
+                <li><span class="note">For video explanations, search "Sudoku Solver Backtracking" on YouTube.</span></li>
+            </ul>
+
+            <h3>Rat in a Maze</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/rat-in-a-maze-backtracking-2/" target="_blank">GeeksforGeeks</a></li>
+                <li><span class="note">For video explanations, search "Rat in a Maze Backtracking" on YouTube.</span></li>
+            </ul>
+        </section>
+
+        <section class="algorithm-section">
+            <h2>Dynamic Programming (DP)</h2>
+            <h3>0/1 Knapsack</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/0-1-knapsack-problem-dp-10/" target="_blank">GeeksforGeeks</a></li>
+                <li><span class="note">For video explanations, search "0/1 Knapsack Dynamic Programming" on YouTube.</span></li>
+            </ul>
+
+            <h3>Longest Common Subsequence (LCS)</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/longest-common-subsequence-dp-4/" target="_blank">GeeksforGeeks</a></li>
+                <li><span class="note">For video explanations, search "Longest Common Subsequence DP" on YouTube.</span></li>
+            </ul>
+
+            <h3>Longest Increasing Subsequence (LIS)</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/longest-increasing-subsequence-dp-3/" target="_blank">GeeksforGeeks</a></li>
+                <li><span class="note">For video explanations, search "Longest Increasing Subsequence DP" on YouTube.</span></li>
+            </ul>
+
+            <h3>Matrix Chain Multiplication</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/matrix-chain-multiplication-dp-8/" target="_blank">GeeksforGeeks</a></li>
+                <li><span class="note">For video explanations, search "Matrix Chain Multiplication DP" on YouTube.</span></li>
+            </ul>
+
+            <h3>Subset Sum / Partition</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/subset-sum-problem-dp-25/" target="_blank">GeeksforGeeks (Subset Sum)</a></li>
+                <li><a href="https://www.geeksforgeeks.org/partition-problem-dp-18/" target="_blank">GeeksforGeeks (Partition Problem)</a></li>
+                <li><span class="note">For video explanations, search "Subset Sum Problem DP" on YouTube.</span></li>
+            </ul>
+
+            <h3>Edit Distance</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/edit-distance-dp-5/" target="_blank">GeeksforGeeks</a></li>
+                <li><span class="note">For video explanations, search "Edit Distance DP" on YouTube.</span></li>
+            </ul>
+
+            <h3>DP with Memoization and Tabulation</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/memoization-1d-2d-and-nd-arrays-c/" target="_blank">GeeksforGeeks (Memoization)</a></li>
+                <li><a href="https://www.geeksforgeeks.org/tabulation-vs-memoization/" target="_blank">GeeksforGeeks (Tabulation)</a></li>
+                <li><span class="note">For video explanations, search "Dynamic Programming Memoization vs Tabulation" on YouTube.</span></li>
+            </ul>
+        </section>
+
+        <section class="algorithm-section">
+            <h2>Graph Algorithms</h2>
+            <h3>Breadth-First Search (BFS)</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/breadth-first-search-or-bfs-for-a-graph/" target="_blank">GeeksforGeeks</a></li>
+                <li><a href="https://www.programiz.com/dsa/graph-bfs" target="_blank">Programiz</a></li>
+                <li><span class="note">For video explanations, search "Breadth-First Search Algorithm" on YouTube.</span></li>
+            </ul>
+
+            <h3>Depth-First Search (DFS)</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/depth-first-search-or-dfs-for-a-graph/" target="_blank">GeeksforGeeks</a></li>
+                <li><a href="https://www.programiz.com/dsa/graph-dfs" target="_blank">Programiz</a></li>
+                <li><span class="note">For video explanations, search "Depth-First Search Algorithm" on YouTube.</span></li>
+            </ul>
+
+            <h3>Topological Sort</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/topological-sorting/" target="_blank">GeeksforGeeks</a></li>
+                <li><span class="note">For video explanations, search "Topological Sort Algorithm" on YouTube.</span></li>
+            </ul>
+
+            <h3>Dijkstra’s Algorithm</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/dijkstras-shortest-path-algorithm-greedy-algo-7/" target="_blank">GeeksforGeeks</a></li>
+                <li><span class="note">For video explanations, search "Dijkstra's Algorithm" on YouTube.</span></li>
+            </ul>
+
+            <h3>Prim’s Algorithm</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/prims-algorithm-greedy-algo-mst/" target="_blank">GeeksforGeeks</a></li>
+                <li><span class="note">For video explanations, search "Prim's Algorithm" on YouTube.</span></li>
+            </ul>
+
+            <h3>Kruskal’s Algorithm</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/kruskals-minimum-spanning-tree-algorithm-greedy-algo-2/" target="_blank">GeeksforGeeks</a></li>
+                <li><span class="note">For video explanations, search "Kruskal's Algorithm" on YouTube.</span></li>
+            </ul>
+
+            <h3>Union-Find / Disjoint Set</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/disjoint-set-data-structures/" target="_blank">GeeksforGeeks</a></li>
+                <li><span class="note">For video explanations, search "Union Find Data Structure" on YouTube.</span></li>
+            </ul>
+
+            <h3>Bellman-Ford</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/bellman-ford-algorithm/" target="_blank">GeeksforGeeks</a></li>
+                <li><span class="note">For video explanations, search "Bellman-Ford Algorithm" on YouTube.</span></li>
+            </ul>
+
+            <h3>Floyd-Warshall</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/floyd-warshall-algorithm-dp-16/" target="_blank">GeeksforGeeks</a></li>
+                <li><span class="note">For video explanations, search "Floyd-Warshall Algorithm" on YouTube.</span></li>
+            </ul>
+
+            <h3>Cycle Detection in Graphs (Directed/Undirected)</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/detect-cycle-in-a-directed-graph/" target="_blank">GeeksforGeeks (Directed)</a></li>
+                <li><a href="https://www.geeksforgeeks.org/detect-cycle-undirected-graph/" target="_blank">GeeksforGeeks (Undirected)</a></li>
+                <li><span class="note">For video explanations, search "Cycle Detection in Graph" on YouTube.</span></li>
+            </ul>
+        </section>
+
+        <section class="algorithm-section">
+            <h2>String Algorithms</h2>
+            <h3>Trie (Prefix Tree)</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/trie-insert-and-search/" target="_blank">GeeksforGeeks</a></li>
+                <li><span class="note">For video explanations, search "Trie Data Structure" on YouTube.</span></li>
+            </ul>
+
+            <h3>KMP Algorithm</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/kmp-algorithm-for-pattern-searching/" target="_blank">GeeksforGeeks</a></li>
+                <li><span class="note">For video explanations, search "KMP Algorithm" on YouTube.</span></li>
+            </ul>
+
+            <h3>Z-Algorithm</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/z-algorithm-linear-time-pattern-searching-algorithm/" target="_blank">GeeksforGeeks</a></li>
+                <li><span class="note">For video explanations, search "Z-Algorithm" on YouTube.</span></li>
+            </ul>
+
+            <h3>Rabin-Karp (Optional)</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/rabin-karp-algorithm-for-pattern-searching/" target="_blank">GeeksforGeeks</a></li>
+                <li><span class="note">For video explanations, search "Rabin-Karp Algorithm" on YouTube.</span></li>
+            </ul>
+        </section>
+
+        <section class="algorithm-section">
+            <h2>Advanced Trees and Data Structures</h2>
+            <h3>Segment Tree</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/segment-tree-set-1-range-minimum-query/" target="_blank">GeeksforGeeks</a></li>
+                <li><span class="note">For video explanations, search "Segment Tree Data Structure" on YouTube.</span></li>
+            </ul>
+
+            <h3>Fenwick Tree (Binary Indexed Tree)</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/binary-indexed-tree-or-fenwick-tree-2/" target="_blank">GeeksforGeeks</a></li>
+                <li><span class="note">For video explanations, search "Fenwick Tree" on YouTube.</span></li>
+            </ul>
+
+            <h3>Lazy Propagation</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/lazy-propagation-in-segment-tree/" target="_blank">GeeksforGeeks</a></li>
+                <li><span class="note">For video explanations, search "Lazy Propagation Segment Tree" on YouTube.</span></li>
+            </ul>
+
+            <h3>Lowest Common Ancestor (LCA)</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/lowest-common-ancestor-in-a-binary-tree/" target="_blank">GeeksforGeeks</a></li>
+                <li><span class="note">For video explanations, search "Lowest Common Ancestor" on YouTube.</span></li>
+            </ul>
+
+            <h3>AVL Tree / Red-Black Tree (Theory)</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/avl-tree-set-1-insertion/" target="_blank">GeeksforGeeks (AVL Tree)</a></li>
+                <li><a href="https://www.geeksforgeeks.org/red-black-tree-set-1-introduction-2/" target="_blank">GeeksforGeeks (Red-Black Tree)</a></li>
+                <li><span class="note">For video explanations, search "AVL Tree Data Structure" or "Red-Black Tree Data Structure" on YouTube.</span></li>
+            </ul>
+        </section>
+
+        <section class="algorithm-section">
+            <h2>Bit Manipulation</h2>
+            <h3>Count Set Bits</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/count-set-bits-in-an-integer/" target="_blank">GeeksforGeeks</a></li>
+                <li><span class="note">For video explanations, search "Count Set Bits" on YouTube.</span></li>
+            </ul>
+
+            <h3>XOR Tricks</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/xor-trick-a-bit-manipulation-concept/" target="_blank">GeeksforGeeks</a></li>
+                <li><span class="note">For video explanations, search "XOR Tricks Bit Manipulation" on YouTube.</span></li>
+            </ul>
+
+            <h3>Power of 2 / Odd-Even Checks</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/check-if-a-number-is-power-of-2/" target="_blank">GeeksforGeeks (Power of 2)</a></li>
+                <li><a href="https://www.geeksforgeeks.org/check-if-a-number-is-odd-or-even-using-bitwise-operators/" target="_blank">GeeksforGeeks (Odd-Even)</a></li>
+                <li><span class="note">For video explanations, search "Power of 2 Bit Manipulation" or "Odd Even Bit Manipulation" on YouTube.</span></li>
+            </ul>
+
+            <h3>Subsets using Bits</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/power-set/" target="_blank">GeeksforGeeks (Power Set using bit manipulation)</a></li>
+                <li><span class="note">For video explanations, search "Subsets using Bit Manipulation" on YouTube.</span></li>
+            </ul>
+        </section>
+
+        <section class="algorithm-section">
+            <h2>Bonus: Advanced / Competitive Programming Algorithms</h2>
+            <h3>Mo’s Algorithm</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/mos-algorithm/" target="_blank">GeeksforGeeks</a></li>
+                <li><span class="note">For video explanations, search "Mo's Algorithm" on YouTube.</span></li>
+            </ul>
+
+            <h3>Heavy-Light Decomposition (HLD)</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/heavy-light-decomposition/" target="_blank">GeeksforGeeks</a></li>
+                <li><span class="note">For video explanations, search "Heavy Light Decomposition" on YouTube.</span></li>
+            </ul>
+
+            <h3>Centroid Decomposition</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/centroid-decomposition-of-a-tree/" target="_blank">GeeksforGeeks</a></li>
+                <li><span class="note">For video explanations, search "Centroid Decomposition" on YouTube.</span></li>
+            </ul>
+
+            <h3>Fast Fourier Transform (FFT)</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/fast-fourier-transform-fft-algorithm/" target="_blank">GeeksforGeeks</a></li>
+                <li><span class="note">For video explanations, search "Fast Fourier Transform" on YouTube.</span></li>
+            </ul>
+
+            <h3>Matrix Exponentiation</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/matrix-exponentiation/" target="_blank">GeeksforGeeks</a></li>
+                <li><span class="note">For video explanations, search "Matrix Exponentiation" on YouTube.</span></li>
+            </ul>
+
+            <h3>Suffix Array / Suffix Tree</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/suffix-array-set-1-introduction/" target="_blank">GeeksforGeeks (Suffix Array)</a></li>
+                <li><a href="https://www.geeksforgeeks.org/suffix-tree-application-1/" target="_blank">GeeksforGeeks (Suffix Tree)</a></li>
+                <li><span class="note">For video explanations, search "Suffix Array" or "Suffix Tree" on YouTube.</span></li>
+            </ul>
+
+            <h3>Game Theory (Nim, Grundy Numbers)</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/introduction-to-game-theory/" target="_blank">GeeksforGeeks (Game Theory Intro)</a></li>
+                <li><a href="https://www.geeksforgeeks.org/grundy-numbers-nim-game/" target="_blank">GeeksforGeeks (Grundy Numbers)</a></li>
+                <li><span class="note">For video explanations, search "Nim Game Theory" or "Grundy Numbers" on YouTube.</span></li>
+            </ul>
+
+            <h3>Rolling Hash / Rabin-Karp</h3>
+            <ul class="resource-list">
+                <li><a href="https://www.geeksforgeeks.org/rolling-hash-string-hashing/" target="_blank">GeeksforGeeks (Rolling Hash)</a></li>
+                <li><a href="https://www.geeksforgeeks.org/rabin-karp-algorithm-for-pattern-searching/" target="_blank">GeeksforGeeks (Rabin-Karp)</a></li>
+                <li><span class="note">For video explanations, search "Rolling Hash Algorithm" on YouTube.</span></li>
+            </ul>
+        </section>
+
+    </div>
+</body>
+</html>

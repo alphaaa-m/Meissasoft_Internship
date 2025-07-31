@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Database Learning Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Chosen Palette: Calm Focus (Grays, Muted Teal/Cyan) -->
+    <!-- Application Structure Plan: A non-linear, SPA dashboard design. A persistent sidebar navigation allows users to jump to any topic instantly. The main content area dynamically displays the selected topic, preventing overwhelming the user with a single long page. This structure prioritizes user-directed exploration over the linear format of the source report. Key interactions include interactive charts for comparisons (e.g., ACID vs. BASE), dynamic diagrams for concepts (e.g., joins, normalization), and utility features like search and code-copying to enhance usability and learning retention. This modular, on-demand content display is more effective for both targeted learning and comprehensive study. -->
+    <!-- Visualization & Content Choices: The application uses a variety of interactive elements tailored to the learning objective of each section. Goal: Compare -> Use Chart.js bar/doughnut charts (e.g., RDBMS vs NoSQL, Isolation Levels). Goal: Explain complex structures -> Use interactive HTML/CSS diagrams (e.g., Joins, ERDs, Normal Forms) that respond to user clicks, which is more engaging than static images. Goal: Practical Application -> Provide formatted SQL code blocks with a one-click copy feature. Goal: Organize -> Use tabbed interfaces to neatly segment dense topics like SQL command types (DDL, DML). This approach makes the material more digestible and interactive, supporting the overall goal of efficient learning. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .sidebar-link {
+            transition: all 0.2s ease-in-out;
+        }
+        .sidebar-link.active {
+            background-color: #0d9488; /* teal-600 */
+            color: white;
+            transform: translateX(4px);
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .interactive-diagram-item {
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
+        .interactive-diagram-item:hover, .interactive-diagram-item.selected {
+            transform: scale(1.05);
+            box-shadow: 0 4px 14px 0 rgba(0, 150, 136, 0.38);
+            border-color: #0d9488;
+        }
+        pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="w-64 bg-gray-800 text-white p-4 space-y-2 fixed h-full overflow-y-auto">
+            <h1 class="text-2xl font-bold text-teal-400 mb-4">Database Hub</h1>
+            <input type="text" id="searchInput" placeholder="Search topics..." class="w-full p-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-teal-500">
+            <nav id="sidebarNav" class="mt-4 space-y-1"></nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="ml-64 p-4 md:p-8 w-full">
+            <div id="content-container">
+                <!-- Content will be injected here -->
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        // Helper function for creating code blocks
+        function createCodeBlock(code, description) {
+            const id = `code-${Math.random().toString(36).substr(2, 9)}`;
+            return `
+                <div class="bg-gray-800 rounded-lg shadow-md">
+                    <div class="p-4">
+                        <p class="text-sm text-gray-300 mb-2">${description}</p>
+                        <div class="bg-gray-900 p-4 rounded relative">
+                            <pre><code id="${id}" class="text-white font-mono text-sm">${escapeHtml(code)}</code></pre>
+                            <button onclick="copyCode('${id}')" class="absolute top-2 right-2 bg-teal-500 text-white px-2 py-1 rounded text-xs hover:bg-teal-600">Copy</button>
+                        </div>
+                    </div>
+                </div>`;
+        }
+
+        // Global function for copying code
+        window.copyCode = function(elementId) {
+            const codeElement = document.getElementById(elementId);
+            const textToCopy = codeElement.innerText;
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = textToCopy;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+            alert('Code copied to clipboard!');
+        }
+        
+        // Helper function to escape HTML for code blocks
+        function escapeHtml(unsafe) {
+            return unsafe
+                 .replace(/&/g, "&amp;")
+                 .replace(/</g, "&lt;")
+                 .replace(/>/g, "&gt;")
+                 .replace(/"/g, "&quot;")
+                 .replace(/'/g, "&#039;");
+        }
+
+        const contentData = {
+            "db-fundamentals": {
+                title: "Database Fundamentals",
+                intro: "Welcome to the fundamentals of databases. This section introduces the core concepts, defines what a database is, compares it to simple spreadsheets, and explains the basic terminology. Understanding these building blocks is the first step toward mastering more complex database topics.",
+                content: `
+                    <div class="space-y-8">
+                        <div>
+                            <h3 class="text-2xl font-semibold text-teal-700 mb-2">What is a Database?</h3>
+                            <p class="text-lg leading-relaxed">A database is an organized collection of structured information, or data, typically stored electronically in a computer system. A database is usually controlled by a database management system (DBMS). Together, the data and the DBMS, along with the applications that are associated with them, are referred to as a database system.</p>
+                        </div>
+
+                        <div>
+                            <h3 class="text-2xl font-semibold text-teal-700 mb-2">Database vs. Spreadsheet</h3>
+                            <p class="text-lg leading-relaxed mb-4">While both can store data in a tabular format, databases offer significant advantages in terms of scalability, data integrity, security, and multi-user access. Spreadsheets are excellent for single-user, small-scale data management, but databases are essential for building robust applications.</p>
+                            <div class="overflow-x-auto">
+                                <table class="w-full min-w-max text-left border border-gray-200 rounded-lg">
+                                    <thead class="bg-gray-100">
+                                        <tr>
+                                            <th class="p-4 font-semibold">Feature</th>
+                                            <th class="p-4 font-semibold">Spreadsheet</th>
+                                            <th class="p-4 font-semibold">Database</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200">
+                                        <tr><td class="p-4">Scalability</td><td class="p-4">Poor for large data</td><td class="p-4">Excellent, handles millions of records</td></tr>
+                                        <tr><td class="p-4">Data Integrity</td><td class="p-4">Low (no strict rules)</td><td class="p-4">High (enforced by schema)</td></tr>
+                                        <tr><td class="p-4">Multi-User Access</td><td class="p-4">Difficult and prone to conflict</td><td class="p-4">Designed for concurrency</td></tr>
+                                        <tr><td class="p-4">Relationships</td><td class="p-4">Limited to simple links</td><td class="p-4">Manages complex relationships</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-2xl font-semibold text-teal-700 mb-2">Database Terminology</h3>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div class="bg-white p-4 rounded-lg shadow"><strong>Table:</strong> A collection of related data held in a table format within a database.</div>
+                                <div class="bg-white p-4 rounded-lg shadow"><strong>Record (Row/Tuple):</strong> A single entry in a table, representing a set of related data.</div>
+                                <div class="bg-white p-4 rounded-lg shadow"><strong>Field (Column/Attribute):</strong> A single piece of data in a record, defining a specific characteristic.</div>
+                                <div class="bg-white p-4 rounded-lg shadow"><strong>Schema:</strong> The blueprint of the database that defines the tables, fields, relationships, and constraints.</div>
+                            </div>
+                        </div>
+
+                        <div>
+                             <h3 class="text-2xl font-semibold text-teal-700 mb-4 text-center">High-Level Database Types</h3>
+                             <div class="chart-container"><canvas id="dbTypesChart"></canvas></div>
+                        </div>
+                    </div>
+                `
+            },
+            "sql-basics": {
+                title: "Relational Databases & SQL",
+                intro: "This section covers the heart of relational databases: Structured Query Language (SQL). We'll break down SQL into its main components—DDL, DML, DCL, and TCL—and provide practical examples for each. Use the tabs to explore the different types of SQL commands.",
+                content: `
+                    <div class="space-y-8">
+                        <div id="sql-tabs">
+                            <div class="flex border-b border-gray-300">
+                                <button data-target="ddl" class="sql-tab-btn p-4 font-semibold border-b-2 border-teal-500">DDL</button>
+                                <button data-target="dml" class="sql-tab-btn p-4 font-semibold text-gray-500">DML</button>
+                                <button data-target="dcl" class="sql-tab-btn p-4 font-semibold text-gray-500">DCL</button>
+                                <button data-target="tcl" class="sql-tab-btn p-4 font-semibold text-gray-500">TCL</button>
+                            </div>
+                            <div class="mt-4">
+                                <div id="ddl" class="sql-tab-content space-y-4">
+                                    <h4 class="text-xl font-semibold">Data Definition Language (DDL)</h4>
+                                    <p>DDL commands are used to define and manage the database structure (schema).</p>
+                                    ${createCodeBlock('CREATE TABLE Employees (id INT, name VARCHAR(100));', 'CREATE: Used to build new database objects.')}
+                                    ${createCodeBlock('ALTER TABLE Employees ADD COLUMN salary INT;', 'ALTER: Used to modify existing database objects.')}
+                                    ${createCodeBlock('DROP TABLE Employees;', 'DROP: Used to permanently delete database objects.')}
+                                </div>
+                                <div id="dml" class="sql-tab-content hidden space-y-4">
+                                    <h4 class="text-xl font-semibold">Data Manipulation Language (DML)</h4>
+                                    <p>DML commands are used to manage the data within the tables.</p>
+                                    ${createCodeBlock("SELECT name, salary FROM Employees WHERE salary > 50000;", 'SELECT: Retrieves data from the database.')}
+                                    ${createCodeBlock("INSERT INTO Employees (id, name) VALUES (1, 'John Doe');", 'INSERT: Adds new data into a table.')}
+                                    ${createCodeBlock("UPDATE Employees SET salary = 60000 WHERE id = 1;", 'UPDATE: Modifies existing data.')}
+                                    ${createCodeBlock("DELETE FROM Employees WHERE id = 1;", 'DELETE: Removes data from a table.')}
+                                </div>
+                                <div id="dcl" class="sql-tab-content hidden space-y-4">
+                                    <h4 class="text-xl font-semibold">Data Control Language (DCL)</h4>
+                                    <p>DCL commands are used to control access and permissions to the database.</p>
+                                    ${createCodeBlock("GRANT SELECT ON Employees TO user_name;", 'GRANT: Gives a specific user permissions.')}
+                                    ${createCodeBlock("REVOKE SELECT ON Employees FROM user_name;", 'REVOKE: Takes away permissions from a user.')}
+                                </div>
+                                <div id="tcl" class="sql-tab-content hidden space-y-4">
+                                    <h4 class="text-xl font-semibold">Transaction Control Language (TCL)</h4>
+                                    <p>TCL commands are used to manage transactions in the database.</p>
+                                    ${createCodeBlock("COMMIT;", 'COMMIT: Saves all the work done in a transaction.')}
+                                    ${createCodeBlock("ROLLBACK;", 'ROLLBACK: Undoes changes from a transaction.')}
+                                    ${createCodeBlock("SAVEPOINT my_savepoint;", 'SAVEPOINT: Sets a point within a transaction to which you can later roll back.')}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            "sql-joins": {
+                title: "SQL Joins",
+                intro: "Joins are a fundamental concept in SQL, used to combine rows from two or more tables based on a related column. This interactive diagram helps visualize how different types of joins work. Click on a join type to see which parts of the data are included.",
+                content: `
+                    <div class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                            <div>
+                                <h3 class="text-2xl font-semibold text-teal-700 mb-4">Visualizing Joins</h3>
+                                <div class="flex justify-center items-center space-x-[-40px] h-48">
+                                    <div id="join-circle-left" class="w-40 h-40 rounded-full bg-blue-300 opacity-70 flex items-center justify-center font-bold text-xl text-blue-800 transition-all duration-300">Table A</div>
+                                    <div id="join-circle-right" class="w-40 h-40 rounded-full bg-pink-300 opacity-70 flex items-center justify-center font-bold text-xl text-pink-800 transition-all duration-300">Table B</div>
+                                </div>
+                                <div class="mt-6 flex flex-wrap justify-center gap-2">
+                                    <button class="join-btn bg-gray-200 p-2 rounded-lg" data-join="inner">INNER JOIN</button>
+                                    <button class="join-btn bg-gray-200 p-2 rounded-lg" data-join="left">LEFT JOIN</button>
+                                    <button class="join-btn bg-gray-200 p-2 rounded-lg" data-join="right">RIGHT JOIN</button>
+                                    <button class="join-btn bg-gray-200 p-2 rounded-lg" data-join="full">FULL OUTER JOIN</button>
+                                </div>
+                            </div>
+                            <div id="join-explanation" class="bg-white p-6 rounded-lg shadow-md">
+                                <h4 class="text-xl font-semibold mb-2">Select a Join Type</h4>
+                                <p>Click a button to see how the join works and read its description here.</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            "db-design": {
+                title: "Database Design",
+                intro: "Effective database design is crucial for building scalable and maintainable systems. This section covers key design principles, including Entity-Relationship Diagrams (ERDs) and Normalization. Explore the interactive elements to understand these concepts visually.",
+                content: `
+                    <div class="space-y-12">
+                        <div>
+                            <h3 class="text-2xl font-semibold text-teal-700 mb-4">Entity-Relationship Diagrams (ERD)</h3>
+                            <p class="mb-4">An ERD is a visual blueprint of a database. It shows entities (tables), their attributes (columns), and the relationships between them.</p>
+                            <div class="p-4 border border-gray-200 rounded-lg bg-white shadow-sm">
+                                <div class="flex flex-col md:flex-row md:items-center md:space-x-4">
+                                    <!-- ERD Entity 1 -->
+                                    <div class="border-2 border-blue-500 rounded p-4 text-center">
+                                        <h4 class="font-bold">Customers</h4>
+                                        <hr class="my-2">
+                                        <p><u>CustomerID (PK)</u></p>
+                                        <p>Name</p>
+                                        <p>Email</p>
+                                    </div>
+                                    <!-- ERD Relationship -->
+                                    <div class="text-center font-mono my-2 md:my-0">&lt;-- places --&gt;</div>
+                                    <!-- ERD Entity 2 -->
+                                    <div class="border-2 border-green-500 rounded p-4 text-center">
+                                        <h4 class="font-bold">Orders</h4>
+                                        <hr class="my-2">
+                                        <p><u>OrderID (PK)</u></p>
+                                        <p>OrderDate</p>
+                                        <p>CustomerID (FK)</p>
+                                    </div>
+                                </div>
+                                <p class="text-center mt-4 text-sm text-gray-600">This diagram shows a one-to-many relationship: one customer can place many orders.</p>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-2xl font-semibold text-teal-700 mb-4">Normalization</h3>
+                            <p class="mb-4">Normalization is the process of organizing data to reduce redundancy and improve data integrity. Click through the normal forms to see how a table is refined.</p>
+                            <div id="norm-container" class="space-y-4">
+                                <!-- Normalization content will be generated here -->
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            "nosql-db": {
+                title: "NoSQL Databases",
+                intro: "NoSQL ('Not Only SQL') databases provide flexible alternatives to the traditional relational model. They are ideal for big data, real-time applications, and unstructured data. This section explores the main types of NoSQL databases and key theoretical concepts like the CAP Theorem.",
+                content: `
+                    <div class="space-y-12">
+                         <div>
+                             <h3 class="text-2xl font-semibold text-teal-700 mb-4 text-center">Comparing NoSQL Database Types</h3>
+                             <div class="chart-container"><canvas id="noSqlChart"></canvas></div>
+                             <p class="text-center text-sm text-gray-600 mt-2">A comparison of common NoSQL models based on key characteristics.</p>
+                         </div>
+                         
+                         <div>
+                            <h3 class="text-2xl font-semibold text-teal-700 mb-4">The CAP Theorem</h3>
+                            <p class="mb-4">In distributed systems, the CAP theorem states that it's impossible for a distributed data store to simultaneously provide more than two out of the following three guarantees: Consistency, Availability, and Partition Tolerance. Click a property to learn more.</p>
+                             <div class="flex justify-center space-x-4">
+                                <button data-cap="c" class="cap-btn p-4 rounded-lg bg-blue-200 text-blue-800 font-bold w-32 h-32 flex items-center justify-center text-center">Consistency</button>
+                                <button data-cap="a" class="cap-btn p-4 rounded-lg bg-green-200 text-green-800 font-bold w-32 h-32 flex items-center justify-center text-center">Availability</button>
+                                <button data-cap="p" class="cap-btn p-4 rounded-lg bg-yellow-200 text-yellow-800 font-bold w-32 h-32 flex items-center justify-center text-center">Partition Tolerance</button>
+                             </div>
+                             <div id="cap-explanation" class="mt-6 bg-white p-6 rounded-lg shadow-md min-h-[100px]">
+                                <h4 class="text-xl font-semibold mb-2">Select a Property</h4>
+                                <p>Click on C, A, or P to understand its role in distributed systems.</p>
+                            </div>
+                         </div>
+                    </div>
+                `
+            },
+        };
+
+        const joinExplanations = {
+            inner: { title: 'INNER JOIN', desc: 'Returns records that have matching values in both tables. This is the most common type of join.' },
+            left: { title: 'LEFT JOIN', desc: 'Returns all records from the left table (Table A), and the matched records from the right table (Table B). The result is NULL from the right side, if there is no match.' },
+            right: { title: 'RIGHT JOIN', desc: 'Returns all records from the right table (Table B), and the matched records from the left table (Table A). The result is NULL from the left side, if there is no match.' },
+            full: { title: 'FULL OUTER JOIN', desc: 'Returns all records when there is a match in either left or right table. It combines the results of both LEFT and RIGHT joins.' }
+        };
+
+        const capExplanations = {
+            c: { title: 'Consistency', desc: 'Every read receives the most recent write or an error. All nodes see the same data at the same time. Traditional relational databases like MySQL prioritize this.' },
+            a: { title: 'Availability', desc: 'Every request receives a (non-error) response, without the guarantee that it contains the most recent write. The system is always operational.' },
+            p: { title: 'Partition Tolerance', desc: 'The system continues to operate despite an arbitrary number of messages being dropped (or delayed) by the network between nodes. In modern distributed systems, this is a must-have.' },
+        };
+
+        const normSteps = [
+            {
+                level: "Unnormalized Form (UNF)",
+                desc: "Data is in its raw form, often with repeating groups and multiple values in a single cell, leading to redundancy and anomalies.",
+                table: `
+                    <table class="w-full text-left border border-red-300">
+                        <thead class="bg-red-100"><tr><th class="p-2"><u>ProjID</u></th><th class="p-2">ProjName</th><th class="p-2">Employees (ID, Name)</th></tr></thead>
+                        <tbody><tr><td class="p-2">101</td><td class="p-2">Apollo</td><td class="p-2">(1, Ann), (2, Bob)</td></tr><tr><td class="p-2">102</td><td class="p-2">Gemini</td><td class="p-2">(1, Ann), (3, Chris)</td></tr></tbody>
+                    </table>`
+            },
+            {
+                level: "First Normal Form (1NF)",
+                desc: "Rule: Ensure all columns contain atomic (indivisible) values. Repeating groups are eliminated.",
+                table: `
+                    <table class="w-full text-left border border-orange-300">
+                        <thead class="bg-orange-100"><tr><th class="p-2"><u>ProjID</u></th><th class="p-2">ProjName</th><th class="p-2"><u>EmpID</u></th><th class="p-2">EmpName</th></tr></thead>
+                        <tbody>
+                           <tr><td class="p-2">101</td><td class="p-2">Apollo</td><td class="p-2">1</td><td class="p-2">Ann</td></tr>
+                           <tr><td class="p-2">101</td><td class="p-2">Apollo</td><td class="p-2">2</td><td class="p-2">Bob</td></tr>
+                           <tr><td class="p-2">102</td><td class="p-2">Gemini</td><td class="p-2">1</td><td class="p-2">Ann</td></tr>
+                           <tr><td class="p-2">102</td><td class="p-2">3</td><td class="p-2">Chris</td></tr>
+                        </tbody>
+                    </table>`
+            },
+            {
+                level: "Second Normal Form (2NF)",
+                desc: "Rule: Must be in 1NF, and all non-key attributes must depend on the entire primary key (no partial dependencies). We separate out Project and Employee information.",
+                table: `
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <table class="w-full text-left border border-yellow-300"><thead class="bg-yellow-100"><tr><th class="p-2"><u>ProjID</u></th><th class="p-2">ProjName</th></tr></thead><tbody><tr><td class="p-2">101</td><td class="p-2">Apollo</td></tr><tr><td class="p-2">102</td><td class="p-2">Gemini</td></tr></tbody></table>
+                        <table class="w-full text-left border border-yellow-300"><thead class="bg-yellow-100"><tr><th class="p-2"><u>EmpID</u></th><th class="p-2">EmpName</th></tr></thead><tbody><tr><td class="p-2">1</td><td class="p-2">Ann</td></tr><tr><td class="p-2">2</td><td class="p-2">Bob</td></tr><tr><td class="p-2">3</td><td class="p-2">Chris</td></tr></tbody></table>
+                        <table class="w-full text-left border border-yellow-300 md:col-span-2"><thead class="bg-yellow-100"><tr><th class="p-2"><u>ProjID (FK)</u></th><th class="p-2"><u>EmpID (FK)</u></th></tr></thead><tbody><tr><td class="p-2">101</td><td class="p-2">1</td></tr><tr><td class="p-2">101</td><td class="p-2">2</td></tr><tr><td class="p-2">102</td><td class="p-2">1</td></tr><tr><td class="p-2">102</td><td class="p-2">3</td></tr></tbody></table>
+                    </div>`
+            },
+             {
+                level: "Third Normal Form (3NF)",
+                desc: "Rule: Must be in 2NF, and have no transitive dependencies (non-key attributes cannot depend on other non-key attributes). Our example is already in 3NF as there are no transitive dependencies.",
+                table: `<p class="text-green-600 font-semibold p-4 bg-green-50 rounded-lg">The tables from 2NF are already in 3NF as there are no transitive dependencies to resolve.</p>`
+            },
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const sidebarNav = document.getElementById('sidebarNav');
+            const contentContainer = document.getElementById('content-container');
+            const searchInput = document.getElementById('searchInput');
+
+            const sections = Object.keys(contentData);
+
+            function populateSidebar(filter = '') {
+                sidebarNav.innerHTML = '';
+                sections.forEach(id => {
+                    const section = contentData[id];
+                    if (section.title.toLowerCase().includes(filter.toLowerCase())) {
+                        const link = document.createElement('a');
+                        link.href = `#${id}`;
+                        link.textContent = section.title;
+                        link.className = 'sidebar-link block p-2 rounded hover:bg-gray-700';
+                        link.dataset.sectionId = id;
+                        sidebarNav.appendChild(link);
+                    }
+                });
+            }
+
+            function showSection(sectionId) {
+                const sectionData = contentData[sectionId];
+                if (!sectionData) return;
+
+                document.querySelectorAll('.sidebar-link').forEach(l => {
+                    l.classList.toggle('active', l.dataset.sectionId === sectionId);
+                });
+
+                contentContainer.innerHTML = `
+                    <section id="${sectionId}" class="content-section active">
+                        <h2 class="text-4xl font-bold mb-4 text-gray-800">${sectionData.title}</h2>
+                        <p class="text-xl text-gray-600 mb-8 leading-relaxed">${sectionData.intro}</p>
+                        ${sectionData.content}
+                    </section>
+                `;
+                
+                window.scrollTo(0, 0);
+                
+                if(sectionId === 'db-fundamentals') initDbTypesChart();
+                if(sectionId === 'sql-basics') initSqlTabs();
+                if(sectionId === 'sql-joins') initJoinVisualizer();
+                if(sectionId === 'db-design') initNormVisualizer();
+                if(sectionId === 'nosql-db') { initNoSqlChart(); initCapTheorem(); }
+            }
+
+            sidebarNav.addEventListener('click', e => {
+                e.preventDefault();
+                if (e.target.tagName === 'A') {
+                    const sectionId = e.target.dataset.sectionId;
+                    showSection(sectionId);
+                }
+            });
+
+            searchInput.addEventListener('input', (e) => {
+                populateSidebar(e.target.value);
+            });
+
+            function initDbTypesChart() {
+                const ctx = document.getElementById('dbTypesChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Relational (SQL)', 'Non-Relational (NoSQL)', 'Specialized'],
+                        datasets: [{
+                            label: 'Database Types',
+                            data: [45, 35, 20],
+                            backgroundColor: ['#2dd4bf', '#60a5fa', '#f87171'],
+                            borderColor: '#ffffff',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'top' },
+                            tooltip: { callbacks: { label: (c) => `${c.label}: ${c.raw}%` } }
+                        }
+                    }
+                });
+            }
+            
+            function initSqlTabs() {
+                const tabButtons = document.querySelectorAll('.sql-tab-btn');
+                const tabContents = document.querySelectorAll('.sql-tab-content');
+                tabButtons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        tabButtons.forEach(btn => {
+                            btn.classList.remove('border-teal-500');
+                            btn.classList.add('text-gray-500');
+                        });
+                        button.classList.add('border-teal-500');
+                        button.classList.remove('text-gray-500');
+                        
+                        tabContents.forEach(content => {
+                            content.classList.add('hidden');
+                        });
+                        document.getElementById(button.dataset.target).classList.remove('hidden');
+                    });
+                });
+            }
+
+            function initJoinVisualizer() {
+                const buttons = document.querySelectorAll('.join-btn');
+                const leftCircle = document.getElementById('join-circle-left');
+                const rightCircle = document.getElementById('join-circle-right');
+                const explanationDiv = document.getElementById('join-explanation');
+
+                buttons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        const joinType = button.dataset.join;
+                        
+                        buttons.forEach(b => b.classList.remove('bg-teal-500', 'text-white'));
+                        button.classList.add('bg-teal-500', 'text-white');
+
+                        leftCircle.className = 'w-40 h-40 rounded-full flex items-center justify-center font-bold text-xl transition-all duration-300';
+                        rightCircle.className = 'w-40 h-40 rounded-full flex items-center justify-center font-bold text-xl transition-all duration-300';
+                        
+                        if (joinType === 'inner') {
+                            leftCircle.classList.add('bg-blue-300', 'opacity-70', 'text-blue-800');
+                            rightCircle.classList.add('bg-pink-300', 'opacity-70', 'text-pink-800', 'bg-blend-multiply');
+                            rightCircle.style.backgroundBlendMode = 'multiply';
+                        } else if (joinType === 'left') {
+                            leftCircle.classList.add('bg-blue-500', 'opacity-100', 'text-white');
+                            rightCircle.classList.add('bg-pink-300', 'opacity-70', 'text-pink-800', 'bg-blend-multiply');
+                            rightCircle.style.backgroundBlendMode = 'multiply';
+                        } else if (joinType === 'right') {
+                            leftCircle.classList.add('bg-blue-300', 'opacity-70', 'text-blue-800', 'bg-blend-multiply');
+                            rightCircle.classList.add('bg-pink-500', 'opacity-100', 'text-white');
+                             rightCircle.style.backgroundBlendMode = 'normal';
+                             leftCircle.style.backgroundBlendMode = 'multiply';
+                        } else if (joinType === 'full') {
+                            leftCircle.classList.add('bg-blue-500', 'opacity-100', 'text-white');
+                            rightCircle.classList.add('bg-pink-500', 'opacity-100', 'text-white');
+                             rightCircle.style.backgroundBlendMode = 'normal';
+                             leftCircle.style.backgroundBlendMode = 'normal';
+                        }
+                        
+                        const explanation = joinExplanations[joinType];
+                        explanationDiv.innerHTML = `<h4 class="text-xl font-semibold mb-2">${explanation.title}</h4><p>${explanation.desc}</p>`;
+                    });
+                });
+            }
+
+            function initNormVisualizer() {
+                const container = document.getElementById('norm-container');
+                container.innerHTML = normSteps.map((step, index) => `
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h4 class="text-xl font-semibold mb-2 text-teal-700">${index + 1}. ${step.level}</h4>
+                        <p class="mb-4">${step.desc}</p>
+                        <div class="overflow-x-auto">${step.table}</div>
+                    </div>
+                `).join('');
+            }
+
+            function initNoSqlChart() {
+                const ctx = document.getElementById('noSqlChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'radar',
+                    data: {
+                        labels: ['Schema Flexibility', 'Scalability', 'Query Complexity', 'Data Structure', 'Performance'],
+                        datasets: [
+                            {
+                                label: 'Document',
+                                data: [9, 8, 7, 8, 8],
+                                fill: true,
+                                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                borderColor: 'rgb(54, 162, 235)',
+                                pointBackgroundColor: 'rgb(54, 162, 235)',
+                            }, {
+                                label: 'Key-Value',
+                                data: [5, 10, 3, 4, 10],
+                                fill: true,
+                                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                borderColor: 'rgb(255, 99, 132)',
+                                pointBackgroundColor: 'rgb(255, 99, 132)',
+                            }, {
+                                label: 'Graph',
+                                data: [8, 7, 9, 10, 6],
+                                fill: true,
+                                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                borderColor: 'rgb(75, 192, 192)',
+                                pointBackgroundColor: 'rgb(75, 192, 192)',
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        elements: { line: { tension: 0.1 } },
+                        scales: { r: { angleLines: { display: false }, suggestedMin: 0, suggestedMax: 10 } }
+                    }
+                });
+            }
+            
+            function initCapTheorem() {
+                const buttons = document.querySelectorAll('.cap-btn');
+                const explanationDiv = document.getElementById('cap-explanation');
+
+                buttons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        const capType = button.dataset.cap;
+                        buttons.forEach(b => b.classList.remove('ring-4', 'ring-offset-2', 'ring-teal-400'));
+                        button.classList.add('ring-4', 'ring-offset-2', 'ring-teal-400');
+                        
+                        const explanation = capExplanations[capType];
+                        explanationDiv.innerHTML = `<h4 class="text-xl font-semibold mb-2">${explanation.title}</h4><p>${explanation.desc}</p>`;
+                    });
+                });
+            }
+
+            // Initial setup
+            populateSidebar();
+            if (sections.length > 0) {
+                showSection(sections[0]);
+            }
+        });
+    </script>
+
+</body>
+</html>

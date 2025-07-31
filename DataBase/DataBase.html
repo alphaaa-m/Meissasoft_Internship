@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Guide to Databases</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Harmony -->
+    <!-- Application Structure Plan: A vertical-scrolling single-page application with a sticky top navigation bar for easy access to different thematic sections. This structure was chosen over the report's linear format to empower users to explore topics non-linearly, based on their curiosity. The flow starts with foundational 'why' and 'what' questions, moves to core building blocks, compares fundamental types (SQL/NoSQL), provides a hands-on 'terminal' for practice, visualizes advanced concepts, and concludes with real-world context and resources. This guided-yet-flexible path is designed for optimal learning and engagement for a beginner audience. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Core Concepts (Table/Row/Column) -> Goal: Inform -> Viz: Interactive HTML Table -> Interaction: Hover to highlight and see definitions -> Justification: Reinforces basic structure through direct manipulation. -> Library: Vanilla JS.
+        - Report Info: SQL vs NoSQL -> Goal: Compare -> Viz: Bar Chart -> Interaction: View side-by-side comparison of key attributes like scalability and schema type. -> Justification: Provides a quick, quantitative visual for abstract differences. -> Library: Chart.js.
+        - Report Info: Basic SQL Commands -> Goal: Teach a process -> Viz: Simulated SQL Terminal -> Interaction: Click buttons to 'run' commands and see a table update dynamically. -> Justification: Active participation is more memorable than passive reading. -> Library: Vanilla JS.
+        - Report Info: Joins -> Goal: Explain relationships -> Viz: Interactive Venn Diagram-style chart -> Interaction: Click buttons to highlight join types and see a simple resulting table. -> Justification: Visually demystifies a difficult concept using a familiar analogy. -> Library: Chart.js.
+        - Report Info: Normalization -> Goal: Show a process -> Viz: Before/After animated table transformation -> Interaction: Click a 'Normalize!' button. -> Justification: A single, impactful visual that clearly demonstrates the benefit of normalization. -> Library: Vanilla JS + CSS transitions.
+        - Report Info: Job Roles -> Goal: Inform -> Viz: Icon-based grid of cards -> Interaction: Simple, clear presentation of roles. -> Justification: Easily scannable and visually appealing. -> Library: HTML/CSS.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8F9FA;
+            color: #343A40;
+        }
+        .nav-link {
+            transition: color 0.3s, border-bottom-color 0.3s;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #007BFF;
+            border-bottom-color: #007BFF;
+        }
+        .card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.1);
+        }
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            transition: background-color 0.3s, transform 0.2s;
+            cursor: pointer;
+        }
+        .btn-primary {
+            background-color: #007BFF;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        .interactive-table th, .interactive-table td {
+            transition: background-color 0.3s;
+        }
+        .highlight-col { background-color: #cfe2ff !important; }
+        .highlight-row { background-color: #d1e7dd !important; }
+
+        .join-diagram-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            width: 300px;
+            height: 200px;
+            margin: auto;
+        }
+        .join-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            position: absolute;
+            opacity: 0.6;
+            transition: all 0.4s ease;
+        }
+        .join-circle-left {
+            background-color: #64b5f6; /* Blue */
+            left: 20px;
+        }
+        .join-circle-right {
+            background-color: #81c784; /* Green */
+            right: 20px;
+        }
+        .join-text {
+            position: absolute;
+            font-weight: bold;
+            color: white;
+        }
+        .join-text-left { top: 45%; left: 60px; }
+        .join-text-right { top: 45%; right: 55px; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <header id="header" class="bg-white/80 backdrop-blur-md sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                    <a href="#hero" class="text-xl font-bold text-blue-600">DB Demystified 🚀</a>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#basics" class="nav-link px-3 py-2 text-sm font-medium">The Basics</a>
+                        <a href="#comparison" class="nav-link px-3 py-2 text-sm font-medium">SQL vs NoSQL</a>
+                        <a href="#commands" class="nav-link px-3 py-2 text-sm font-medium">SQL Playground</a>
+                        <a href="#advanced" class="nav-link px-3 py-2 text-sm font-medium">Advanced Concepts</a>
+                        <a href="#real-world" class="nav-link px-3 py-2 text-sm font-medium">Real World</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="hero" class="py-20 md:py-32 bg-white">
+            <div class="container mx-auto text-center px-4">
+                <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight text-slate-900">
+                    Become a <span class="text-blue-600">Data Wizard!</span>
+                </h1>
+                <p class="mt-6 max-w-2xl mx-auto text-lg text-slate-600">
+                    Ever wondered how your favorite game saves your score? Or how websites remember your shopping cart? The magic is all in databases! This guide will take you from a curious beginner to a confident data explorer, one fun step at a time.
+                </p>
+            </div>
+        </section>
+        
+        <section id="basics" class="py-16 md:py-24">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold tracking-tight">The Basics: Your Digital Toy Box 🧸</h2>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg text-slate-600">Let's start with the fundamentals. Think of a database as a super-organized digital filing cabinet or a magic toy box that keeps all your digital treasures perfectly sorted and easy to find.</p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8 items-center">
+                    <div class="card p-8">
+                        <h3 class="text-2xl font-semibold mb-4">Why Do We Need Databases?</h3>
+                        <p class="text-slate-600">Imagine your favorite game forgot your high score every time you closed it. Sad, right? 😭 Databases prevent this! They give our apps and websites a reliable memory, ensuring that important information is stored safely and can be found quickly. They handle huge amounts of data with rules that keep it accurate and secure.</p>
+                    </div>
+                    <div class="card p-8">
+                        <h3 class="text-2xl font-semibold mb-4">Meet the Data Crew!</h3>
+                        <p class="text-slate-600 mb-4">Databases organize information into <span class="font-bold text-blue-600">Tables</span>, which are made of <span class="font-bold text-green-600">Rows</span> and <span class="font-bold text-indigo-600">Columns</span>. Hover over the table below to see how it works!</p>
+                        <div class="overflow-x-auto">
+                            <table id="interactive-attendance" class="w-full text-sm text-left text-gray-500 interactive-table">
+                                <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3" data-type="column" data-info="A 'Column' (or Field) holds a specific type of information for every record. This one is for names!">Name</th>
+                                        <th scope="col" class="px-6 py-3" data-type="column" data-info="This 'Column' tracks Monday's attendance.">Monday</th>
+                                        <th scope="col" class="px-6 py-3" data-type="column" data-info="This 'Column' tracks Tuesday's attendance.">Tuesday</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="bg-white border-b" data-type="row" data-info="A 'Row' (or Record) is a single, complete entry containing all the information for one item, like Lily's attendance.">
+                                        <td class="px-6 py-4 font-medium text-gray-900">Lily</td>
+                                        <td class="px-6 py-4">Present</td>
+                                        <td class="px-6 py-4">Present</td>
+                                    </tr>
+                                    <tr class="bg-white border-b" data-type="row" data-info="This is another 'Row' or Record, containing all of Tom's data.">
+                                        <td class="px-6 py-4 font-medium text-gray-900">Tom</td>
+                                        <td class="px-6 py-4">Present</td>
+                                        <td class="px-6 py-4">Absent</td>
+                                    </tr>
+                                    <tr class="bg-white" data-type="row" data-info="And here's Sarah's 'Row'! Each row is a unique entry in the table.">
+                                        <td class="px-6 py-4 font-medium text-gray-900">Sarah</td>
+                                        <td class="px-6 py-4">Absent</td>
+                                        <td class="px-6 py-4">Present</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p id="table-tooltip" class="mt-2 text-center text-sm font-medium text-slate-500 h-5"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="comparison" class="py-16 md:py-24 bg-white">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold tracking-tight">The Two Flavors: SQL vs. NoSQL</h2>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg text-slate-600">Databases come in two main styles: SQL, the strict librarian, and NoSQL, the creative artist. The choice depends on the job! This section introduces the core differences to help you understand when to use each.</p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8 items-center">
+                    <div class="card p-8 text-center">
+                        <div class="text-6xl mb-4">🧑‍🏫</div>
+                        <h3 class="text-2xl font-semibold">SQL (Relational)</h3>
+                        <p class="text-slate-600 mt-2">Think of a super-organized librarian. Everything has a precise place in structured tables. Perfect for data that needs to be consistent, like bank transactions or store inventory.</p>
+                    </div>
+                     <div class="card p-8 text-center">
+                        <div class="text-6xl mb-4">🎨</div>
+                        <h3 class="text-2xl font-semibold">NoSQL (Non-Relational)</h3>
+                        <p class="text-slate-600 mt-2">Imagine a creative artist's studio. It's flexible and can store all sorts of things, like documents, social media posts, or game data. Great for fast-changing and massive datasets.</p>
+                    </div>
+                </div>
+                <div class="mt-12">
+                    <div class="card p-8">
+                         <h3 class="text-2xl font-semibold text-center mb-6">Key Differences at a Glance</h3>
+                         <div class="chart-container">
+                             <canvas id="sqlVsNoSqlChart"></canvas>
+                         </div>
+                         <p class="text-center mt-4 text-sm text-slate-500">This chart highlights fundamental differences in how SQL and NoSQL databases approach data structure and growth. SQL's vertical scaling means making one server more powerful, while NoSQL's horizontal scaling involves adding more servers, which is often better for massive, modern applications.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="commands" class="py-16 md:py-24">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold tracking-tight">SQL Playground: Speak the Language 👨‍💻</h2>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg text-slate-600">The most common language for talking to databases is SQL (Structured Query Language). It's like learning a few magic words to find, add, and organize your data. Try it yourself in our mini-playground!</p>
+                </div>
+                <div class="card p-8">
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div>
+                            <h3 class="text-xl font-semibold mb-4">Your Mission: Build a Players Table!</h3>
+                            <p class="text-slate-600 mb-4">Click the buttons in order to create a table, add some players, and then view your data. Watch the table on the right update with each command!</p>
+                            <div id="sql-controls" class="space-y-3">
+                                <button id="btn-create" class="btn btn-primary w-full text-left">1. CREATE TABLE Players (...)</button>
+                                <button id="btn-insert" class="btn btn-primary w-full text-left" disabled>2. INSERT INTO Players (...)</button>
+                                <button id="btn-select" class="btn btn-primary w-full text-left" disabled>3. SELECT * FROM Players</button>
+                                <button id="btn-reset" class="btn btn-secondary w-full text-left mt-4">Reset Playground</button>
+                            </div>
+                            <div class="mt-6 bg-slate-900 rounded-lg p-4">
+                                <p class="text-gray-400 font-mono text-sm">// Your SQL command will appear here</p>
+                                <pre><code id="sql-code-display" class="text-white font-mono text-sm"></code></pre>
+                            </div>
+                        </div>
+                        <div>
+                             <h3 class="text-xl font-semibold mb-4">Database Output:</h3>
+                             <div id="sql-output-container" class="border-2 border-dashed border-slate-300 rounded-lg p-4 min-h-[200px] flex items-center justify-center">
+                                 <p id="sql-output-placeholder" class="text-slate-500">Table will appear here...</p>
+                                 <div id="sql-output-table" class="hidden w-full"></div>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="advanced" class="py-16 md:py-24 bg-white">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold tracking-tight">Level Up: Advanced Concepts 🧙‍♂️</h2>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg text-slate-600">Ready for the next level? These concepts are the secret sauce that makes databases so powerful and reliable. We've turned them into simple, interactive visuals.</p>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="card p-8">
+                        <h3 class="text-2xl font-semibold mb-2">Joins: Merging Puzzles 🧩</h3>
+                        <p class="text-slate-600 mb-4">Joins let you combine information from different tables. It’s like putting two puzzle pieces together! Select a join type to see how it works.</p>
+                        <div class="flex justify-center space-x-2 mb-4">
+                            <button class="join-btn btn btn-sm btn-primary" data-join="inner">INNER</button>
+                            <button class="join-btn btn btn-sm btn-secondary" data-join="left">LEFT</button>
+                            <button class="join-btn btn btn-sm btn-secondary" data-join="right">RIGHT</button>
+                            <button class="join-btn btn btn-sm btn-secondary" data-join="full">FULL</button>
+                        </div>
+                        <div class="join-diagram-container">
+                            <div id="join-left-circle" class="join-circle join-circle-left"></div>
+                            <div id="join-right-circle" class="join-circle join-circle-right"></div>
+                            <div class="join-text join-text-left">Students</div>
+                            <div class="join-text join-text-right">Classes</div>
+                        </div>
+                        <p id="join-explanation" class="text-center mt-4 text-sm font-medium h-10"></p>
+                    </div>
+
+                    <div class="card p-8">
+                        <h3 class="text-2xl font-semibold mb-2">Normalization: Tidy Your Room ✨</h3>
+                        <p class="text-slate-600 mb-4">Normalization is about organizing your data to avoid mess and repetition. Click the button to see how we clean up a messy table!</p>
+                        <div id="norm-before" class="p-4 border rounded-lg bg-red-50 border-red-200">
+                             <h4 class="font-semibold text-red-800">Before (Messy & Repetitive)</h4>
+                             <p class="text-sm text-red-600">Notice how the friend's address is repeated for each cat.</p>
+                        </div>
+                        <div class="text-center my-4 text-3xl text-slate-400">↓</div>
+                         <div id="norm-after" class="p-4 border rounded-lg bg-green-50 border-green-200 opacity-0 transition-opacity duration-500">
+                             <h4 class="font-semibold text-green-800">After (Clean & Organized)</h4>
+                              <p class="text-sm text-green-600">Now, data is split into two tables, saving space and preventing errors!</p>
+                        </div>
+                         <div class="text-center mt-6">
+                            <button id="btn-normalize" class="btn btn-primary">Normalize It!</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="real-world" class="py-16 md:py-24">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold tracking-tight">Databases in the Real World 🌍</h2>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg text-slate-600">Databases are the invisible engines powering our digital lives. From shopping online to your doctor's office, they're everywhere! This has created amazing career opportunities for people who understand data.</p>
+                </div>
+                <h3 class="text-2xl font-bold text-center mb-8">Who Works With Databases?</h3>
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    <div class="card p-6 text-center">
+                        <div class="text-4xl mb-3">🗄️</div>
+                        <h4 class="font-semibold">DB Administrator</h4>
+                        <p class="text-sm text-slate-500 mt-1">The guardians. They keep databases secure, healthy, and fast.</p>
+                    </div>
+                     <div class="card p-6 text-center">
+                        <div class="text-4xl mb-3">🏗️</div>
+                        <h4 class="font-semibold">DB Architect</h4>
+                        <p class="text-sm text-slate-500 mt-1">The planners. They design the blueprint for how data is stored.</p>
+                    </div>
+                    <div class="card p-6 text-center">
+                        <div class="text-4xl mb-3">🕵️</div>
+                        <h4 class="font-semibold">Data Analyst</h4>
+                        <p class="text-sm text-slate-500 mt-1">The detectives. They find patterns and stories in the data.</p>
+                    </div>
+                     <div class="card p-6 text-center">
+                        <div class="text-4xl mb-3">🛠️</div>
+                        <h4 class="font-semibold">Data Engineer</h4>
+                        <p class="text-sm text-slate-500 mt-1">The builders. They create the 'pipelines' that move data around.</p>
+                    </div>
+                </div>
+                 <div class="mt-12 card p-8">
+                     <h3 class="text-2xl font-bold text-center mb-6">Cool Resources to Learn More</h3>
+                     <p class="text-center text-slate-600 mb-6">Your adventure doesn't stop here. Check out these fantastic free resources to continue your journey!</p>
+                     <div class="flex justify-center flex-wrap gap-4">
+                         <a href="https://sqlzoo.net/" target="_blank" class="btn btn-primary">SQLZoo</a>
+                         <a href="https://www.khanacademy.org/computing/computer-programming/sql" target="_blank" class="btn btn-primary">Khan Academy</a>
+                         <a href="https://www.codecademy.com/learn/learn-sql" target="_blank" class="btn btn-primary">Codecademy</a>
+                         <a href="https://www.freecodecamp.org/" target="_blank" class="btn btn-primary">freeCodeCamp</a>
+                     </div>
+                 </div>
+            </div>
+        </section>
+
+    </main>
+    
+    <footer class="bg-slate-800 text-white">
+        <div class="container mx-auto py-8 px-4 text-center">
+            <p>Created with 🚀 to make learning databases fun.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- Navigation Highlighting ---
+            const sections = document.querySelectorAll('main section');
+            const navLinks = document.querySelectorAll('.nav-link');
+
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.4
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        navLinks.forEach(link => {
+                            link.classList.toggle('active', link.getAttribute('href').substring(1) === entry.target.id);
+                        });
+                    }
+                });
+            }, observerOptions);
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+
+            // --- Interactive Attendance Table ---
+            const attendanceTable = document.getElementById('interactive-attendance');
+            const tableTooltip = document.getElementById('table-tooltip');
+            if (attendanceTable) {
+                attendanceTable.addEventListener('mouseover', (e) => {
+                    const target = e.target.closest('th, tr');
+                    if (!target) return;
+                    
+                    const type = target.dataset.type;
+                    tableTooltip.textContent = target.dataset.info || '';
+
+                    if (type === 'column') {
+                        const colIndex = target.cellIndex;
+                        attendanceTable.querySelectorAll('th, td').forEach(cell => {
+                            if (cell.cellIndex === colIndex) {
+                                cell.classList.add('highlight-col');
+                            }
+                        });
+                    } else if (type === 'row') {
+                        target.classList.add('highlight-row');
+                    }
+                });
+
+                attendanceTable.addEventListener('mouseout', () => {
+                    tableTooltip.textContent = '';
+                    attendanceTable.querySelectorAll('.highlight-col, .highlight-row').forEach(el => {
+                        el.classList.remove('highlight-col', 'highlight-row');
+                    });
+                });
+            }
+
+            // --- SQL vs NoSQL Chart ---
+            const sqlVsNoSqlCtx = document.getElementById('sqlVsNoSqlChart');
+            if (sqlVsNoSqlCtx) {
+                new Chart(sqlVsNoSqlCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Schema', 'Scalability', 'Data Structure'],
+                        datasets: [{
+                            label: 'SQL (Relational)',
+                            data: [9, 6, 9],
+                            backgroundColor: 'rgba(0, 123, 255, 0.6)',
+                            borderColor: 'rgba(0, 123, 255, 1)',
+                            borderWidth: 1
+                        }, {
+                            label: 'NoSQL (Non-Relational)',
+                            data: [4, 9, 5],
+                            backgroundColor: 'rgba(108, 117, 125, 0.6)',
+                            borderColor: 'rgba(108, 117, 125, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                beginAtZero: true,
+                                max: 10,
+                                ticks: {
+                                    callback: function(value, index, values) {
+                                        if (value === 0) return 'Low/Rigid';
+                                        if (value === 10) return 'High/Flexible';
+                                        return '';
+                                    }
+                                }
+                            }
+                        },
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        const value = context.raw;
+                                        const type = context.label;
+                                        if (type === 'Schema') label += value > 5 ? 'Predefined/Rigid' : 'Dynamic/Flexible';
+                                        else if (type === 'Scalability') label += value > 5 ? 'Horizontal' : 'Vertical';
+                                        else if (type === 'Data Structure') label += value > 5 ? 'Structured (Tables)' : 'Varied (Docs, etc)';
+                                        return label;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // --- SQL Playground ---
+            const btnCreate = document.getElementById('btn-create');
+            const btnInsert = document.getElementById('btn-insert');
+            const btnSelect = document.getElementById('btn-select');
+            const btnReset = document.getElementById('btn-reset');
+            const codeDisplay = document.getElementById('sql-code-display');
+            const outputPlaceholder = document.getElementById('sql-output-placeholder');
+            const outputTableContainer = document.getElementById('sql-output-table');
+
+            let isTableCreated = false;
+            let isDataInserted = false;
+
+            const playersData = [
+                { PlayerID: 1, PlayerName: 'GamerGuy77', FavoriteGame: 'Minecraft' },
+                { PlayerID: 2, PlayerName: 'PixelPrincess', FavoriteGame: 'Stardew Valley' },
+            ];
+            
+            function resetPlayground() {
+                isTableCreated = false;
+                isDataInserted = false;
+                btnCreate.disabled = false;
+                btnInsert.disabled = true;
+                btnSelect.disabled = true;
+                codeDisplay.textContent = '';
+                outputPlaceholder.classList.remove('hidden');
+                outputTableContainer.classList.add('hidden');
+                outputTableContainer.innerHTML = '';
+            }
+
+            btnCreate.addEventListener('click', () => {
+                if (isTableCreated) return;
+                isTableCreated = true;
+                codeDisplay.textContent = `CREATE TABLE Players (\n  PlayerID INT PRIMARY KEY,\n  PlayerName VARCHAR(100),\n  FavoriteGame VARCHAR(100)\n);`;
+                outputPlaceholder.textContent = 'Table "Players" created successfully!';
+                btnCreate.disabled = true;
+                btnInsert.disabled = false;
+            });
+
+            btnInsert.addEventListener('click', () => {
+                if (isDataInserted) return;
+                isDataInserted = true;
+                codeDisplay.textContent = `INSERT INTO Players (PlayerID, PlayerName, FavoriteGame)\nVALUES (1, 'GamerGuy77', 'Minecraft'),\n       (2, 'PixelPrincess', 'Stardew Valley');`;
+                outputPlaceholder.textContent = '2 rows inserted successfully!';
+                btnInsert.disabled = true;
+                btnSelect.disabled = false;
+            });
+
+            btnSelect.addEventListener('click', () => {
+                codeDisplay.textContent = `SELECT * FROM Players;`;
+                outputPlaceholder.classList.add('hidden');
+                
+                const table = document.createElement('table');
+                table.className = 'w-full text-sm text-left';
+                const thead = document.createElement('thead');
+                thead.className = 'text-xs text-gray-700 uppercase bg-gray-50';
+                thead.innerHTML = `<tr><th class="px-6 py-3">PlayerID</th><th class="px-6 py-3">PlayerName</th><th class="px-6 py-3">FavoriteGame</th></tr>`;
+                const tbody = document.createElement('tbody');
+                playersData.forEach(player => {
+                    const row = document.createElement('tr');
+                    row.className = 'bg-white border-b';
+                    row.innerHTML = `<td class="px-6 py-4">${player.PlayerID}</td><td class="px-6 py-4">${player.PlayerName}</td><td class="px-6 py-4">${player.FavoriteGame}</td>`;
+                    tbody.appendChild(row);
+                });
+                table.appendChild(thead);
+                table.appendChild(tbody);
+                outputTableContainer.innerHTML = '';
+                outputTableContainer.appendChild(table);
+                outputTableContainer.classList.remove('hidden');
+            });
+
+            btnReset.addEventListener('click', resetPlayground);
+            
+            // --- Joins Visualizer ---
+            const joinBtns = document.querySelectorAll('.join-btn');
+            const leftCircle = document.getElementById('join-left-circle');
+            const rightCircle = document.getElementById('join-right-circle');
+            const joinExplanation = document.getElementById('join-explanation');
+
+            const joinStates = {
+                inner: { opacityL: 0, opacityR: 0, left: '75px', width: '150px', text: 'Shows only the matching data from BOTH tables.' },
+                left: { opacityL: 0.6, opacityR: 0, left: '20px', width: '230px', text: 'Shows ALL data from the left table, and matches from the right.' },
+                right: { opacityL: 0, opacityR: 0.6, left: '75px', width: '230px', text: 'Shows ALL data from the right table, and matches from the left.' },
+                full: { opacityL: 0.6, opacityR: 0.6, left: '20px', width: '260px', text: 'Shows ALL data from BOTH tables, matching where possible.' }
+            };
+
+            function updateJoinVisual(type) {
+                const state = joinStates[type];
+                leftCircle.style.opacity = '0.6';
+                rightCircle.style.opacity = '0.6';
+
+                // Reset intersection simulation
+                const sharedArea = document.querySelector('.join-intersection');
+                if (sharedArea) sharedArea.remove();
+
+                if (type === 'inner') {
+                    leftCircle.style.opacity = '0';
+                    rightCircle.style.opacity = '0';
+                    // Create a pseudo-element for intersection
+                    const intersection = document.createElement('div');
+                    intersection.className = 'join-intersection join-circle';
+                    intersection.style.cssText = 'background-color: #4caf50; left: 110px; width: 80px; z-index: 2;';
+                    leftCircle.parentElement.appendChild(intersection);
+                } else if (type === 'left') {
+                    rightCircle.style.opacity = '0.3';
+                } else if (type === 'right') {
+                    leftCircle.style.opacity = '0.3';
+                }
+
+                joinExplanation.textContent = state.text;
+
+                joinBtns.forEach(b => {
+                    b.classList.remove('btn-primary');
+                    b.classList.add('btn-secondary');
+                });
+                document.querySelector(`.join-btn[data-join="${type}"]`).classList.add('btn-primary');
+                document.querySelector(`.join-btn[data-join="${type}"]`).classList.remove('btn-secondary');
+            }
+
+            joinBtns.forEach(btn => btn.addEventListener('click', () => updateJoinVisual(btn.dataset.join)));
+            updateJoinVisual('inner'); // Initial state
+
+            // --- Normalization Visualizer ---
+            const btnNormalize = document.getElementById('btn-normalize');
+            const normAfter = document.getElementById('norm-after');
+            btnNormalize.addEventListener('click', () => {
+                normAfter.classList.remove('opacity-0');
+            });
+        });
+    </script>
+
+</body>
+</html>

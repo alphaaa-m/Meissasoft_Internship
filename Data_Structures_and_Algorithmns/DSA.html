@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Python DSA Roadmap</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .phase-card { transition: all 0.3s ease-in-out; }
+        .phase-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+        .phase-card.active { border-color: #4f46e5; background-color: #eef2ff; }
+        .content-section { display: none; }
+        .content-section.active { display: block; }
+        .info-card { transition: all 0.3s ease; }
+        .info-card .details { display: none; max-height: 0; overflow: hidden; transition: max-height 0.5s ease-in-out; }
+        .info-card.open .details { display: block; max-height: 1000px; }
+        .chart-container { position: relative; width: 100%; max-width: 800px; margin-left: auto; margin-right: auto; height: 400px; max-height: 50vh; }
+        @media (min-width: 768px) { .chart-container { height: 450px; } }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 0.75rem; text-align: left; border-bottom: 1px solid #e5e7eb; }
+        th { background-color: #f9fafb; }
+        .tag { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 500; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8">
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-indigo-700 mb-2">Interactive Python DSA Roadmap</h1>
+            <p class="text-lg text-gray-600 max-w-3xl mx-auto">An interactive guide to mastering Data Structures & Algorithms in Python, from core concepts to advanced problem-solving.</p>
+        </header>
+
+        <nav id="phase-selector" class="mb-12">
+            <h2 class="text-2xl font-semibold text-center mb-6">Select a Learning Phase</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
+            </div>
+        </nav>
+
+        <main id="content-container">
+        </main>
+    </div>
+
+    <script>
+        const roadmapData = {
+            phases: [
+                { id: "phase1", title: "Python Essentials" },
+                { id: "phase2", title: "Core Data Structures" },
+                { id: "phase3", title: "Fundamental Algorithms" },
+                { id: "phase4", title: "Recursion & Backtracking" },
+                { id: "phase5", title: "Greedy, D&C, Sliding Window" },
+                { id: "phase6", title: "Dynamic Programming" },
+                { id: "phase7", title: "Graph Algorithms" },
+                { id: "phase8", title: "Advanced Topics" },
+            ],
+            content: {
+                phase1: {
+                    title: "Phase 1: Python Essentials for DSA",
+                    intro: "This initial phase ensures proficiency in Python's core constructs, which serve as the building blocks for implementing more complex data structures and algorithms. A robust foundation here is an indispensable prerequisite for effective DSA learning.",
+                    topics: [
+                        { title: "Basic Syntax & Data Types", description: "Understanding fundamental syntax, variables, and built-in types like integers, floats, and booleans." },
+                        { title: "Control Flow", description: "Mastery of `if-elif-else` statements and `for`/`while` loops for implementing algorithmic logic." },
+                        { title: "Functions & Recursion", description: "Defining functions, managing parameters, and understanding recursion to lay the groundwork for advanced techniques." },
+                        { title: "Built-in Collections", description: "Proficiency with Lists, Tuples, Dictionaries, and Sets, which are the workhorses of Python data manipulation." },
+                        { title: "String Manipulation", description: "Essential techniques for processing text, a common requirement in algorithmic problems." },
+                        { title: "I/O Handling", description: "Methods for receiving input and displaying output, crucial for competitive programming." },
+                        { title: "Object-Oriented Programming (OOP)", description: "A basic understanding of classes and objects, as custom data structures are often defined as classes." },
+                    ],
+                    insight: "Python's high-level abstractions, like dynamically resizing lists and built-in dictionaries, accelerate learning by allowing focus on logic over low-level memory management. However, a deeper DSA study is critical to understand the performance implications (e.g., `list.insert(0, ...)` being O(N)) which is vital for writing efficient code in competitive programming."
+                },
+                phase2: {
+                    title: "Phase 2: Core Data Structures",
+                    intro: "This phase delves into the fundamental building blocks of efficient data organization, exploring their conceptual underpinnings, Pythonic implementations, and performance characteristics. Understanding these structures is key to writing efficient and scalable code.",
+                    structures: [
+                        { name: "Arrays / Lists", complexity: "Access: O(1)", space: "O(N)", description: "Python's `list` acts as a dynamic array. While access is O(1), inserting or deleting at the beginning is O(N) due to element shifting. For memory-efficient homogeneous data, use the `array` module." },
+                        { name: "Stacks (LIFO)", complexity: "Push/Pop: O(1)", space: "O(N)", description: "Last-In/First-Out. While a `list` can be used (`append`/`pop`), `collections.deque` is preferred as it guarantees O(1) for operations at both ends." },
+                        { name: "Queues (FIFO)", complexity: "Enqueue/Dequeue: O(1)", space: "O(N)", description: "First-In/First-Out. Using `list.pop(0)` is inefficient (O(N)). `collections.deque` is the standard for efficient queues with its `append` and `popleft` O(1) operations." },
+                        { name: "Linked Lists", complexity: "Access: O(N)", space: "O(N)", description: "Nodes containing data and pointers. Allows O(1) insertion/deletion if the node reference is known. Requires custom class implementation in Python (Singly, Doubly, Circular)." },
+                        { name: "Trees", complexity: "Search/Insert/Delete: O(logN) avg", space: "O(N)", description: "Hierarchical structures. Binary Search Trees (BSTs) provide efficient operations on average, but can degrade to O(N). Balanced BSTs (e.g., AVL) guarantee O(logN) performance." },
+                        { name: "Heaps", complexity: "Insert/Delete: O(logN)", space: "O(N)", description: "A specialized tree-based structure satisfying the heap property, ideal for priority queues. Python's `heapq` module provides an efficient min-heap implementation." },
+                        { name: "Hash Tables", complexity: "Access/Insert/Delete: O(1) avg", space: "O(N)", description: "Powers rapid key-value lookups. Python's built-in `dict` is a highly optimized hash table. Performance can degrade to O(N) in worst-case collision scenarios." },
+                        { name: "Graphs", complexity: "Varies", space: "O(V+E) or O(V^2)", description: "Represents networks of nodes (vertices) and connections (edges). Commonly represented by Adjacency Lists (for sparse graphs) or Adjacency Matrices (for dense graphs)." },
+                    ],
+                    insight: "The choice of implementation in Python has major performance implications. For instance, using `collections.deque` for stacks and queues instead of a standard `list` is a critical optimization in competitive programming, as it provides true O(1) append and pop operations from both ends, avoiding the O(N) cost of shifting elements in a list."
+                },
+                phase3: {
+                    title: "Phase 3: Fundamental Algorithms (Sorting and Searching)",
+                    intro: "This phase covers essential algorithms for organizing and retrieving data. Mastery of sorting and searching is foundational, as they are prerequisites for solving a vast number of more complex problems and are frequent components of technical interviews.",
+                    chartData: {
+                        labels: ['Bubble', 'Selection', 'Insertion', 'Merge', 'Quick (Avg)', 'Quick (Worst)', 'Heap', 'Counting', 'Radix'],
+                        datasets: [
+                            { label: 'Time Complexity (Big-O Notation)', data: [2, 2, 2, 1.5, 1.5, 2, 1.5, 1, 1], backgroundColor: ['#fb7185', '#f472b6', '#e879f9', '#a78bfa', '#818cf8', '#ef4444', '#60a5fa', '#34d399', '#2dd4bf'], tooltip: ['O(N²)', 'O(N²)', 'O(N²)', 'O(N logN)', 'O(N logN)', 'O(N²)', 'O(N logN)', 'O(N+k)', 'O(N*d)'] }
+                        ]
+                    },
+                    algorithms: [
+                         { name: "Linear Search", type: "Searching", complexity: "O(N)", description: "Sequentially checks each element. Simple but inefficient for large datasets. Works on unsorted arrays." },
+                         { name: "Binary Search", type: "Searching", complexity: "O(logN)", description: "Efficiently finds an item in a **sorted** array by repeatedly dividing the search interval in half. A classic Divide and Conquer algorithm." },
+                         { name: "Bubble Sort", type: "Sorting", complexity: "O(N²)", description: "Simple comparison-based sort. Repeatedly swaps adjacent elements if they are in the wrong order. Too slow for most applications." },
+                         { name: "Selection Sort", type: "Sorting", complexity: "O(N²)", description: "Repeatedly finds the minimum element from the unsorted part and puts it at the beginning. In-place but inefficient." },
+                         { name: "Insertion Sort", type: "Sorting", complexity: "O(N²)", description: "Builds the final sorted array one item at a time. Efficient for small or nearly sorted arrays." },
+                         { name: "Merge Sort", type: "Sorting", complexity: "O(N logN)", description: "A 'Divide and Conquer' algorithm that guarantees O(N logN) performance but requires O(N) extra space." },
+                         { name: "Quick Sort", type: "Sorting", complexity: "O(N logN) avg", description: "Also 'Divide and Conquer'. Often the fastest in practice, but its worst-case performance is O(N²) if pivot selection is poor. Typically sorts in-place." },
+                         { name: "Heap Sort", type: "Sorting", complexity: "O(N logN)", description: "Uses a heap data structure to sort in-place with O(N logN) guaranteed performance." },
+                         { name: "Counting Sort", type: "Sorting", complexity: "O(N+k)", description: "A non-comparison sort. Very efficient for sorting integers in a small range." },
+                         { name: "Radix Sort", type: "Sorting", complexity: "O(N*d)", description: "Another non-comparison sort that groups keys by individual digits. Efficient for integers." }
+                    ],
+                    insight: "Sorting algorithms are not one-size-fits-all. The choice involves a trade-off between average vs. worst-case performance, space complexity (in-place vs. auxiliary space), and stability. Quick Sort is often fastest on average, but Merge Sort or Heap Sort provide performance guarantees that are critical in some applications."
+                },
+                phase4: {
+                    title: "Phase 4: Problem Solving with Recursion & Backtracking",
+                    intro: "This phase explores two powerful algorithmic paradigms for solving problems that can be broken down into smaller, self-similar subproblems or require a systematic search through a solution space. Mastery here is key for tackling combinatorial and optimization problems.",
+                    topics: [
+                        { title: "Recursion", description: "A function that calls itself. Defined by a base case (termination condition) and a recursive case (moving towards the base case). Elegant for problems like tree traversals but can cause stack overflow." },
+                        { title: "Backtracking", description: "A systematic way to explore all possible solutions to a problem. It incrementally builds candidates and 'backtracks' (reverts a choice) as soon as it determines that a candidate cannot possibly be completed to a valid solution. Used in puzzles like Sudoku and N-Queens." },
+                        { title: "Memoization (Top-Down DP)", description: "An optimization technique for recursion that caches the results of expensive function calls to avoid recomputing them. It transforms exponential solutions into polynomial ones for problems with overlapping subproblems." },
+                        { title:- "Tabulation (Bottom-Up DP)", description: "An iterative approach to dynamic programming that builds a table of solutions from the base case up. It avoids recursion overhead and can often be more space-efficient than memoization." }
+                    ],
+                    insight: "Backtracking is essentially a pruned brute-force search. Its efficiency comes not from a better algorithm, but from intelligently discarding paths that won't lead to a solution. The effectiveness of a backtracking algorithm is therefore highly dependent on how well and how early it can prune the search space."
+                },
+                phase5: {
+                    title: "Phase 5: Greedy, Divide & Conquer, and Sliding Window",
+                    intro: "This phase introduces three distinct and powerful algorithmic paradigms. Each offers a specific strategy for breaking down problems or optimizing solutions, often leading to significant efficiency gains over naive approaches.",
+                    topics: [
+                        { title: "Greedy Algorithms", description: "Builds a solution by making the locally optimal choice at each step. This works for problems with 'optimal substructure' and the 'greedy choice property' (e.g., Dijkstra's, Kruskal's). It's crucial to prove its correctness, as it doesn't work for all problems (e.g., 0/1 Knapsack)." },
+                        { title: "Divide and Conquer", description: "Breaks a problem into smaller subproblems, solves them recursively, and combines the results. Classic examples include Merge Sort, Quick Sort, and Binary Search. The core idea is to reduce the problem size at each step." },
+                        { title: "Sliding Window", description: "An optimization technique for array/string problems. It maintains a 'window' of elements that slides across the data, efficiently updating calculations to avoid redundant work. This often turns O(N²) solutions into O(N)." }
+                    ],
+                    insight: "The Sliding Window technique is a prime example of optimizing brute-force solutions. By avoiding re-computation for every subarray/substring and instead incrementally updating the window's state, it achieves linear time complexity for a class of problems that naively appear quadratic."
+                },
+                phase6: {
+                    title: "Phase 6: Dynamic Programming (DP)",
+                    intro: "DP is a powerful technique for solving complex optimization problems by breaking them into simpler, overlapping subproblems and storing their solutions to avoid re-computation. It's a cornerstone of competitive programming.",
+                    topics: [
+                        { title: "Key Properties", description: "DP is applicable to problems exhibiting 'Optimal Substructure' (global optimum from subproblem optima) and 'Overlapping Subproblems' (subproblems are solved multiple times)." },
+                        { title: "1D DP", description: "Problems where the state depends on a single variable. Classic examples: Fibonacci sequence, Climbing Stairs." },
+                        { title: "2D DP", description: "Problems where the state depends on two variables. Classic examples: Longest Common Subsequence (LCS), Edit Distance, Knapsack." },
+                        { title: "DP Patterns", description: "Recognizing patterns like Knapsack, LIS, LCS, and grid-based problems is key. This helps in defining the state, recurrence relation, and base cases for new problems." }
+                    ],
+                    insight: "While memoization (top-down) is often more intuitive to write from a recursive solution, tabulation (bottom-up) is generally preferred in competitive programming. It avoids recursion overhead, is immune to stack overflow, and can often be optimized for space by only storing the necessary previous states."
+                },
+                phase7: {
+                    title: "Phase 7: Graph Algorithms",
+                    intro: "Graphs are used to model networks and relationships. This phase covers essential algorithms for graph traversal, finding shortest paths, identifying connectivity, and building minimum spanning trees—all critical for a wide range of real-world and competitive problems.",
+                    diagrams: [
+                        { 
+                            type: 'representation',
+                            title: 'Graph Representations: Adjacency List vs. Matrix',
+                            content: `
+                                <div class="grid md:grid-cols-2 gap-8">
+                                    <div class="bg-white p-4 rounded-lg shadow">
+                                        <h4 class="font-semibold mb-2">Adjacency List (Sparse Graphs)</h4>
+                                        <p class="text-sm text-gray-600 mb-2">A dictionary mapping each vertex to a list of its neighbors. Space: O(V+E).</p>
+                                        <pre class="bg-gray-100 p-2 rounded text-sm"><code>graph = {
+  'A': ['B', 'C'],
+  'B': ['A', 'D'],
+  'C': ['A'],
+  'D': ['B']
+}</code></pre>
+                                    </div>
+                                    <div class="bg-white p-4 rounded-lg shadow">
+                                        <h4 class="font-semibold mb-2">Adjacency Matrix (Dense Graphs)</h4>
+                                        <p class="text-sm text-gray-600 mb-2">A V x V matrix where matrix[i][j]=1 if an edge exists. Space: O(V²).</p>
+                                        <pre class="bg-gray-100 p-2 rounded text-sm"><code># A B C D
+[[0,1,1,0], # A
+ [1,0,0,1], # B
+ [1,0,0,0], # C
+ [0,1,0,0]] # D</code></pre>
+                                    </div>
+                                </div>`
+                        }
+                    ],
+                    algorithms: [
+                         { name: "BFS & DFS", type: "Traversal", complexity: "O(V+E)", description: "Breadth-First Search (uses a queue) explores level-by-level, finding shortest paths in unweighted graphs. Depth-First Search (uses a stack/recursion) explores as far as possible before backtracking." },
+                         { name: "Topological Sort", type: "Ordering", complexity: "O(V+E)", description: "A linear ordering of vertices in a Directed Acyclic Graph (DAG). Used for dependency resolution." },
+                         { name: "Dijkstra's Algorithm", type: "Shortest Path", complexity: "O((V+E)logV)", description: "Finds the shortest path from a single source in a graph with **non-negative** edge weights. Uses a priority queue." },
+                         { name: "Bellman-Ford", type: "Shortest Path", complexity: "O(V*E)", description: "Finds single-source shortest paths and can handle **negative** edge weights. Can also detect negative cycles." },
+                         { name: "Floyd-Warshall", type: "Shortest Path", complexity: "O(V³)", description: "Finds shortest paths between **all pairs** of vertices. Can handle negative weights but not negative cycles." },
+                         { name: "Prim's & Kruskal's", type: "MST", complexity: "O((V+E)logV) / O(E logE)", description: "Greedy algorithms to find a Minimum Spanning Tree (MST) in a connected, weighted, undirected graph." },
+                         { name: "Disjoint Set Union (DSU)", type: "Connectivity", complexity: "Nearly O(1)", description: "Also known as Union-Find. A data structure that tracks a set of elements partitioned into a number of disjoint subsets. Essential for Kruskal's algorithm." }
+                    ],
+                    insight: "The choice of shortest path algorithm critically depends on the graph's properties. Dijkstra's is fast but fails with negative weights. Bellman-Ford is slower but more robust, handling negative weights and detecting negative cycles. Floyd-Warshall solves the all-pairs problem but is the most computationally expensive."
+                },
+                phase8: {
+                    title: "Phase 8: Advanced Topics",
+                    intro: "This final phase covers specialized data structures and algorithms that provide significant optimizations for specific problem types. Mastery of these topics is often a differentiator in top-tier competitive programming and technical interviews.",
+                     topics: [
+                        { title: "Tries (Prefix Trees)", description: "A tree-like structure for efficient string storage and retrieval, especially for prefix-based searches (e.g., autocomplete). Operations are O(L) where L is the string length." },
+                        { title: "Segment Trees & Fenwick Trees (BIT)", description: "Data structures for efficient range queries (sum, min, max) and point updates on an array in O(logN) time. Segment trees are more versatile, while Fenwick trees are simpler and more space-efficient for prefix sums." },
+                        { title: "KMP & Rabin-Karp", description: "Advanced string matching algorithms. KMP achieves linear time O(N+M) by precomputing a helper array. Rabin-Karp uses rolling hashes for fast comparisons." },
+                        { title: "Union-Find Optimizations", description: "Techniques like 'path compression' and 'union by rank/size' make DSU operations run in nearly constant amortized time, making it extremely efficient for connectivity problems." },
+                        { title: "Bit Manipulation", description: "Performing operations directly on the binary representation of numbers. These low-level tricks can lead to highly optimized and elegant solutions." },
+                        { title: "LRU Cache", description: "A classic system design problem. An efficient implementation requires combining a hash map (for O(1) lookups) and a doubly linked list (for O(1) removal of the least recently used item)." }
+                    ],
+                    insight: "The LRU Cache problem is a perfect example of synergy between data structures. No single structure can efficiently provide the required operations. The optimal solution combines a hash map for fast access and a doubly linked list to maintain the usage order, demonstrating how foundational knowledge can be integrated to solve complex design problems."
+                },
+            }
+        };
+
+        const phaseSelector = document.getElementById('phase-selector').querySelector('div');
+        const contentContainer = document.getElementById('content-container');
+        let activeChart = null;
+
+        function renderPhaseSelector() {
+            roadmapData.phases.forEach((phase, index) => {
+                const card = document.createElement('div');
+                card.className = 'phase-card cursor-pointer p-3 md:p-4 text-center bg-white rounded-lg border-2 border-transparent shadow-sm';
+                card.dataset.phase = phase.id;
+                card.innerHTML = `<span class="text-xl md:text-2xl font-bold text-indigo-600">${index + 1}</span><h3 class="text-sm md:text-base font-semibold mt-1">${phase.title}</h3>`;
+                phaseSelector.appendChild(card);
+            });
+        }
+
+        function renderContent() {
+            for (const phaseId in roadmapData.content) {
+                const phaseData = roadmapData.content[phaseId];
+                const section = document.createElement('section');
+                section.id = phaseId;
+                section.className = 'content-section bg-white p-6 md:p-8 rounded-xl shadow-lg';
+                
+                let contentHTML = `
+                    <h2 class="text-3xl font-bold mb-3">${phaseData.title}</h2>
+                    <p class="text-gray-600 mb-8">${phaseData.intro}</p>
+                `;
+
+                if (phaseData.topics) {
+                    contentHTML += '<div class="grid md:grid-cols-2 gap-6 mb-8">';
+                    phaseData.topics.forEach(topic => {
+                        contentHTML += `
+                            <div class="info-card bg-gray-50 p-4 rounded-lg">
+                                <h3 class="font-semibold text-lg text-indigo-700">${topic.title}</h3>
+                                <p class="text-gray-700 mt-1">${topic.description}</p>
+                            </div>
+                        `;
+                    });
+                    contentHTML += '</div>';
+                }
+
+                if (phaseData.structures) {
+                     contentHTML += '<div class="space-y-4 mb-8">';
+                     phaseData.structures.forEach(s => {
+                         contentHTML += `
+                            <div class="info-card bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+                                <div class="p-4 cursor-pointer flex justify-between items-center" onclick="this.parentElement.classList.toggle('open')">
+                                    <div>
+                                        <h3 class="font-semibold text-lg">${s.name}</h3>
+                                        <div class="mt-1">
+                                            <span class="tag bg-blue-100 text-blue-800">${s.complexity}</span>
+                                            <span class="tag bg-green-100 text-green-800">${s.space}</span>
+                                        </div>
+                                    </div>
+                                    <span class="text-2xl text-gray-400 transform transition-transform duration-300">&#x2304;</span>
+                                </div>
+                                <div class="details p-4 border-t border-gray-200 bg-white">
+                                    <p>${s.description}</p>
+                                </div>
+                            </div>
+                         `;
+                     });
+                     contentHTML += '</div>';
+                }
+                
+                if (phaseData.algorithms) {
+                    contentHTML += '<div class="space-y-4 mb-8">';
+                     phaseData.algorithms.forEach(a => {
+                         contentHTML += `
+                            <div class="info-card bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+                                <div class="p-4 cursor-pointer flex justify-between items-center" onclick="this.parentElement.classList.toggle('open')">
+                                    <div>
+                                        <h3 class="font-semibold text-lg">${a.name}</h3>
+                                         <div class="mt-1">
+                                            <span class="tag bg-purple-100 text-purple-800">${a.type}</span>
+                                            <span class="tag bg-blue-100 text-blue-800">${a.complexity}</span>
+                                        </div>
+                                    </div>
+                                    <span class="text-2xl text-gray-400 transform transition-transform duration-300">&#x2304;</span>
+                                </div>
+                                <div class="details p-4 border-t border-gray-200 bg-white">
+                                    <p>${a.description}</p>
+                                </div>
+                            </div>
+                         `;
+                     });
+                     contentHTML += '</div>';
+                }
+                
+                if (phaseData.chartData) {
+                    contentHTML += `
+                        <div class="mb-8">
+                            <h3 class="text-2xl font-semibold text-center mb-4">Sorting Algorithm Time Complexity Comparison</h3>
+                            <p class="text-center text-gray-600 mb-4 text-sm">This chart visualizes the average-case time complexity, mapping Big-O to a numerical scale for comparison (e.g., O(N*d) and O(N+k) as ~1, O(N logN) as ~1.5, O(N²) as 2). Click on bars to see the exact notation.</p>
+                            <div class="chart-container"><canvas id="complexity-chart"></canvas></div>
+                        </div>
+                    `;
+                }
+                
+                if (phaseData.diagrams) {
+                    phaseData.diagrams.forEach(d => {
+                        contentHTML += `
+                            <div class="mb-8">
+                                <h3 class="text-xl font-semibold mb-4">${d.title}</h3>
+                                ${d.content}
+                            </div>
+                        `;
+                    });
+                }
+
+
+                if (phaseData.insight) {
+                    contentHTML += `
+                        <blockquote class="bg-indigo-50 border-l-4 border-indigo-500 p-4 rounded-r-lg">
+                            <p class="font-medium text-indigo-800 italic">Key Insight: ${phaseData.insight}</p>
+                        </blockquote>
+                    `;
+                }
+
+                section.innerHTML = contentHTML;
+                contentContainer.appendChild(section);
+            }
+        }
+
+        function setActivePhase(phaseId) {
+            document.querySelectorAll('.phase-card').forEach(card => {
+                card.classList.toggle('active', card.dataset.phase === phaseId);
+            });
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.toggle('active', section.id === phaseId);
+            });
+
+            if (activeChart) {
+                activeChart.destroy();
+                activeChart = null;
+            }
+
+            if (phaseId === 'phase3') {
+                const ctx = document.getElementById('complexity-chart').getContext('2d');
+                const chartData = roadmapData.content.phase3.chartData;
+                activeChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: chartData.labels,
+                        datasets: chartData.datasets
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function(value, index, values) {
+                                        if (value === 1) return 'Linear';
+                                        if (value === 1.5) return 'Log-Linear';
+                                        if (value === 2) return 'Quadratic';
+                                        return '';
+                                    }
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                  maxRotation: 45,
+                                  minRotation: 45
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return `Complexity: ${chartData.datasets[0].tooltip[context.dataIndex]}`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        phaseSelector.addEventListener('click', (e) => {
+            const card = e.target.closest('.phase-card');
+            if (card) {
+                setActivePhase(card.dataset.phase);
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderPhaseSelector();
+            renderContent();
+            setActivePhase('phase1'); 
+        });
+
+    </script>
+</body>
+</html>
